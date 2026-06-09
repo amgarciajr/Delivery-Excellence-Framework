@@ -2,109 +2,85 @@
 <html lang="en">
 <head>
     <meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>COMMAND CENTER — DELIVERY EXCELLENCE OS</title>
+    <title>COMMAND CENTER — EDE OS v4.0</title>
     <link href="css/styles.css" rel="stylesheet"/>
     <style>
-        /* Enterprise-Ready Hero Panel (Teams-Inspired) */
-        .hero-panel { background: #ffffff; border: 1px solid #edebe9; border-radius: 4px; padding: 24px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-bottom: 32px; font-family: 'Segoe UI', sans-serif; }
-        
-        /* Grid Layout (Refined for high-density info) */
-        .nav-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); gap: 20px; }
-        
-        /* Module Card UI - Synced with Operational Hygiene aesthetic */
-        .nav-item { 
-            background: linear-gradient(160deg, rgba(17,24,39,0.97) 0%, rgba(10,14,36,0.97) 100%);
-            border: 1px solid rgba(0,200,255,0.18); 
-            padding: 24px; 
-            border-radius: 14px; 
-            display: flex; 
-            gap: 20px; 
-            transition: all 0.2s ease; 
-            text-decoration: none; 
-            color: #fff; 
-            align-items: flex-start;
+        /* Professional Pride-Themed Command Button */
+        .pride-btn {
+            display: inline-block; padding: 10px 20px;
+            background: #111827; color: #fff;
+            border: 1px solid transparent; border-radius: 4px;
+            cursor: pointer; font-weight: 500; font-size: 0.9rem;
+            /* Subtle Pride Gradient Border */
+            border-image: linear-gradient(90deg, #E65C5C, #FFC15E, #FFFF99, #76C776, #5E9EFF, #A864A8) 1;
+            transition: 0.3s;
         }
-        .nav-item:hover { border-color: #00c8ff; transform: translateY(-2px); }
-        .nav-item-label { font-size: 0.95rem; font-weight: 700; color: #fff; margin-bottom: 8px; display: block; }
-        .nav-item-desc { font-size: 0.8rem; color: #8892a4; line-height: 1.6; }
+        .pride-btn:hover { background: #1a2233; }
+
+        /* Pride-Themed Bio Modal (Professional Subtlety) */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 100; }
+        .modal-content { 
+            position: relative; margin: 10% auto; padding: 40px; width: 50%;
+            background: #111827; border: 1px solid #333; border-radius: 8px;
+            /* Subtle Pride Top Border */
+            border-top: 4px solid #E65C5C; border-image: linear-gradient(90deg, #E65C5C, #FFC15E, #FFFF99, #76C776, #5E9EFF, #A864A8) 1;
+        }
     </style>
-    <script>
-        if (sessionStorage.getItem("ede-access") !== "granted") { window.location.href = "index.html"; }
-    </script>
 </head>
 <body>
     <div class="page-wrap">
         <header>
-            <div class="header-title"><span>EDE</span> / CEES / EEP OS 
-                <span style="font-size: 0.6rem; color: #34d399; border: 1px solid #34d399; padding: 2px 6px; border-radius: 4px; margin-left: 10px;">RATIFIED v4.0</span>
-            </div>
+            <div class="header-title"><span>EDE</span> / COMMAND CENTER</div>
         </header>
 
         <div class="dashboard-container" style="max-width: 1200px; margin: 40px auto; padding: 0 24px;">
             
-            <section class="hero-panel">
-                <div style="display: flex; gap: 20px; align-items: flex-start;">
-                    <div style="position: relative;">
-                        <img src="assets/icons/profile.png" alt="Mike Garcia" style="width: 80px; height: 80px; border-radius: 4px;"/>
-                        <div style="position: absolute; bottom: -2px; right: -2px; width: 16px; height: 16px; background: #92C353; border: 3px solid #ffffff; border-radius: 50%;"></div>
-                    </div>
-                    <div>
-                        <h2 style="color: #323130; margin: 0; font-size: 1.25rem;">Mike Garcia</h2>
-                        <div style="color: #605e5c; font-size: 0.85rem; margin-bottom: 12px;">Strategic Technical Architect & AI Governance Leader</div>
-                        <p style="color: #323130; font-size: 0.9rem; line-height: 1.4; max-width: 650px;">
-                            Veteran-led technical orchestration. Managing 16+ enterprise accounts. Built a connected Power Platform system—5 apps, 6 training portals—and the EDE v4 operating model[cite: 8, 9]. Driving absolute execution predictability across security, Purview, and AI readiness.
-                        </p>
-                    </div>
-                </div>
-            </section>
+            <div style="margin-bottom: 40px;">
+                <button onclick="document.getElementById('bioModal').style.display='block'" class="pride-btn">
+                    Mike Garcia — Customer Focused | Principal‑level Data Protection & AI Governance Architect | Microsoft 365 Security & Compliance 
+                </button>
+            </div>
 
+            <h3 style="color: #605e5c; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 2px;">Operational Delivery Sector</h3>
             <div class="nav-grid">
                 <a class="nav-item" href="dashboards.html">
                     <div class="ede-icon icon-dashboard"></div>
-                    <div>
-                        <span class="nav-item-label">Operational Dashboards</span>
-                        <div class="nav-item-desc">• Real-time delivery telemetry.<br>• Health monitoring for 16+ accounts.<br>• Visualization of security drift.</div>
-                    </div>
+                    <div><span class="nav-item-label">Operational Dashboards</span></div>
                 </a>
                 <a class="nav-item" href="modules/operational-hygiene.html">
                     <div class="ede-icon icon-hygiene"></div>
-                    <div>
-                        <span class="nav-item-label">Operational Hygiene</span>
-                        <div class="nav-item-desc">• Standardized dispatch cadences.<br>• Communication signal standards.<br>• Eliminating "hidden work".</div>
-                    </div>
-                </a>
-                <a class="nav-item" href="modules/cees-playbook.html">
-                    <div class="ede-icon icon-playbook"></div>
-                    <div>
-                        <span class="nav-item-label">CEES Playbook</span>
-                        <div class="nav-item-desc">• Repeatable delivery pillars.<br>• Transformation playbooks for AI.<br>• High-stakes engagement behavior.</div>
-                    </div>
-                </a>
-                <a class="nav-item" href="modules/eep-charter.html">
-                    <div class="ede-icon icon-charter"></div>
-                    <div>
-                        <span class="nav-item-label">EEP Charter</span>
-                        <div class="nav-item-desc">• Governance models for trust.<br>• Non-negotiable commitment frameworks.<br>• The "Bar-Setter" standard.</div>
-                    </div>
-                </a>
-                <a class="nav-item" href="modules/scoping-adaptive-polling.html">
-                    <div class="ede-icon icon-polling"></div>
-                    <div>
-                        <span class="nav-item-label">Scoping & Polling</span>
-                        <div class="nav-item-desc">• Pre-delivery intelligence gathering.<br>• Aligning outcomes before Day One.<br>• Accurate project estimation tools.</div>
-                    </div>
+                    <div><span class="nav-item-label">Operational Hygiene</span></div>
                 </a>
                 <a class="nav-item" href="modules/self-accountability-scorecard.html">
                     <div class="ede-icon icon-scorecard"></div>
-                    <div>
-                        <span class="nav-item-label">Accountability Scorecard</span>
-                        <div class="nav-item-desc">• 30-day evidence-based loops.<br>• Proactive drift-watch alerts.<br>• Quantifiable impact tracking.</div>
-                    </div>
+                    <div><span class="nav-item-label">Accountability Scorecard</span></div>
+                </a>
+            </div>
+
+            <h3 style="margin-top: 40px; color: #605e5c; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 2px;">Framework Governance Sector</h3>
+            <div class="nav-grid">
+                <a class="nav-item" href="modules/cees-playbook.html">
+                    <div class="ede-icon icon-playbook"></div>
+                    <div><span class="nav-item-label">CEES Playbook</span></div>
+                </a>
+                <a class="nav-item" href="modules/eep-charter.html">
+                    <div class="ede-icon icon-charter"></div>
+                    <div><span class="nav-item-label">EEP Charter</span></div>
+                </a>
+                <a class="nav-item" href="modules/scoping-adaptive-polling.html">
+                    <div class="ede-icon icon-polling"></div>
+                    <div><span class="nav-item-label">Scoping & Polling</span></div>
                 </a>
             </div>
         </div>
-        <footer>EDE / CEES / EEP Operating System · Confidential · Authorized Personnel Only</footer>
+    </div>
+
+    <div id="bioModal" class="modal" onclick="this.style.display='none'">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <h2 style="color:#fff;">Mike Garcia</h2>
+            <p style="color:#aaa;">Strategic Technical Architect & AI Governance Leader.</p>
+            <p style="color:#8892a4;">Veteran-led technical orchestration. Specializing in high-stakes cloud architecture, M365 transformation, and enterprise AI adoption.</p>
+        </div>
     </div>
 </body>
 </html>
