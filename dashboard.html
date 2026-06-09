@@ -2,85 +2,83 @@
 <html lang="en">
 <head>
     <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>COMMAND CENTER — EDE OS v4.0</title>
-    <link href="css/styles.css" rel="stylesheet"/>
     <style>
-        /* Professional Pride-Themed Command Button */
-        .pride-btn {
-            display: inline-block; padding: 10px 20px;
-            background: #111827; color: #fff;
-            border: 1px solid transparent; border-radius: 4px;
-            cursor: pointer; font-weight: 500; font-size: 0.9rem;
-            /* Subtle Pride Gradient Border */
-            border-image: linear-gradient(90deg, #E65C5C, #FFC15E, #FFFF99, #76C776, #5E9EFF, #A864A8) 1;
-            transition: 0.3s;
-        }
-        .pride-btn:hover { background: #1a2233; }
+        body { background: #0a0e24; color: #fff; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .page-wrap { max-width: 1200px; margin: 0 auto; padding: 40px 24px; }
+        
+        .header-title { font-weight: 800; letter-spacing: 2px; font-size: 1.2rem; margin-bottom: 40px; border-bottom: 1px solid #333; padding-bottom: 20px; color: #00c8ff; }
+        
+        h3 { color: #8892a4; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 3px; margin: 40px 0 20px; }
 
-        /* Pride-Themed Bio Modal (Professional Subtlety) */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 100; }
-        .modal-content { 
-            position: relative; margin: 10% auto; padding: 40px; width: 50%;
-            background: #111827; border: 1px solid #333; border-radius: 8px;
-            /* Subtle Pride Top Border */
-            border-top: 4px solid #E65C5C; border-image: linear-gradient(90deg, #E65C5C, #FFC15E, #FFFF99, #76C776, #5E9EFF, #A864A8) 1;
+        .nav-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; }
+        
+        .nav-item { 
+            background: linear-gradient(160deg, rgba(17, 24, 39, 0.97) 0%, rgba(10, 14, 36, 0.97) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 24px; border-radius: 14px; text-decoration: none; color: #fff;
+            transition: 0.3s; display: flex; flex-direction: column; gap: 8px;
         }
+        .nav-item:hover { border-color: #0078ff; transform: translateY(-3px); }
+        .nav-item-label { font-weight: 700; font-size: 1rem; color: #fff; }
+        .nav-item-context { font-size: 0.75rem; color: #8892a4; line-height: 1.4; }
+
+        .footer-bio {
+            margin-top: 80px; padding: 20px;
+            background: #111827;
+            border: 2px solid transparent;
+            border-image: linear-gradient(90deg, #E65C5C, #FFC15E, #FFFF99, #76C776, #5E9EFF, #A864A8) 1;
+            text-align: center;
+            opacity: 0.9;
+        }
+        .footer-bio-text { color: #ccc; font-size: 0.75rem; font-style: italic; }
     </style>
 </head>
 <body>
     <div class="page-wrap">
         <header>
-            <div class="header-title"><span>EDE</span> / COMMAND CENTER</div>
+            <div class="header-title">EDE / COMMAND CENTER / v4.0</div>
         </header>
 
-        <div class="dashboard-container" style="max-width: 1200px; margin: 40px auto; padding: 0 24px;">
-            
-            <div style="margin-bottom: 40px;">
-                <button onclick="document.getElementById('bioModal').style.display='block'" class="pride-btn">
-                    Mike Garcia — Customer Focused | Principal‑level Data Protection & AI Governance Architect | Microsoft 365 Security & Compliance 
-                </button>
-            </div>
-
-            <h3 style="color: #605e5c; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 2px;">Operational Delivery Sector</h3>
-            <div class="nav-grid">
-                <a class="nav-item" href="dashboards.html">
-                    <div class="ede-icon icon-dashboard"></div>
-                    <div><span class="nav-item-label">Operational Dashboards</span></div>
-                </a>
-                <a class="nav-item" href="modules/operational-hygiene.html">
-                    <div class="ede-icon icon-hygiene"></div>
-                    <div><span class="nav-item-label">Operational Hygiene</span></div>
-                </a>
-                <a class="nav-item" href="modules/self-accountability-scorecard.html">
-                    <div class="ede-icon icon-scorecard"></div>
-                    <div><span class="nav-item-label">Accountability Scorecard</span></div>
-                </a>
-            </div>
-
-            <h3 style="margin-top: 40px; color: #605e5c; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 2px;">Framework Governance Sector</h3>
-            <div class="nav-grid">
-                <a class="nav-item" href="modules/cees-playbook.html">
-                    <div class="ede-icon icon-playbook"></div>
-                    <div><span class="nav-item-label">CEES Playbook</span></div>
-                </a>
-                <a class="nav-item" href="modules/eep-charter.html">
-                    <div class="ede-icon icon-charter"></div>
-                    <div><span class="nav-item-label">EEP Charter</span></div>
-                </a>
-                <a class="nav-item" href="modules/scoping-adaptive-polling.html">
-                    <div class="ede-icon icon-polling"></div>
-                    <div><span class="nav-item-label">Scoping & Polling</span></div>
-                </a>
-            </div>
+        <h3>Operational Delivery Sector</h3>
+        <div class="nav-grid">
+            <a class="nav-item" href="dashboards.html">
+                <span class="nav-item-label">Operational Dashboards</span>
+                <span class="nav-item-context">Real-time health telemetry, pending actions, and active engagement status indicators.</span>
+            </a>
+            <a class="nav-item" href="modules/operational-hygiene.html">
+                <span class="nav-item-label">Operational Hygiene</span>
+                <span class="nav-item-context">Standard maintenance, artifact compliance, and administrative maintenance protocols.</span>
+            </a>
+            <a class="nav-item" href="modules/self-accountability-scorecard.html">
+                <span class="nav-item-label">Accountability Scorecard</span>
+                <span class="nav-item-context">30-day performance trends, pillar drift analysis, and self-graded evidence logs.</span>
+            </a>
         </div>
-    </div>
 
-    <div id="bioModal" class="modal" onclick="this.style.display='none'">
-        <div class="modal-content" onclick="event.stopPropagation()">
-            <h2 style="color:#fff;">Mike Garcia</h2>
-            <p style="color:#aaa;">Strategic Technical Architect & AI Governance Leader.</p>
-            <p style="color:#8892a4;">Veteran-led technical orchestration. Specializing in high-stakes cloud architecture, M365 transformation, and enterprise AI adoption.</p>
+        <h3>Framework Governance Sector</h3>
+        <div class="nav-grid">
+            <a class="nav-item" href="modules/cees-playbook.html">
+                <span class="nav-item-label">CEES Playbook</span>
+                <span class="nav-item-context">Standard operating procedures, engagement lifecycle guides, and professional methodology.</span>
+            </a>
+            <a class="nav-item" href="modules/eep-charter.html">
+                <span class="nav-item-label">EEP Charter</span>
+                <span class="nav-item-context">Foundational principles, delivery standards, and core value add definitions.</span>
+            </a>
+            <a class="nav-item" href="modules/scoping-adaptive-polling.html">
+                <span class="nav-item-label">Scoping & Polling</span>
+                <span class="nav-item-context">Pre-engagement intelligence, polling workflows, and adaptive delivery triggers.</span>
+            </a>
         </div>
+
+        <footer class="footer-bio">
+            <div class="footer-bio-text">
+                <strong>Mike Garcia</strong> — Principal Data Protection & AI Governance Architect. 
+                Veteran-led technical orchestration. Specializing in high-stakes cloud architecture and enterprise M365 transformation.
+            </div>
+        </footer>
     </div>
 </body>
 </html>
