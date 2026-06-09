@@ -5,50 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>COMMAND CENTER — DELIVERY EXCELLENCE OS</title>
     <link href="css/styles.css" rel="stylesheet"/>
-    <style>
-        /* Force Layout Consistency */
-        .dashboard-container { max-width: 1200px; margin: 40px auto; padding: 0 24px 80px; }
-        
-        /* Grid Layout Fixes */
-        .nav-grid { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); 
-            gap: 24px; 
-            margin-top: 40px; 
-        }
-        
-        .nav-item { 
-            background: rgba(17, 24, 39, 0.8); 
-            border: 1px solid rgba(255, 255, 255, 0.1); 
-            padding: 24px; 
-            border-radius: 12px;
-            display: flex; 
-            gap: 20px; 
-            transition: all 0.3s ease; 
-            text-decoration: none; 
-            color: #fff; 
-            align-items: flex-start;
-        }
-        
-        .nav-item:hover { 
-            border-color: #0078ff; 
-            background: rgba(17, 24, 39, 1); 
-            transform: translateY(-4px); 
-            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
-        }
-        
-        .nav-item img { width: 48px; height: 48px; flex-shrink: 0; filter: drop-shadow(0 0 5px rgba(0,120,255,0.3)); }
-        .nav-item-label { font-size: 1.1rem; font-weight: 700; color: #fff; margin-bottom: 4px; }
-        .nav-item-desc { font-size: 0.85rem; color: #8892a4; line-height: 1.5; }
-        
-        /* Executive Profile */
-        .pitch-panel { background: linear-gradient(135deg, rgba(17, 24, 39, 0.9) 0%, rgba(13, 17, 48, 0.9) 100%); border: 1px solid #0078ff; border-radius: 16px; padding: 40px; margin-bottom: 40px; }
-        .profile-header { display: flex; align-items: center; gap: 32px; }
-        .profile-img { width: 110px; height: 110px; border-radius: 50%; border: 2px solid #0078ff; object-fit: cover; }
-        .bio-trigger-btn { background: rgba(0, 120, 255, 0.1); border: 1px solid #0078ff; color: #fff; padding: 10px 20px; border-radius: 6px; font-size: 0.8rem; cursor: pointer; margin-top: 15px; }
-        .expandable-content { max-height: 0; overflow: hidden; transition: max-height 0.4s ease; color: #8892a4; }
-        .expandable-content.active { max-height: 500px; margin-top: 20px; }
-    </style>
     <script>
         if (sessionStorage.getItem("ede-access") !== "granted") { window.location.href = "index.html"; }
         function toggleBio() {
@@ -62,63 +18,65 @@
 <body>
     <div class="page-wrap">
         <header>
-            <div class="header-title"><span>EDE</span> / CEES / EEP OS <span style="font-size: 0.6rem; color: #34d399; border: 1px solid #34d399; padding: 2px 6px; border-radius: 4px; margin-left: 10px;">RATIFIED v4.0</span></div>
+            <div class="header-title"><span>EDE</span> / CEES / EEP OS 
+                <span style="font-size: 0.6rem; color: #34d399; border: 1px solid #34d399; padding: 2px 6px; border-radius: 4px; margin-left: 10px;">RATIFIED v4.0</span>
+            </div>
         </header>
 
-        <div class="dashboard-container">
-            <section class="pitch-panel">
-                <div class="profile-header">
-                    <img src="assets/icons/mike-garcia-profile.png" alt="Mike Garcia" class="profile-img"/>
+        <div class="dashboard-container" style="max-width: 1200px; margin: 40px auto; padding: 0 24px;">
+            <section style="background: linear-gradient(135deg, rgba(17, 24, 39, 0.9) 0%, rgba(13, 17, 48, 0.9) 100%); border: 1px solid #0078ff; border-radius: 16px; padding: 40px; margin-bottom: 40px;">
+                <div style="display: flex; align-items: center; gap: 32px;">
+                    <img src="assets/icons/profile.png" style="width: 110px; height: 110px; border-radius: 50%; border: 2px solid #0078ff;"/>
                     <div>
                         <div style="color: #0078ff; font-weight: 700; font-size: 0.75rem; text-transform: uppercase;">Architect & Framework Owner</div>
                         <h2 style="color: #fff; margin: 5px 0;">Mike Garcia</h2>
                         <p style="color: #ccc; max-width: 600px;">Architecting enterprise-grade technical delivery standards. This hub replaces reactive subject-matter expertise with a proactive system of outcome ownership.</p>
-                        <button id="bio-btn" onclick="toggleBio()" class="bio-trigger-btn">View Bio & Framework Pitch →</button>
+                        <button id="bio-btn" onclick="toggleBio()" class="bio-trigger-btn" style="background: rgba(0, 120, 255, 0.1); border: 1px solid #0078ff; color: #fff; padding: 10px 20px; border-radius: 6px; font-size: 0.8rem; cursor: pointer; margin-top: 15px;">View Bio & Framework Pitch →</button>
                     </div>
                 </div>
-                <div id="expanded-bio" class="expandable-content">
-                    <p>Leveraging a disciplined operational foundation from US Army aviation systems maintenance to design structural delivery frameworks for complex Microsoft stacks. This system organizes execution across five non-negotiable delivery pillars, ensuring absolute execution predictability.</p>
+                <div id="expanded-bio" class="expandable-content" style="max-height: 0; overflow: hidden; transition: max-height 0.4s ease; color: #8892a4;">
+                    <p style="margin-top: 20px;">Leveraging a disciplined operational foundation from US Army aviation systems maintenance to design structural delivery frameworks for complex Microsoft stacks. This system organizes execution across five non-negotiable delivery pillars, ensuring absolute execution predictability.</p>
                 </div>
             </section>
 
             <div class="nav-grid">
                 <a class="nav-item" href="dashboards.html">
-                    <img src="assets/icons/dashboards.png"/>
+                    <div class="ede-icon icon-dashboard"></div>
                     <div>
                         <div class="nav-item-label">Operational Dashboards</div>
                         <div class="nav-item-desc">Live performance telemetry and engagement health metrics.</div>
                     </div>
                 </a>
                 <a class="nav-item" href="modules/operational-hygiene.html">
-                    <img src="assets/icons/operational-hygiene.png"/>
+                    <div class="ede-icon icon-hygiene"></div>
                     <div>
                         <div class="nav-item-label">Operational Hygiene</div>
                         <div class="nav-item-desc">Dispatch, cadence, and communication standards.</div>
                     </div>
                 </a>
                 <a class="nav-item" href="modules/cees-playbook.html">
-                    <img src="assets/icons/cees-playbook.png"/>
+                    <div class="ede-icon icon-playbook"></div>
                     <div>
                         <div class="nav-item-label">CEES Playbook</div>
                         <div class="nav-item-desc">Standardized engagement pillars and delivery behavior.</div>
                     </div>
                 </a>
                 <a class="nav-item" href="modules/eep-charter.html">
-                    <img src="assets/icons/eep-charter.png"/>
+                    <div class="ede-icon icon-charter"></div>
                     <div>
                         <div class="nav-item-label">EEP Charter</div>
                         <div class="nav-item-desc">Governance, non-negotiable commitments, and certification levels.</div>
                     </div>
                 </a>
                 <a class="nav-item" href="modules/scoping-adaptive-polling.html">
-                    <img src="assets/icons/scoping-polling.png"/>
+                    <div class="ede-icon icon-polling"></div>
                     <div>
                         <div class="nav-item-label">Scoping & Polling</div>
                         <div class="nav-item-desc">Pre-delivery intelligence to align outcomes before Day One.</div>
                     </div>
                 </a>
                 <a class="nav-item" href="modules/self-accountability-scorecard.html">
-                    <img src="assets/icons/self-accountability.png"/>
+                    <div class="ede-icon icon-scorecard"></div>
                     <div>
                         <div class="nav-item-label">Accountability Scorecard</div>
                         <div class="nav-item-desc">Evidence-based scorecard trends and 30-day drift watch.</div>
