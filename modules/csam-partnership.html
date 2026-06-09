@@ -1,182 +1,19 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>CSAM Partnership — EDE Frameworks</title>
-<link href="../css/styles.css" rel="stylesheet"/>
-<style>
-    .mod-hero { position:relative; padding:48px 0 36px; text-align:center; overflow:hidden; }
-    .mod-hero-glow { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:600px; height:300px; background:url('../assets/glows/hero-glow.png?expires=1783578132&signature=1963af08dd612e09176da0a694857eba1d9663efbe814173fe9ae6b0ae731190') center/contain no-repeat; opacity:0.4; pointer-events:none; }
-    .mod-eyebrow { font-size:11px; font-weight:700; letter-spacing:3px; text-transform:uppercase; color:#34d399; margin-bottom:12px; }
-    .mod-title { font-size:2.2rem; font-weight:800; color:#fff; margin-bottom:12px; text-shadow:0 0 30px rgba(52,211,153,0.3); }
-    .mod-subtitle { font-size:1rem; color:#8892a4; max-width:600px; margin:0 auto; line-height:1.7; }
-    .stat-row { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:28px; }
-    .stat-card { background:linear-gradient(160deg,rgba(17,24,39,0.97) 0%,rgba(10,14,36,0.97) 100%); border:1px solid rgba(52,211,153,0.18); border-radius:14px; padding:20px 18px; position:relative; overflow:hidden; text-align:center; }
-    .stat-card::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background:linear-gradient(90deg,#059669,#34d399); }
-    .stat-num { font-size:2rem; font-weight:800; color:#34d399; line-height:1; margin-bottom:6px; }
-    .stat-label { font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:#8892a4; }
-    .stat-desc { font-size:0.78rem; color:#b0bac8; margin-top:4px; }
-    .panel { background:linear-gradient(160deg,rgba(17,24,39,0.97) 0%,rgba(10,14,36,0.97) 100%); border:1px solid rgba(52,211,153,0.15); border-radius:14px; padding:24px 28px; position:relative; overflow:hidden; margin-bottom:20px; }
-    .panel::before { content:''; position:absolute; top:0; left:0; right:0; height:1px; background:linear-gradient(90deg,transparent,rgba(52,211,153,0.4),transparent); }
-    .panel-title { font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:#34d399; margin-bottom:16px; }
-    .concept-list { list-style:none; padding:0; }
-    .concept-item { display:flex; align-items:flex-start; gap:16px; padding:14px 0; border-bottom:1px solid rgba(255,255,255,0.05); }
-    .concept-item:last-child { border-bottom:none; }
-    .concept-icon { width:36px; height:36px; border-radius:10px; background:rgba(52,211,153,0.1); border:1px solid rgba(52,211,153,0.25); display:flex; align-items:center; justify-content:center; font-size:1.1rem; flex-shrink:0; }
-    .concept-title { font-size:0.92rem; font-weight:700; color:#fff; margin-bottom:4px; }
-    .concept-body { font-size:0.82rem; color:#8892a4; line-height:1.6; }
-    .two-col { display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom:20px; }
-    .three-col { display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; margin-bottom:20px; }
-    .mini-card { background:rgba(0,0,0,0.25); border:1px solid rgba(255,255,255,0.07); border-radius:10px; padding:16px; margin-bottom:12px; }
-    .mini-card:last-child { margin-bottom:0; }
-    .mini-card-title { font-size:0.85rem; font-weight:700; color:#fff; margin-bottom:6px; }
-    .mini-card-body { font-size:0.78rem; color:#8892a4; line-height:1.6; }
-    .callout { border-radius:10px; padding:16px 20px; margin:16px 0; border:1px solid rgba(52,211,153,0.3); background:rgba(52,211,153,0.07); }
-    .callout-text { font-size:0.88rem; color:#e8eaf6; line-height:1.7; font-style:italic; }
-    .callout-attr { font-size:0.75rem; color:#34d399; font-weight:700; margin-top:8px; }
-    .principle-row { display:flex; align-items:flex-start; gap:14px; padding:14px 0; border-bottom:1px solid rgba(255,255,255,0.05); }
-    .principle-row:last-child { border-bottom:none; }
-    .principle-num { width:32px; height:32px; border-radius:50%; background:rgba(52,211,153,0.12); border:1px solid rgba(52,211,153,0.3); display:flex; align-items:center; justify-content:center; font-size:0.8rem; font-weight:800; color:#34d399; flex-shrink:0; line-height:32px; text-align:center; }
-    .principle-title { font-size:0.92rem; font-weight:700; color:#fff; margin-bottom:4px; }
-    .principle-body { font-size:0.82rem; color:#8892a4; line-height:1.6; }
-    .surprise-card { border-radius:10px; padding:14px 18px; margin-bottom:10px; border:1px solid; }
-    .surprise-card.green { background:rgba(5,150,105,0.07); border-color:rgba(52,211,153,0.25); }
-    .surprise-card.amber { background:rgba(217,119,6,0.07); border-color:rgba(251,191,36,0.25); }
-    .surprise-card.red   { background:rgba(220,38,38,0.07); border-color:rgba(248,113,113,0.25); }
-    .surprise-title { font-size:0.88rem; font-weight:700; margin-bottom:4px; }
-    .surprise-card.green .surprise-title { color:#34d399; }
-    .surprise-card.amber .surprise-title { color:#fbbf24; }
-    .surprise-card.red   .surprise-title { color:#f87171; }
-    .surprise-body { font-size:0.78rem; color:#8892a4; line-height:1.6; }
-    .compare-table { width:100%; border-collapse:collapse; }
-    .compare-table th { font-size:9px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:#8892a4; padding:0 12px 12px 0; text-align:left; border-bottom:1px solid rgba(255,255,255,0.06); }
-    .compare-table td { font-size:0.82rem; color:#e8eaf6; padding:11px 12px 11px 0; border-bottom:1px solid rgba(255,255,255,0.04); vertical-align:top; line-height:1.6; }
-    .compare-table tr:last-child td { border-bottom:none; }
-    @media(max-width:900px){ .two-col,.three-col,.stat-row{ grid-template-columns:1fr 1fr; } }
-    @media(max-width:600px){ .two-col,.three-col,.stat-row{ grid-template-columns:1fr; } .mod-title{ font-size:1.6rem; } }
-  </style>
+    <meta charset="utf-8"/>
+    <script>
+        if (sessionStorage.getItem("ede-access") !== "granted") { window.location.href = "../index.html"; }
+    </script>
+    <link href="../css/styles.css" rel="stylesheet"/>
 </head>
 <body>
-<canvas id="particle-canvas"></canvas>
-<div class="page-wrap">
-<header>
-<div class="header-title"><span>EDE</span> / CEES / EEP  Frameworks</div>
-<button class="pdf-btn" onclick="exportPDF()">⬇ Export PDF</button>
-</header>
-<div class="container">
-<div style="margin-bottom:16px;"><a class="back-btn" href="../index.html">← Back to Framework Library</a></div>
-<div class="mod-hero">
-<div class="mod-hero-glow"></div>
-<div class="mod-eyebrow">EDEv4 · Partnership Layer — Relationship &amp; Routing</div>
-<h1 class="mod-title">CSAM Partnership</h1>
-<p class="mod-subtitle">The CSAM is your closest ally. They own the relationship; you own the outcome. Partnership rhythm determines trust, pipeline, and future routing.</p>
-</div>
-<!-- Stats -->
-<div class="stat-row">
-<div class="stat-card"><div class="stat-num">5</div><div class="stat-label">Partnership Principles</div><div class="stat-desc">Non-negotiable operating rules</div></div>
-<div class="stat-card"><div class="stat-num">Weekly</div><div class="stat-label">Check-In Cadence</div><div class="stat-desc">Signal-sharing, not status reporting</div></div>
-<div class="stat-card"><div class="stat-num">1</div><div class="stat-label">Shared OO Call</div><div class="stat-desc">Per engagement — EDE + CSAM present</div></div>
-<div class="stat-card"><div class="stat-num">Zero</div><div class="stat-label">Surprise Target</div><div class="stat-desc">CSAM is never caught unprepared</div></div>
-</div>
-<!-- Overview -->
-<div class="panel">
-<div class="panel-title">The Partnership Model</div>
-<p style="color:#e8eaf6;line-height:1.8;font-size:0.97rem;margin-bottom:14px;">The CSAM owns the client relationship. The EDE owns the delivery outcome. These are distinct accountabilities — and the partnership between them is what determines whether a technically excellent engagement also produces a referenceable client. A CSAM who is surprised by a delivery problem loses trust with the client. An EDE who operates without CSAM alignment loses routing priority. The partnership rhythm is not optional — it is the mechanism that converts individual delivery quality into organizational trust.</p>
-<div class="callout">
-<div class="callout-text">"They own the relationship; you own the outcome. Make the CSAM look prepared in every client interaction — no surprises, ever."</div>
-<div class="callout-attr">— EEP CSAM Partnership Standard</div>
-</div>
-</div>
-<!-- Five Principles -->
-<div class="panel">
-<div class="panel-title">Five Partnership Principles</div>
-<div class="principle-row">
-<div class="principle-num">1</div>
-<div>
-<div class="principle-title">Make the CSAM Look Prepared — No Surprises</div>
-<div class="principle-body">Every client-facing moment must be coordinated with the CSAM before it happens. If the CSAM is surprised by a delivery problem, a client escalation, or a scope change — the partnership has failed. Pre-brief before every client interaction above routine status. The CSAM should never learn about a problem from the client.</div>
-</div>
-</div>
-<div class="principle-row">
-<div class="principle-num">2</div>
-<div>
-<div class="principle-title">Signal-Over-Status Updates</div>
-<div class="principle-body">Updates to the CSAM must communicate what changes decisions — not just what happened. "The call went well" is not an update. "Customer Friction is amber — the client re-asked the same question twice this week, which suggests our last communication didn't land clearly" is signal. The CSAM needs to know what to do differently, not just what occurred.</div>
-</div>
-</div>
-<div class="principle-row">
-<div class="principle-num">3</div>
-<div>
-<div class="principle-title">Disagree in Private, Align in Public</div>
-<div class="principle-body">Disagreements between EDE and CSAM are resolved before the client interaction — never in front of the client. A unified front is non-negotiable. If you disagree with the CSAM's approach, raise it in the weekly check-in. In the client call, you are one team with one position. Visible disagreement between EDE and CSAM destroys client confidence immediately.</div>
-</div>
-</div>
-<div class="principle-row">
-<div class="principle-num">4</div>
-<div>
-<div class="principle-title">Outcome Owner Call — Shared Between EDE and CSAM</div>
-<div class="principle-body">The Outcome Owner call is a joint accountability moment. Both EDE and CSAM are present. The client sees a unified team with a single named owner. This is the primary trust-building cadence in the partnership model — it demonstrates that the relationship owner and the delivery owner are coordinated and accountable together.</div>
-</div>
-</div>
-<div class="principle-row">
-<div class="principle-num">5</div>
-<div>
-<div class="principle-title">Weekly CSAM Check-In — Non-Negotiable</div>
-<div class="principle-body">The weekly check-in is not a status call — it is a signal-sharing session. What friction indicators did you observe this week? What communications are going out? What does the CSAM need to know before their next client interaction? This cadence is a Non-Negotiable Commitment under the EEP Charter. It cannot be cancelled, deferred, or abbreviated.</div>
-</div>
-</div>
-</div>
-<!-- Surprise Index + Routing Trust -->
-<div class="two-col">
-<div class="panel">
-<div class="panel-title">Surprise Index — Three Levels</div>
-<div class="surprise-card green">
-<div class="surprise-title">✅ Zero Surprises — Target State</div>
-<div class="surprise-body">CSAM is pre-briefed before every client interaction. No unplanned escalations. No client-initiated surprises. CSAM can answer any client question about delivery status without contacting the EDE first. This is the standard.</div>
-</div>
-<div class="surprise-card amber">
-<div class="surprise-title">⚠️ Amber — One Unplanned Event</div>
-<div class="surprise-body">One unplanned escalation or client-initiated surprise this month. CSAM was not fully prepared for one client interaction. Requires immediate debrief and process correction. Two consecutive amber months triggers a partnership review.</div>
-</div>
-<div class="surprise-card red">
-<div class="surprise-title">🔴 Red — Routing Trust at Risk</div>
-<div class="surprise-body">Client raised a concern directly to CSAM without prior EDE notification. CSAM was caught unprepared in a client interaction. Routing trust score below threshold. Immediate escalation and partnership reset required.</div>
-</div>
-</div>
-<div class="panel">
-<div class="panel-title">Routing Trust — How It's Built and Eroded</div>
-<div class="mini-card">
-<div class="mini-card-title" style="color:#34d399;">✅ Trust-Building Behaviors</div>
-<div class="mini-card-body">Consistent pre-briefing before client interactions · Signal-quality updates that change CSAM decisions · Zero surprises over multiple engagements · Outcome Owner calls held on schedule · CSAM can predict EDE behavior under pressure</div>
-</div>
-<div class="mini-card">
-<div class="mini-card-title" style="color:#f87171;">❌ Trust-Eroding Behaviors</div>
-<div class="mini-card-body">CSAM learns about problems from the client · Status updates that don't change decisions · Missed weekly check-ins · Visible disagreement in client interactions · Outcome Owner call cancelled or deferred</div>
-</div>
-<div class="callout" style="margin-top:0;">
-<div class="callout-text">"Routing trust is built over multiple engagements and eroded in a single interaction. The CSAM routes future work to engineers they can predict."</div>
-</div>
-</div>
-</div>
-<!-- Weekly Check-In Structure -->
-<div class="panel">
-<div class="panel-title">Weekly CSAM Check-In — What to Cover</div>
-<table class="compare-table">
-<thead><tr><th>Topic</th><th>What to Share</th><th>Why It Matters</th></tr></thead>
-<tbody>
-<tr><td><strong style="color:#34d399;">Signal Update</strong></td><td>Current status of all three signal streams (Customer Friction, Communication Clarity, Ownership Follow-Through) — Green, Amber, or Red with specific indicators</td><td>CSAM needs to know engagement health before their next client interaction</td></tr>
-<tr><td><strong style="color:#34d399;">Outbound Communications</strong></td><td>Any client-facing communications going out this week — subject, recipient, key message</td><td>CSAM should never be surprised by a communication the client received</td></tr>
-<tr><td><strong style="color:#34d399;">Open Issues</strong></td><td>Any open issues with named owners and committed resolution dates — especially anything past due</td><td>CSAM needs to be able to answer "what happened with X?" without contacting EDE</td></tr>
-<tr><td><strong style="color:#34d399;">Upcoming Client Interactions</strong></td><td>Any client calls, sessions, or touchpoints in the next 7 days — agenda, expected questions, EDE position</td><td>Pre-briefing prevents surprises and enables CSAM to reinforce EDE messaging</td></tr>
-<tr><td><strong style="color:#34d399;">Routing Intelligence</strong></td><td>Any signals about future engagement opportunities, client satisfaction, or relationship health</td><td>CSAM uses this to plan pipeline and routing decisions</td></tr>
-</tbody>
-</table>
-</div>
-</div>
-<footer>EDE / CEES / EEP Frameworks  ·  Confidential  ·  Authorized Personnel Only</footer>
-</div>
-<script src="../js/main.js"></script>
+    <div class="page-wrap">
+        <header><div class="header-title"><span>EDE</span> / CEES / EEP OS</div></header>
+        <div class="container">
+            <a class="back-btn" href="../dashboard.html">← Back to Command Center</a>
+            <h1>CSAM Partnership</h1>
+            </div>
+    </div>
 </body>
 </html>
