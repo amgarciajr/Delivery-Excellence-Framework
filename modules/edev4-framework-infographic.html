@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EDEv4 vs ITIL · PMI · SAFe — Interactive Infographic</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#050d1a;--navy2:#0a1628;--navy3:#0f1f38;
+  --orange:#f97316;--orange2:#ea580c;
+  --blue:#2563eb;--blue2:#3b82f6;--blue3:#60a5fa;
+  --purple:#8b5cf6;--purple2:#a78bfa;
+  --teal:#14b8a6;--teal2:#2dd4bf;
+  --green:#22c55e;--green2:#4ade80;
+  --red:#ef4444;--red2:#f87171;
+  --white:#fff;--gray1:#e2e8f0;--gray2:#94a3b8;--gray3:#475569;--gray4:#334155;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',sans-serif;background:var(--navy);color:var(--gray1);min-height:100vh;overflow-x:hidden}
+/* Scrollbar */
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:var(--navy2)}::-webkit-scrollbar-thumb{background:var(--navy3);border-radius:3px}::-webkit-scrollbar-thumb:hover{background:var(--blue)}
+/* Header */
+.header{background:rgba(10,22,40,0.95);border-bottom:1px solid rgba(59,130,246,0.15);padding:0 40px;height:60px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;backdrop-filter:blur(20px)}
+.header-brand{display:flex;align-items:center;gap:12px}
+.header-dot{width:8px;height:8px;border-radius:50%;background:var(--orange);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.8)}}
+.header-title{font-size:14px;font-weight:700;color:var(--white)}
+.header-sub{font-size:11px;color:var(--gray3);margin-top:1px}
+.header-badge{background:rgba(249,115,22,0.12);border:1px solid rgba(249,115,22,0.3);color:var(--orange);font-size:10px;font-weight:700;padding:4px 12px;border-radius:20px;letter-spacing:1px;text-transform:uppercase}
+/* Hero */
+.hero{padding:60px 40px 40px;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;width:800px;height:800px;border-radius:50%;background:radial-gradient(circle,rgba(37,99,235,0.08) 0%,transparent 70%);top:-300px;left:50%;transform:translateX(-50%)}
+.hero-eyebrow{display:inline-flex;align-items:center;gap:8px;background:rgba(249,115,22,0.1);border:1px solid rgba(249,115,22,0.25);border-radius:20px;padding:5px 16px;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--orange);margin-bottom:20px}
+.hero h1{font-size:clamp(32px,5vw,52px);font-weight:900;color:var(--white);line-height:1.1;letter-spacing:-1.5px;margin-bottom:16px}
+.hero h1 .grad{background:linear-gradient(135deg,var(--orange),#fb923c);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero h1 .vs{color:var(--blue);font-size:.75em;margin:0 10px}
+.hero-sub{font-size:17px;color:var(--gray2);max-width:640px;margin:0 auto 32px;line-height:1.7}
+/* Framework pills */
+.fw-pills{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;margin-bottom:48px}
+.fw-pill{padding:8px 20px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;border:2px solid transparent}
+.fw-pill.itil{background:rgba(37,99,235,0.12);border-color:rgba(37,99,235,0.25);color:var(--blue3)}
+.fw-pill.pmi{background:rgba(139,92,246,0.12);border-color:rgba(139,92,246,0.25);color:var(--purple2)}
+.fw-pill.safe{background:rgba(20,184,166,0.12);border-color:rgba(20,184,166,0.25);color:var(--teal2)}
+.fw-pill.edev4{background:rgba(249,115,22,0.15);border-color:rgba(249,115,22,0.4);color:var(--orange);font-size:15px}
+.fw-pill:hover,.fw-pill.active{transform:translateY(-2px);box-shadow:0 8px 20px rgba(0,0,0,0.3)}
+.fw-pill.itil.active{background:rgba(37,99,235,0.25);border-color:var(--blue)}
+.fw-pill.pmi.active{background:rgba(139,92,246,0.25);border-color:var(--purple)}
+.fw-pill.safe.active{background:rgba(20,184,166,0.25);border-color:var(--teal)}
+.fw-pill.edev4.active{background:rgba(249,115,22,0.25);border-color:var(--orange)}
+.fw-pill-vs{color:var(--gray3);font-size:16px;font-weight:700}
+/* Main content */
+.main{max-width:1200px;margin:0 auto;padding:0 40px 80px}
+/* Section */
+.section{margin-bottom:60px}
+.section-label{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--orange);margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.section-label::before{content:'';display:block;width:20px;height:2px;background:var(--orange)}
+.section-title{font-size:28px;font-weight:800;color:var(--white);margin-bottom:6px;letter-spacing:-.5px}
+.section-sub{font-size:14px;color:var(--gray2);margin-bottom:28px;line-height:1.6}
+/* Optimization target cards */
+.target-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.target-card{border-radius:14px;padding:24px;transition:all .25s;cursor:default;position:relative;overflow:hidden}
+.target-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.target-card.itil{background:rgba(37,99,235,0.08);border:1px solid rgba(37,99,235,0.2)}
+.target-card.itil::before{background:var(--blue)}
+.target-card.pmi{background:rgba(139,92,246,0.08);border:1px solid rgba(139,92,246,0.2)}
+.target-card.pmi::before{background:var(--purple)}
+.target-card.safe{background:rgba(20,184,166,0.08);border:1px solid rgba(20,184,166,0.2)}
+.target-card.safe::before{background:var(--teal)}
+.target-card.edev4{background:rgba(249,115,22,0.1);border:2px solid rgba(249,115,22,0.35)}
+.target-card.edev4::before{background:linear-gradient(90deg,var(--orange),var(--orange2))}
+.target-card:hover{transform:translateY(-4px);box-shadow:0 12px 32px rgba(0,0,0,0.3)}
+.tc-label{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:10px}
+.tc-label.itil{color:var(--blue3)}
+.tc-label.pmi{color:var(--purple2)}
+.tc-label.safe{color:var(--teal2)}
+.tc-label.edev4{color:var(--orange)}
+.tc-title{font-size:18px;font-weight:800;color:var(--white);margin-bottom:10px}
+.tc-desc{font-size:13px;color:var(--gray2);line-height:1.65;margin-bottom:14px}
+.tc-measure{font-size:11px;font-weight:700;padding:6px 12px;border-radius:6px}
+.tc-measure.team{background:rgba(239,68,68,0.1);color:var(--red2)}
+.tc-measure.client{background:rgba(34,197,94,0.1);color:var(--green2)}
+/* Comparison table */
+.comp-table{width:100%;border-collapse:collapse;border-radius:12px;overflow:hidden}
+.comp-table th{padding:12px 16px;text-align:left;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;border-bottom:1px solid rgba(255,255,255,0.06)}
+.comp-table th.dim{background:rgba(15,31,56,0.9);color:var(--gray3);width:16%}
+.comp-table th.itil{background:rgba(37,99,235,0.12);color:var(--blue3);width:18%}
+.comp-table th.pmi{background:rgba(139,92,246,0.12);color:var(--purple2);width:18%}
+.comp-table th.safe{background:rgba(20,184,166,0.12);color:var(--teal2);width:18%}
+.comp-table th.edev4{background:rgba(249,115,22,0.15);color:var(--orange);width:30%}
+.comp-table td{padding:11px 16px;border-bottom:1px solid rgba(255,255,255,0.04);font-size:13px;vertical-align:top}
+.comp-table td.dim{color:var(--gray2);font-weight:600;background:rgba(15,31,56,0.5)}
+.comp-table td.itil,.comp-table td.pmi,.comp-table td.safe{color:var(--gray1)}
+.comp-table td.edev4{color:var(--orange);font-weight:600;background:rgba(249,115,22,0.05)}
+.comp-table tr:hover td{background:rgba(255,255,255,0.02)}
+.comp-table tr:hover td.edev4{background:rgba(249,115,22,0.08)}
+/* Three unique principles */
+.principles-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.principle-card{border-radius:16px;padding:28px;transition:all .25s}
+.principle-card:hover{transform:translateY(-4px)}
+.principle-card.p1{background:rgba(249,115,22,0.08);border:2px solid rgba(249,115,22,0.2)}
+.principle-card.p2{background:rgba(37,99,235,0.08);border:2px solid rgba(37,99,235,0.2)}
+.principle-card.p3{background:rgba(34,197,94,0.08);border:2px solid rgba(34,197,94,0.2)}
+.pc-icon{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:16px}
+.pc-icon.p1{background:rgba(249,115,22,0.2)}
+.pc-icon.p2{background:rgba(37,99,235,0.2)}
+.pc-icon.p3{background:rgba(34,197,94,0.2)}
+.pc-num{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px}
+.pc-num.p1{color:var(--orange)}
+.pc-num.p2{color:var(--blue3)}
+.pc-num.p3{color:var(--green2)}
+.pc-title{font-size:17px;font-weight:800;color:var(--white);margin-bottom:10px;line-height:1.2}
+.pc-desc{font-size:13px;color:var(--gray2);line-height:1.7}
+/* Stats */
+.stats-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:14px}
+.stat-card{background:rgba(15,31,56,0.8);border:1px solid rgba(59,130,246,0.15);border-radius:12px;padding:18px;text-align:center;transition:all .2s}
+.stat-card:hover{border-color:rgba(249,115,22,0.3);transform:translateY(-2px)}
+.stat-num{font-size:28px;font-weight:900;margin-bottom:4px}
+.stat-num.orange{color:var(--orange)}
+.stat-num.blue{color:var(--blue3)}
+.stat-label{font-size:11px;color:var(--gray2);line-height:1.4}
+.stat-source{font-size:10px;color:var(--gray3);margin-top:4px}
+/* Integration model */
+.integration-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.int-card{background:rgba(15,31,56,0.8);border-radius:12px;padding:20px;transition:all .2s}
+.int-card:hover{transform:translateY(-3px)}
+.int-card.itil{border:1px solid rgba(37,99,235,0.2)}
+.int-card.pmi{border:1px solid rgba(139,92,246,0.2)}
+.int-card.safe{border:1px solid rgba(20,184,166,0.2)}
+.int-title{font-size:13px;font-weight:700;margin-bottom:10px}
+.int-title.itil{color:var(--blue3)}
+.int-title.pmi{color:var(--purple2)}
+.int-title.safe{color:var(--teal2)}
+.int-desc{font-size:12px;color:var(--gray2);line-height:1.65;margin-bottom:12px}
+.int-tag{font-size:11px;font-weight:600;padding:5px 10px;border-radius:6px}
+.int-tag.itil{background:rgba(37,99,235,0.1);color:var(--blue3)}
+.int-tag.pmi{background:rgba(139,92,246,0.1);color:var(--purple2)}
+.int-tag.safe{background:rgba(20,184,166,0.1);color:var(--teal2)}
+/* Bottom line */
+.bottom-line{background:linear-gradient(135deg,rgba(249,115,22,0.1),rgba(37,99,235,0.1));border:1px solid rgba(249,115,22,0.2);border-radius:16px;padding:40px;text-align:center;margin-top:60px}
+.bl-title{font-size:32px;font-weight:900;color:var(--white);margin-bottom:16px;letter-spacing:-.5px;line-height:1.2}
+.bl-title .delivery{color:var(--gray3)}
+.bl-title .trust{background:linear-gradient(135deg,var(--orange),#fb923c);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.bl-sub{font-size:16px;color:var(--gray2);max-width:700px;margin:0 auto 24px;line-height:1.7}
+.bl-tags{display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;margin-bottom:24px}
+.bl-tag{padding:8px 20px;border-radius:8px;font-size:13px;font-weight:700}
+.bl-tag.t1{background:rgba(249,115,22,0.12);border:1px solid rgba(249,115,22,0.3);color:var(--orange)}
+.bl-tag.t2{background:rgba(37,99,235,0.12);border:1px solid rgba(37,99,235,0.3);color:var(--blue3)}
+.bl-tag.t3{background:rgba(34,197,94,0.12);border:1px solid rgba(34,197,94,0.3);color:var(--green2)}
+.bl-quote{font-size:20px;font-style:italic;color:var(--gray1);border-top:1px solid rgba(255,255,255,0.08);padding-top:24px;margin-top:8px}
+/* Conf banner */
+.conf-banner{position:fixed;bottom:0;left:0;right:0;background:#050d1a;border-top:2px solid var(--orange);padding:8px 24px;display:flex;align-items:center;justify-content:space-between;z-index:99999;font-family:'Inter',sans-serif}
+.conf-text{font-size:11px;color:var(--gray3)}
+.conf-text strong{color:var(--orange)}
+.conf-btn{font-size:11px;color:var(--orange);border:1px solid rgba(249,115,22,0.3);padding:3px 10px;border-radius:3px;cursor:pointer;background:none;font-family:inherit}
+/* Responsive */
+@media(max-width:900px){.target-grid,.stats-grid{grid-template-columns:1fr 1fr}.principles-grid,.integration-grid{grid-template-columns:1fr}.main{padding:0 20px 80px}}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-brand">
+    <div class="header-dot"></div>
+    <div>
+      <div class="header-title">EDEv4 Framework Comparison</div>
+      <div class="header-sub">vs ITIL 4 · PMI/PMBOK · SAFe</div>
+    </div>
+  </div>
+  <div class="header-badge">Mike Garcia · EEP Framework</div>
+</div>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-eyebrow">Interactive Framework Comparison</div>
+  <h1><span class="grad">EDEv4</span><span class="vs">vs</span>ITIL · PMI · SAFe</h1>
+  <p class="hero-sub">Where established delivery frameworks leave the trust gap open — and why EDEv4 is designed to close it. Not a replacement. A trust layer that operates above them.</p>
+  <div class="fw-pills">
+    <div class="fw-pill itil active">ITIL 4</div>
+    <div class="fw-pill-vs">·</div>
+    <div class="fw-pill pmi active">PMI / PMBOK</div>
+    <div class="fw-pill-vs">·</div>
+    <div class="fw-pill safe active">SAFe</div>
+    <div class="fw-pill-vs">vs</div>
+    <div class="fw-pill edev4 active">EDEv4 ↗</div>
+  </div>
+</div>
+
+<div class="main">
+
+  <!-- SECTION 1: OPTIMIZATION TARGET -->
+  <div class="section">
+    <div class="section-label">The Core Question</div>
+    <div class="section-title">What Is Each Framework Optimizing For?</div>
+    <div class="section-sub">Every framework has a primary optimization target. Understanding that target explains everything else about its design choices.</div>
+    <div class="target-grid">
+      <div class="target-card itil">
+        <div class="tc-label itil">ITIL 4</div>
+        <div class="tc-title">Service Reliability</div>
+        <div class="tc-desc">Operational continuity and service stability. Measures incident rate, SLA compliance, and mean time to resolution.</div>
+        <div class="tc-measure team">Measures: What the team produces</div>
+      </div>
+      <div class="target-card pmi">
+        <div class="tc-label pmi">PMI / PMBOK</div>
+        <div class="tc-title">Project Delivery</div>
+        <div class="tc-desc">Scope, schedule, and budget. Measures milestone completion, schedule variance, and earned value.</div>
+        <div class="tc-measure team">Measures: What the team produces</div>
+      </div>
+      <div class="target-card safe">
+        <div class="tc-label safe">SAFe</div>
+        <div class="tc-title">Software Velocity</div>
+        <div class="tc-desc">Delivery velocity and team alignment. Measures velocity, PI objectives, and flow metrics.</div>
+        <div class="tc-measure team">Measures: What the team produces</div>
+      </div>
+      <div class="target-card edev4">
+        <div class="tc-label edev4">EDEv4 ↗</div>
+        <div class="tc-title">Client Trust</div>
+        <div class="tc-desc">Trust as a distinct, engineered output. Measures signal streams, Outcome Owner coverage, and client-articulated value.</div>
+        <div class="tc-measure client">Measures: What the client experiences</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 2: COMPARISON TABLE -->
+  <div class="section">
+    <div class="section-label">Six-Dimension Comparison</div>
+    <div class="section-title">Side-by-Side at a Glance</div>
+    <div class="section-sub">Six structural dimensions where EDEv4 diverges from established frameworks — and why each divergence matters.</div>
+    <table class="comp-table">
+      <thead>
+        <tr>
+          <th class="dim">Dimension</th>
+          <th class="itil">ITIL 4</th>
+          <th class="pmi">PMI / PMBOK</th>
+          <th class="safe">SAFe</th>
+          <th class="edev4">EDEv4 ↗</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="dim">Primary Target</td>
+          <td class="itil">Service reliability</td>
+          <td class="pmi">Project delivery</td>
+          <td class="safe">Software velocity</td>
+          <td class="edev4">Client trust as distinct output</td>
+        </tr>
+        <tr>
+          <td class="dim">Accountability</td>
+          <td class="itil">Role-based RACI matrix</td>
+          <td class="pmi">PM + work packages</td>
+          <td class="safe">Distributed team ownership</td>
+          <td class="edev4">Single named Outcome Owner — client-visible, in writing, before delivery</td>
+        </tr>
+        <tr>
+          <td class="dim">Communication</td>
+          <td class="itil">SLA compliance — who gets what, when</td>
+          <td class="pmi">Communications Management Plan — completeness & timeliness</td>
+          <td class="safe">Continuous informal — no explicit quality standard</td>
+          <td class="edev4">Three Tests quality gate — Repeat-Back, Stakes, Next-Step — no exceptions</td>
+        </tr>
+        <tr>
+          <td class="dim">Health Monitoring</td>
+          <td class="itil">KPIs, SLA metrics — retrospective</td>
+          <td class="pmi">Earned value, schedule variance — plan deviation</td>
+          <td class="safe">Velocity, flow metrics — internal</td>
+          <td class="edev4">3 signal streams, weekly cadence — predictive, not retrospective</td>
+        </tr>
+        <tr>
+          <td class="dim">Definition of Done</td>
+          <td class="itil">Ticket closed</td>
+          <td class="pmi">Deliverables accepted</td>
+          <td class="safe">Story meets Definition of Done</td>
+          <td class="edev4">Client articulates value in their own words — 3 validation questions</td>
+        </tr>
+        <tr>
+          <td class="dim">Learning Mechanism</td>
+          <td class="itil">Continual Improvement — quarterly/annual</td>
+          <td class="pmi">Lessons learned — project close only</td>
+          <td class="safe">Sprint retrospective — process-focused, every 2 weeks</td>
+          <td class="edev4">CEES Sessions — standard-based, bi-weekly, individual behavioral commitments</td>
+        </tr>
+        <tr>
+          <td class="dim">Trust Measurement</td>
+          <td class="itil">Implicit (CSAT)</td>
+          <td class="pmi">Implicit (stakeholder satisfaction)</td>
+          <td class="safe">Implicit (NPS)</td>
+          <td class="edev4">Explicit — signal streams + outcome validation + client language</td>
+        </tr>
+        <tr>
+          <td class="dim">Replaces existing?</td>
+          <td class="itil">—</td>
+          <td class="pmi">—</td>
+          <td class="safe">—</td>
+          <td class="edev4">No — operates above them as the trust layer</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- SECTION 3: THREE UNIQUE PRINCIPLES -->
+  <div class="section">
+    <div class="section-label">What EDEv4 Introduces</div>
+    <div class="section-title">Three Principles With No Equivalent in ITIL, PMI, or SAFe</div>
+    <div class="section-sub">These three principles are structurally new — not refinements of existing concepts, but genuinely different approaches to the problem of client trust.</div>
+    <div class="principles-grid">
+      <div class="principle-card p1">
+        <div class="pc-icon p1">🎯</div>
+        <div class="pc-num p1">Principle 1</div>
+        <div class="pc-title">Trust as a Distinct, Engineered Output</div>
+        <div class="pc-desc">ITIL, PMI, and SAFe treat client trust as a byproduct of good delivery. EDEv4 treats it as a distinct output with its own drivers, failure modes, and production process.<br><br>This means trust is measured separately from delivery quality, trust failures can occur even when delivery succeeds, and trust-building behaviors are specified as non-negotiable standards.<br><br><em style="color:#f97316">"Trustworthy by design, not by default."</em></div>
+      </div>
+      <div class="principle-card p2">
+        <div class="pc-icon p2">📡</div>
+        <div class="pc-num p2">Principle 2</div>
+        <div class="pc-title">Signal Intelligence as a Predictive Discipline</div>
+        <div class="pc-desc">Monitoring client relationship health through observable behavioral signals — on a weekly cadence, with specific flag conditions — has no equivalent in any established delivery framework.<br><br>These frameworks measure what happened. Signal Intelligence measures what is about to happen. The weekly cadence is the critical design choice: fast enough to catch leading indicators 4–8 weeks before formal escalation.<br><br><em style="color:#60a5fa">Gartner (2024): 4.2× earlier detection.</em></div>
+      </div>
+      <div class="principle-card p3">
+        <div class="pc-icon p3">👤</div>
+        <div class="pc-num p3">Principle 3</div>
+        <div class="pc-title">Outcome Ownership as a Trust Architecture</div>
+        <div class="pc-desc">One named person owns the client's experience — communicated to the client in writing before delivery begins. Structurally different from RACI matrices and distributed team accountability.<br><br>Those models answer "who does what?" Outcome Ownership answers "who does the client trust?" Trust is personal, not organizational. Clients trust people, not processes.<br><br><em style="color:#4ade80">McKinsey (2023): 72% of failures from unclear ownership.</em></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 4: RESEARCH STATS -->
+  <div class="section">
+    <div class="section-label">The Business Case</div>
+    <div class="section-title">Why the Trust Gap Is a Commercial Problem</div>
+    <div class="section-sub">The trust gap is not a soft problem. It is a commercial problem with measurable financial consequences.</div>
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-num orange">5%→95%</div>
+        <div class="stat-label">Retention increase → profitability improvement</div>
+        <div class="stat-source">Bain & Company</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num orange">87%</div>
+        <div class="stat-label">Cite transparency during problems as more trust-building than flawless delivery</div>
+        <div class="stat-source">PwC Trust Survey 2024</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num blue">4.2×</div>
+        <div class="stat-label">Earlier dissatisfaction detection with structured signal monitoring</div>
+        <div class="stat-source">Gartner 2024</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num blue">3.2×</div>
+        <div class="stat-label">More likely to refer when clients articulate value in their own words</div>
+        <div class="stat-source">Harvard Business School 2023</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num orange">45%</div>
+        <div class="stat-label">Increase in reference willingness with structured outcome validation</div>
+        <div class="stat-source">Gainsight 2024</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num blue">72%</div>
+        <div class="stat-label">Of delivery failures stem from unclear ownership — not capability gaps</div>
+        <div class="stat-source">McKinsey 2023</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 5: INTEGRATION MODEL -->
+  <div class="section">
+    <div class="section-label">Integration Model</div>
+    <div class="section-title">How EDEv4 Works With Existing Frameworks</div>
+    <div class="section-sub">EDEv4 does not replace ITIL, PMI, or SAFe. It adds the trust layer they leave open. Teams running any of these frameworks can adopt EDEv4 without replacing their existing methodology.</div>
+    <div class="integration-grid">
+      <div class="int-card itil">
+        <div class="int-title itil">EDEv4 + ITIL 4</div>
+        <div class="int-desc">ITIL governs service reliability. EDEv4 governs the client's experience of that reliability. The Signal Intelligence streams complement ITIL's incident management by detecting client-visible friction before it becomes a formal incident. A team can achieve 100% SLA compliance while the client experiences the engagement as chaotic and unaccountable.</div>
+        <div class="int-tag itil">ITIL: Service reliability · EDEv4: Client trust engineering</div>
+      </div>
+      <div class="int-card pmi">
+        <div class="int-title pmi">EDEv4 + PMI / PMBOK</div>
+        <div class="int-desc">PMI governs project delivery within scope, schedule, and budget. EDEv4 governs what the client experiences across that delivery arc. The Outcome Owner model complements the PM role by adding client-visible accountability. The Three Tests complement the Communications Management Plan by adding a quality standard for individual communications.</div>
+        <div class="int-tag pmi">PMI: Project delivery · EDEv4: Client experience layer</div>
+      </div>
+      <div class="int-card safe">
+        <div class="int-title safe">EDEv4 + SAFe</div>
+        <div class="int-desc">SAFe governs software delivery velocity and team alignment. EDEv4 governs the client's experience of that velocity. The CEES Session complements the SAFe retrospective by adding a standard-based learning mechanism. The Outcome Validation layer complements the SAFe DoD by adding a client-perspective closure standard.</div>
+        <div class="int-tag safe">SAFe: Software velocity · EDEv4: Trust architecture</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BOTTOM LINE -->
+  <div class="bottom-line">
+    <div class="bl-title">
+      ITIL, PMI, and SAFe are <span class="delivery">delivery frameworks.</span><br>
+      EDEv4 is a <span class="trust">trust framework.</span>
+    </div>
+    <p class="bl-sub">Delivery frameworks answer: <em>"How do we produce the work reliably?"</em><br>EDEv4 answers: <em>"How do we ensure the client experiences the work as valuable, and trusts us enough to renew, reference, and expand?"</em></p>
+    <div class="bl-tags">
+      <div class="bl-tag t1">Not a replacement</div>
+      <div class="bl-tag t2">Operates above them</div>
+      <div class="bl-tag t3">Closes the trust gap</div>
+    </div>
+    <div class="bl-quote">"Trustworthy by design, not by default." — Mike Garcia</div>
+  </div>
+
+</div>
+
+<!-- CONF BANNER -->
+<div class="conf-banner">
+  <span class="conf-text"><strong>CONFIDENTIAL & PROPRIETARY</strong> — Mike Garcia · EEP Framework · View-only access. Unauthorized use prohibited.</span>
+  <button class="conf-btn" onclick="alert('By accessing this content you agree to the confidentiality terms. All content is proprietary to Mike Garcia. View-only access for review purposes only.')">READ TERMS</button>
+</div>
+
+</body>
+</html>

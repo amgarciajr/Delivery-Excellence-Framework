@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EDEv4 vs ITIL · PMI · SAFe — One-Page Summary</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',sans-serif;background:#050d1a;color:#e2e8f0;min-height:100vh;padding:40px}
+.page{max-width:1100px;margin:0 auto;background:rgba(10,22,40,0.95);border:1px solid rgba(59,130,246,0.15);border-radius:16px;overflow:hidden;box-shadow:0 40px 80px rgba(0,0,0,0.5)}
+/* Top accent */
+.top-bar{height:4px;background:linear-gradient(90deg,#f97316,#2563eb,#f97316)}
+/* Header */
+.pg-header{padding:36px 48px 28px;border-bottom:1px solid rgba(255,255,255,0.06);display:flex;align-items:flex-start;justify-content:space-between;gap:24px}
+.pg-header-left h1{font-size:32px;font-weight:900;color:#fff;letter-spacing:-1px;line-height:1.1;margin-bottom:8px}
+.pg-header-left h1 .grad{background:linear-gradient(135deg,#f97316,#fb923c);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.pg-header-left h1 .vs{color:#2563eb;font-size:.7em;margin:0 8px}
+.pg-header-left p{font-size:13px;color:#64748b;line-height:1.6;max-width:500px}
+.pg-header-right{display:flex;flex-direction:column;gap:8px;align-items:flex-end;flex-shrink:0}
+.author-badge{background:rgba(249,115,22,0.12);border:1px solid rgba(249,115,22,0.3);color:#f97316;font-size:11px;font-weight:700;padding:5px 14px;border-radius:20px;letter-spacing:1px;text-transform:uppercase;white-space:nowrap}
+.version-badge{font-size:11px;color:#475569}
+/* Body */
+.pg-body{padding:28px 48px 36px;display:grid;grid-template-columns:1fr 1fr;gap:28px}
+/* Section */
+.pg-section{display:flex;flex-direction:column;gap:12px}
+.pg-section-title{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#f97316;display:flex;align-items:center;gap:8px}
+.pg-section-title::before{content:'';display:block;width:16px;height:2px;background:#f97316}
+/* Target cards */
+.target-row{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px}
+.tc{border-radius:8px;padding:12px;font-size:12px}
+.tc.itil{background:rgba(37,99,235,0.08);border:1px solid rgba(37,99,235,0.2)}
+.tc.pmi{background:rgba(139,92,246,0.08);border:1px solid rgba(139,92,246,0.2)}
+.tc.safe{background:rgba(20,184,166,0.08);border:1px solid rgba(20,184,166,0.2)}
+.tc.edev4{background:rgba(249,115,22,0.1);border:2px solid rgba(249,115,22,0.3)}
+.tc-lbl{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:4px}
+.tc-lbl.itil{color:#60a5fa}.tc-lbl.pmi{color:#a78bfa}.tc-lbl.safe{color:#2dd4bf}.tc-lbl.edev4{color:#f97316}
+.tc-val{font-size:12px;font-weight:700;color:#fff;margin-bottom:4px}
+.tc-sub{font-size:10px;color:#64748b;line-height:1.4}
+/* Comparison mini-table */
+.mini-table{width:100%;border-collapse:collapse;font-size:11px}
+.mini-table th{padding:6px 10px;text-align:left;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border-bottom:1px solid rgba(255,255,255,0.06)}
+.mini-table th.d{background:rgba(15,31,56,0.8);color:#475569;width:20%}
+.mini-table th.i{background:rgba(37,99,235,0.1);color:#60a5fa;width:20%}
+.mini-table th.p{background:rgba(139,92,246,0.1);color:#a78bfa;width:20%}
+.mini-table th.s{background:rgba(20,184,166,0.1);color:#2dd4bf;width:20%}
+.mini-table th.e{background:rgba(249,115,22,0.12);color:#f97316;width:20%}
+.mini-table td{padding:6px 10px;border-bottom:1px solid rgba(255,255,255,0.03);color:#94a3b8;vertical-align:top;line-height:1.4}
+.mini-table td.d{color:#64748b;font-weight:600;background:rgba(15,31,56,0.4)}
+.mini-table td.e{color:#f97316;font-weight:600;background:rgba(249,115,22,0.04)}
+/* Principles */
+.principles-col{display:flex;flex-direction:column;gap:10px}
+.principle{border-radius:8px;padding:14px;display:flex;gap:12px;align-items:flex-start}
+.principle.p1{background:rgba(249,115,22,0.08);border:1px solid rgba(249,115,22,0.2)}
+.principle.p2{background:rgba(37,99,235,0.08);border:1px solid rgba(37,99,235,0.2)}
+.principle.p3{background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.2)}
+.pr-icon{font-size:18px;flex-shrink:0}
+.pr-title{font-size:12px;font-weight:700;color:#fff;margin-bottom:3px}
+.pr-desc{font-size:11px;color:#94a3b8;line-height:1.5}
+.pr-stat{font-size:10px;font-weight:700;margin-top:4px}
+.pr-stat.p1{color:#f97316}.pr-stat.p2{color:#60a5fa}.pr-stat.p3{color:#4ade80}
+/* Stats row */
+.stats-row{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;grid-column:1/-1}
+.stat{background:rgba(15,31,56,0.8);border:1px solid rgba(59,130,246,0.12);border-radius:8px;padding:12px;text-align:center}
+.stat-n{font-size:20px;font-weight:900;margin-bottom:2px}
+.stat-n.o{color:#f97316}.stat-n.b{color:#60a5fa}
+.stat-l{font-size:10px;color:#64748b;line-height:1.3}
+.stat-s{font-size:9px;color:#334155;margin-top:2px}
+/* Integration */
+.int-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;grid-column:1/-1}
+.int{border-radius:8px;padding:12px}
+.int.itil{background:rgba(37,99,235,0.06);border:1px solid rgba(37,99,235,0.15)}
+.int.pmi{background:rgba(139,92,246,0.06);border:1px solid rgba(139,92,246,0.15)}
+.int.safe{background:rgba(20,184,166,0.06);border:1px solid rgba(20,184,166,0.15)}
+.int-t{font-size:11px;font-weight:700;margin-bottom:5px}
+.int-t.itil{color:#60a5fa}.int-t.pmi{color:#a78bfa}.int-t.safe{color:#2dd4bf}
+.int-d{font-size:11px;color:#64748b;line-height:1.5}
+/* Bottom line */
+.pg-footer{padding:20px 48px;background:rgba(249,115,22,0.06);border-top:1px solid rgba(249,115,22,0.15);display:flex;align-items:center;justify-content:space-between;gap:20px}
+.pg-footer-quote{font-size:15px;font-style:italic;color:#cbd5e1}
+.pg-footer-quote strong{color:#f97316;font-style:normal}
+.pg-footer-tags{display:flex;gap:8px;flex-shrink:0}
+.ft{padding:5px 12px;border-radius:6px;font-size:11px;font-weight:700}
+.ft.t1{background:rgba(249,115,22,0.12);border:1px solid rgba(249,115,22,0.25);color:#f97316}
+.ft.t2{background:rgba(37,99,235,0.12);border:1px solid rgba(37,99,235,0.25);color:#60a5fa}
+.ft.t3{background:rgba(34,197,94,0.12);border:1px solid rgba(34,197,94,0.25);color:#4ade80}
+/* Print */
+@media print{body{background:#fff;padding:0}
+.page{background:#fff;border:none;box-shadow:none;border-radius:0}
+.top-bar{background:linear-gradient(90deg,#f97316,#2563eb)!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+body,p,.tc-sub,.pr-desc,.int-d,.stat-l{color:#333!important}
+.pg-header-left h1,.tc-val,.pr-title{color:#111!important}
+.pg-footer-quote{color:#333!important}}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="top-bar"></div>
+  
+  <div class="pg-header">
+    <div class="pg-header-left">
+      <h1><span class="grad">EDEv4</span><span class="vs">vs</span>ITIL · PMI · SAFe</h1>
+      <p>Where established delivery frameworks leave the trust gap open — and why EDEv4 is designed to close it. Not a replacement. A trust layer that operates above them.</p>
+    </div>
+    <div class="pg-header-right">
+      <div class="author-badge">Mike Garcia · EEP Framework</div>
+      <div class="version-badge">Version 1.0 · June 2026 · Confidential</div>
+    </div>
+  </div>
+
+  <div class="pg-body">
+    
+    <!-- LEFT COLUMN -->
+    <div class="pg-section">
+      <div class="pg-section-title">Optimization Target</div>
+      <div class="target-row">
+        <div class="tc itil"><div class="tc-lbl itil">ITIL 4</div><div class="tc-val">Service Reliability</div><div class="tc-sub">Incident rate, SLA compliance, MTTR</div></div>
+        <div class="tc pmi"><div class="tc-lbl pmi">PMI</div><div class="tc-val">Project Delivery</div><div class="tc-sub">Scope, schedule, budget, earned value</div></div>
+        <div class="tc safe"><div class="tc-lbl safe">SAFe</div><div class="tc-val">Software Velocity</div><div class="tc-sub">Velocity, PI objectives, flow metrics</div></div>
+        <div class="tc edev4"><div class="tc-lbl edev4">EDEv4 ↗</div><div class="tc-val">Client Trust</div><div class="tc-sub">Signal streams, Outcome Owner, client-articulated value</div></div>
+      </div>
+    </div>
+
+    <!-- RIGHT COLUMN: THREE UNIQUE PRINCIPLES -->
+    <div class="pg-section">
+      <div class="pg-section-title">Three Unique EDEv4 Principles</div>
+      <div class="principles-col">
+        <div class="principle p1">
+          <div class="pr-icon">🎯</div>
+          <div><div class="pr-title">Trust as a Distinct, Engineered Output</div><div class="pr-desc">Not a byproduct of delivery — a designed output with its own production process, drivers, and failure modes.</div><div class="pr-stat p1">"Trustworthy by design, not by default."</div></div>
+        </div>
+        <div class="principle p2">
+          <div class="pr-icon">📡</div>
+          <div><div class="pr-title">Signal Intelligence as a Predictive Discipline</div><div class="pr-desc">3 signal streams monitored weekly. Catches leading indicators 4–8 weeks before formal escalation.</div><div class="pr-stat p2">Gartner 2024: 4.2× earlier detection</div></div>
+        </div>
+        <div class="principle p3">
+          <div class="pr-icon">👤</div>
+          <div><div class="pr-title">Outcome Ownership as a Trust Architecture</div><div class="pr-desc">One named person, client-visible, in writing before delivery. "Who does the client trust?" not "who does what?"</div><div class="pr-stat p3">McKinsey 2023: 72% of failures from unclear ownership</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FULL WIDTH: COMPARISON TABLE -->
+    <div class="pg-section" style="grid-column:1/-1">
+      <div class="pg-section-title">Six-Dimension Comparison</div>
+      <table class="mini-table">
+        <thead><tr><th class="d">Dimension</th><th class="i">ITIL 4</th><th class="p">PMI</th><th class="s">SAFe</th><th class="e">EDEv4 ↗</th></tr></thead>
+        <tbody>
+          <tr><td class="d">Accountability</td><td class="i">Role-based RACI</td><td class="p">PM + work packages</td><td class="s">Distributed team</td><td class="e">Single named Outcome Owner — client-visible, in writing</td></tr>
+          <tr><td class="d">Communication</td><td class="i">SLA compliance</td><td class="p">Communications plan</td><td class="s">Continuous informal</td><td class="e">Three Tests quality gate — no exceptions</td></tr>
+          <tr><td class="d">Health Monitoring</td><td class="i">KPIs, SLA metrics</td><td class="p">Earned value, variance</td><td class="s">Velocity, flow</td><td class="e">3 signal streams, weekly — predictive not retrospective</td></tr>
+          <tr><td class="d">Definition of Done</td><td class="i">Ticket closed</td><td class="p">Deliverables accepted</td><td class="s">Story meets DoD</td><td class="e">Client articulates value in their own words</td></tr>
+          <tr><td class="d">Learning</td><td class="i">Continual Improvement</td><td class="p">Lessons learned</td><td class="s">Sprint retrospective</td><td class="e">CEES Sessions — standard-based, bi-weekly</td></tr>
+          <tr><td class="d">Trust Measurement</td><td class="i">Implicit (CSAT)</td><td class="p">Implicit (satisfaction)</td><td class="s">Implicit (NPS)</td><td class="e">Explicit — signal streams + outcome validation</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- STATS ROW -->
+    <div class="stats-row">
+      <div class="stat"><div class="stat-n o">5%→95%</div><div class="stat-l">Retention → profitability</div><div class="stat-s">Bain & Company</div></div>
+      <div class="stat"><div class="stat-n o">87%</div><div class="stat-l">Transparency > flawless delivery</div><div class="stat-s">PwC 2024</div></div>
+      <div class="stat"><div class="stat-n b">4.2×</div><div class="stat-l">Earlier dissatisfaction detection</div><div class="stat-s">Gartner 2024</div></div>
+      <div class="stat"><div class="stat-n b">3.2×</div><div class="stat-l">More likely to refer</div><div class="stat-s">Harvard 2023</div></div>
+      <div class="stat"><div class="stat-n o">45%</div><div class="stat-l">More reference willingness</div><div class="stat-s">Gainsight 2024</div></div>
+      <div class="stat"><div class="stat-n b">72%</div><div class="stat-l">Failures from unclear ownership</div><div class="stat-s">McKinsey 2023</div></div>
+    </div>
+
+    <!-- INTEGRATION ROW -->
+    <div class="int-row">
+      <div class="int itil"><div class="int-t itil">EDEv4 + ITIL 4</div><div class="int-d">ITIL: service reliability. EDEv4: client experience of that reliability. Signal Intelligence detects friction before it becomes a formal incident.</div></div>
+      <div class="int pmi"><div class="int-t pmi">EDEv4 + PMI</div><div class="int-d">PMI: project delivery. EDEv4: what the client experiences across that arc. Outcome Owner + Three Tests complement PM role and Communications Plan.</div></div>
+      <div class="int safe"><div class="int-t safe">EDEv4 + SAFe</div><div class="int-d">SAFe: software velocity. EDEv4: client experience of that velocity. CEES Session + Outcome Validation complement retrospective and DoD.</div></div>
+    </div>
+
+  </div>
+
+  <div class="pg-footer">
+    <div class="pg-footer-quote">"ITIL, PMI, and SAFe are delivery frameworks. EDEv4 is a <strong>trust framework.</strong> You need reliable delivery before you can build trust — but reliable delivery alone does not produce trust."</div>
+    <div class="pg-footer-tags">
+      <div class="ft t1">Not a replacement</div>
+      <div class="ft t2">Operates above them</div>
+      <div class="ft t3">Closes the trust gap</div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
