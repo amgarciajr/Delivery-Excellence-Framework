@@ -3,211 +3,129 @@
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>COMMAND CENTER — DELIVERY EXCELLENCE FRAMEWORK</title>
+    <title>COMMAND CENTER — DELIVERY EXCELLENCE OS</title>
     <link href="css/styles.css" rel="stylesheet"/>
     <style>
-        /* Base Layout Extensions */
-        .dashboard-container { 
-            max-width: 1200px; 
-            margin: 40px auto; 
-            padding: 0 24px 80px; 
+        /* Force Layout Consistency */
+        .dashboard-container { max-width: 1200px; margin: 40px auto; padding: 0 24px 80px; }
+        
+        /* Grid Layout Fixes */
+        .nav-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); 
+            gap: 24px; 
+            margin-top: 40px; 
         }
-
-        /* Executive Pitch Panel */
-        .pitch-panel {
-            background: linear-gradient(135deg, rgba(17, 24, 39, 0.85) 0%, rgba(13, 17, 48, 0.85) 100%);
-            border: 1px solid var(--accent);
-            border-radius: var(--radius-lg);
-            padding: 40px;
-            margin-bottom: 32px;
-            box-shadow: var(--shadow), var(--glow-shadow);
+        
+        .nav-item { 
+            background: rgba(17, 24, 39, 0.8); 
+            border: 1px solid rgba(255, 255, 255, 0.1); 
+            padding: 24px; 
+            border-radius: 12px;
+            display: flex; 
+            gap: 20px; 
+            transition: all 0.3s ease; 
+            text-decoration: none; 
+            color: #fff; 
+            align-items: flex-start;
         }
-
-        .profile-header {
-            display: flex;
-            align-items: center;
-            gap: 32px;
+        
+        .nav-item:hover { 
+            border-color: #0078ff; 
+            background: rgba(17, 24, 39, 1); 
+            transform: translateY(-4px); 
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
         }
-
-        .profile-img {
-            width: 110px;
-            height: 110px;
-            border-radius: 50%;
-            border: 2px solid var(--accent2);
-            object-fit: cover;
-            box-shadow: 0 0 20px rgba(0, 120, 255, 0.2);
-        }
-
-        .profile-meta h2 { font-size: 1.8rem; color: #fff; margin-bottom: 4px; }
-        .profile-meta .title { color: var(--accent2); font-weight: 700; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1.5px; }
-
-        /* Expandable Bio Area */
-        .bio-trigger-btn {
-            background: transparent;
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            color: var(--text);
-            padding: 8px 16px;
-            border-radius: 6px;
-            font-size: 0.85rem;
-            cursor: pointer;
-            margin-top: 16px;
-            transition: 0.2s;
-        }
-        .bio-trigger-btn:hover {
-            border-color: var(--accent2);
-            color: #fff;
-            background: rgba(0, 242, 254, 0.05);
-        }
-
-        .expandable-content {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.4s ease-out;
-            margin-top: 0;
-        }
-        .expandable-content.active {
-            max-height: 500px;
-            margin-top: 24px;
-            padding-top: 24px;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .pitch-text { font-size: 1.1rem; color: #fff; line-height: 1.6; font-weight: 500; margin-bottom: 12px; }
-        .bio-text { color: var(--muted); line-height: 1.6; font-size: 0.95rem; }
-
-        /* Telemetry Header Strip */
-        .telemetry-strip {
-            display: flex;
-            justify-content: space-between;
-            background: rgba(0, 0, 0, 0.4);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            padding: 16px 24px;
-            border-radius: var(--radius);
-            margin-bottom: 40px;
-            font-size: 0.85rem;
-        }
-        .telemetry-item span { color: var(--muted); display: block; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
-        .telemetry-item strong { color: #fff; font-weight: 700; }
-
-        @media (max-width: 768px) {
-            .profile-header { flex-direction: column; text-align: center; }
-            .telemetry-strip { flex-direction: column; gap: 16px; text-align: center; }
-        }
+        
+        .nav-item img { width: 48px; height: 48px; flex-shrink: 0; filter: drop-shadow(0 0 5px rgba(0,120,255,0.3)); }
+        .nav-item-label { font-size: 1.1rem; font-weight: 700; color: #fff; margin-bottom: 4px; }
+        .nav-item-desc { font-size: 0.85rem; color: #8892a4; line-height: 1.5; }
+        
+        /* Executive Profile */
+        .pitch-panel { background: linear-gradient(135deg, rgba(17, 24, 39, 0.9) 0%, rgba(13, 17, 48, 0.9) 100%); border: 1px solid #0078ff; border-radius: 16px; padding: 40px; margin-bottom: 40px; }
+        .profile-header { display: flex; align-items: center; gap: 32px; }
+        .profile-img { width: 110px; height: 110px; border-radius: 50%; border: 2px solid #0078ff; object-fit: cover; }
+        .bio-trigger-btn { background: rgba(0, 120, 255, 0.1); border: 1px solid #0078ff; color: #fff; padding: 10px 20px; border-radius: 6px; font-size: 0.8rem; cursor: pointer; margin-top: 15px; }
+        .expandable-content { max-height: 0; overflow: hidden; transition: max-height 0.4s ease; color: #8892a4; }
+        .expandable-content.active { max-height: 500px; margin-top: 20px; }
     </style>
     <script>
-        // Security Guardrail: Intercept unauthorized entries immediately
-        if (sessionStorage.getItem("ede-access") !== "granted") {
-            window.location.href = "index.html";
-        }
-
-        // Toggle mechanism for the interactive bio tile
+        if (sessionStorage.getItem("ede-access") !== "granted") { window.location.href = "index.html"; }
         function toggleBio() {
             const content = document.getElementById("expanded-bio");
             const btn = document.getElementById("bio-btn");
-            if (content.classList.contains("active")) {
-                content.classList.remove("active");
-                btn.innerText = "View Bio & Framework Pitch →";
-            } else {
-                content.classList.add("active");
-                btn.innerText = "Collapse Executive Profile ↑";
-            }
+            content.classList.toggle("active");
+            btn.innerText = content.classList.contains("active") ? "Collapse Executive Profile ↑" : "View Bio & Framework Pitch →";
         }
     </script>
 </head>
 <body>
-    <canvas id="particle-canvas"></canvas>
-    
     <div class="page-wrap">
         <header>
-            <div class="header-title"><span>EDE</span> / CEES / EEP OS</div>
-            <div class="header-badge">SYSTEM STATUS: RATIFIED</div>
+            <div class="header-title"><span>EDE</span> / CEES / EEP OS <span style="font-size: 0.6rem; color: #34d399; border: 1px solid #34d399; padding: 2px 6px; border-radius: 4px; margin-left: 10px;">RATIFIED v4.0</span></div>
         </header>
 
         <div class="dashboard-container">
-            
             <section class="pitch-panel">
                 <div class="profile-header">
                     <img src="assets/icons/mike-garcia-profile.png" alt="Mike Garcia" class="profile-img"/>
-                    <div class="profile-meta">
-                        <div class="title">Architect & Framework Owner</div>
-                        <h2>Mike Garcia</h2>
-                        <p style="color: var(--text); margin-top: 8px; max-width: 800px; line-height: 1.5;">
-                            Architecting enterprise-grade technical delivery standards. This operational hub replaces reactive, fragmented subject-matter expertise with a proactive system of outcome ownership.
-                        </p>
+                    <div>
+                        <div style="color: #0078ff; font-weight: 700; font-size: 0.75rem; text-transform: uppercase;">Architect & Framework Owner</div>
+                        <h2 style="color: #fff; margin: 5px 0;">Mike Garcia</h2>
+                        <p style="color: #ccc; max-width: 600px;">Architecting enterprise-grade technical delivery standards. This hub replaces reactive subject-matter expertise with a proactive system of outcome ownership.</p>
                         <button id="bio-btn" onclick="toggleBio()" class="bio-trigger-btn">View Bio & Framework Pitch →</button>
                     </div>
                 </div>
-
                 <div id="expanded-bio" class="expandable-content">
-                    <div class="pitch-text">
-                        "The goal of this ecosystem is simple: absolute execution predictability in high-trust, zero-fail cloud and data protection environments."
-                    </div>
-                    <div class="bio-text">
-                        <p style="margin-bottom: 12px;">
-                            Leveraging a deeply disciplined operational foundation originating from US Army aviation systems maintenance, I design structural delivery frameworks tailored for complex Microsoft technology stacks. 
-                            As a senior technology leader and Microsoft Certified Trainer, I emphasize knowledge transference and rigorous self-accountability.
-                        </p>
-                        <p>
-                            Connected directly to live operational matrices, telemetry modules, and active playbooks, this command center organizes execution across five non-negotiable delivery pillars.
-                        </p>
-                    </div>
-                    <div style="margin-top: 20px;">
-                        <a href="https://www.linkedin.com/in/amikegarcia/" target="_blank" class="btn-primary" style="display: inline-block; padding: 10px 20px; font-size: 0.8rem; text-decoration: none;">
-                            Connect on LinkedIn
-                        </a>
-                    </div>
+                    <p>Leveraging a disciplined operational foundation from US Army aviation systems maintenance to design structural delivery frameworks for complex Microsoft stacks. This system organizes execution across five non-negotiable delivery pillars, ensuring absolute execution predictability.</p>
                 </div>
             </section>
 
-            <div class="telemetry-strip">
-                <div class="telemetry-item">
-                    <span>Active Version</span>
-                    <strong>Q2.2026.v4</strong>
-                </div>
-                <div class="telemetry-item">
-                    <span>Classification</span>
-                    <strong style="color: var(--accent2);">PROPRIETARY // RESTRICTED</strong>
-                </div>
-                <div class="telemetry-item">
-                    <span>Enforcement Stance</span>
-                    <strong style="color: #34d399;">MANDATORY STANDARDS</strong>
-                </div>
-            </div>
-
             <div class="nav-grid">
                 <a class="nav-item" href="dashboards.html">
-                    <img src="assets/icons/dashboards.png" alt="Dashboards"/>
-                    <span class="nav-item-label">Operational Dashboards<br/><small style="color: var(--muted); font-weight: normal;">Live Telemetry & Metrics</small></span>
+                    <img src="assets/icons/dashboards.png"/>
+                    <div>
+                        <div class="nav-item-label">Operational Dashboards</div>
+                        <div class="nav-item-desc">Live performance telemetry and engagement health metrics.</div>
+                    </div>
                 </a>
                 <a class="nav-item" href="modules/operational-hygiene.html">
-                    <img src="assets/icons/operational-hygiene.png" alt="Operational Hygiene"/>
-                    <span class="nav-item-label">Operational Hygiene<br/><small style="color: var(--muted); font-weight: normal;">Cadence & Comm Standards</small></span>
+                    <img src="assets/icons/operational-hygiene.png"/>
+                    <div>
+                        <div class="nav-item-label">Operational Hygiene</div>
+                        <div class="nav-item-desc">Dispatch, cadence, and communication standards.</div>
+                    </div>
                 </a>
                 <a class="nav-item" href="modules/cees-playbook.html">
-                    <img src="assets/icons/cees-playbook.png" alt="CEES Playbook"/>
-                    <span class="nav-item-label">CEES Playbook<br/><small style="color: var(--muted); font-weight: normal;">Standardized Engagement Pillars</small></span>
+                    <img src="assets/icons/cees-playbook.png"/>
+                    <div>
+                        <div class="nav-item-label">CEES Playbook</div>
+                        <div class="nav-item-desc">Standardized engagement pillars and delivery behavior.</div>
+                    </div>
                 </a>
                 <a class="nav-item" href="modules/eep-charter.html">
-                    <img src="assets/icons/eep-charter.png" alt="EEP Charter"/>
-                    <span class="nav-item-label">EEP Charter<br/><small style="color: var(--muted); font-weight: normal;">Governance & Commitments</small></span>
+                    <img src="assets/icons/eep-charter.png"/>
+                    <div>
+                        <div class="nav-item-label">EEP Charter</div>
+                        <div class="nav-item-desc">Governance, non-negotiable commitments, and certification levels.</div>
+                    </div>
                 </a>
                 <a class="nav-item" href="modules/scoping-adaptive-polling.html">
-                    <img src="assets/icons/scoping-polling.png" alt="Scoping & Polling"/>
-                    <span class="nav-item-label">Scoping & Polling<br/><small style="color: var(--muted); font-weight: normal;">Pre-Delivery Intelligence</small></span>
+                    <img src="assets/icons/scoping-polling.png"/>
+                    <div>
+                        <div class="nav-item-label">Scoping & Polling</div>
+                        <div class="nav-item-desc">Pre-delivery intelligence to align outcomes before Day One.</div>
+                    </div>
                 </a>
                 <a class="nav-item" href="modules/self-accountability-scorecard.html">
-                    <img src="assets/icons/self-accountability.png" alt="Scorecard"/>
-                    <span class="nav-item-label">Accountability Scorecard<br/><small style="color: var(--muted); font-weight: normal;">30-Day Evidence Loops</small></span>
+                    <img src="assets/icons/self-accountability.png"/>
+                    <div>
+                        <div class="nav-item-label">Accountability Scorecard</div>
+                        <div class="nav-item-desc">Evidence-based scorecard trends and 30-day drift watch.</div>
+                    </div>
                 </a>
             </div>
-
         </div>
-
-        <footer>
-            EDE / CEES / EEP Operating System · Confidential · Authorized Personnel Only
-        </footer>
     </div>
-
-    <script src="js/main.js"></script>
 </body>
 </html>
