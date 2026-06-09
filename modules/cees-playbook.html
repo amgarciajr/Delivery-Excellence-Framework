@@ -1,28 +1,45 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
-    <meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CEES Playbook — Delivery Excellence OS</title>
-    <link href="../css/styles.css" rel="stylesheet"/>
+    <script src="https://cdn.tailwindcss.com"></script>
     <script>
         if (sessionStorage.getItem("ede-access") !== "granted") { window.location.href = "../index.html"; }
     </script>
+    <script>
+        tailwind.config = { theme: { extend: { colors: { dark: '#0a0a0f', panel: '#111116', brandRed: '#C62828', neonRed: '#FF1744', darkRed: '#8B0000', } } } }
+    </script>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+        .glass-panel { background: linear-gradient(160deg, rgba(20,20,28,0.95) 0%, rgba(10,10,15,0.95) 100%); border: 1px solid rgba(255, 23, 68, 0.15); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+    </style>
 </head>
-<body>
-    <div class="page-wrap">
-        <header>
-            <div class="header-title"><span>EDE</span> / CEES / EEP OS</div>
-            <button class="pdf-btn" onclick="window.print()">⬇ Export PDF</button>
-        </header>
-        <div class="container">
-            <a class="back-btn" href="../dashboard.html">← Back to Command Center</a>
-            <h1 style="font-size: 2.2rem; margin: 40px 0 20px;">Customer Engineer Excellence Standard</h1>
-            <div class="card">
-                <h2>The Identity Shift</h2>
-                <p>Engineers operating under CEES must transition from order-takers to Trusted Advisors.</p>
+<body class="bg-dark text-gray-300 antialiased selection:bg-brandRed selection:text-white">
+
+    <nav class="fixed w-full z-50 bg-dark/90 backdrop-blur-md border-b border-white/5">
+        <div class="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="text-white font-bold tracking-widest text-sm uppercase flex items-center gap-3">
+                <span class="w-2 h-2 rounded-full bg-neonRed shadow-[0_0_8px_#FF1744]"></span>
+                CEES Playbook
             </div>
-            </div>
-    </div>
-</body>
+            <a href="../dashboard.html" class="text-sm text-gray-400 hover:text-white transition-colors duration-200">
+                &larr; Back to Command Center
+            </a>
+        </div>
+    </nav>
+
+    <header class="max-w-4xl mx-auto px-6 pt-32 pb-20">
+        <div class="inline-block border border-neonRed/30 bg-brandRed/10 text-neonRed font-bold text-xs tracking-widest uppercase px-4 py-2 rounded-full mb-6">
+            Core Operating Model
+        </div>
+        <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight text-white mb-6 leading-tight">
+            Customer Engineer Excellence Standard
+        </h1>
+        <p class="text-lg text-gray-400 leading-relaxed max-w-3xl">
+            The CEES Playbook strips away reliance on specific internal tools and defines the behavioral standard for technical delivery. It is the framework for operating as a Trusted Advisor rather than a reactive order-taker.
+        </p>
+    </header>
+    </body>
 </html>
