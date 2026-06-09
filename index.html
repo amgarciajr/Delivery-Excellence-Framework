@@ -3,41 +3,60 @@
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Framework Library</title>
+    <title>EDE Frameworks | Authorized Access</title>
     <link href="css/styles.css" rel="stylesheet"/>
+    <style>
+        /* Modernized Gate/Dashboard transition styles */
+        #main-dashboard { display: none; }
+        .gate-card { max-width: 600px; margin: 100px auto; padding: 40px; background: #111827; border: 1px solid rgba(0,120,255,0.2); border-radius: 20px; text-align: center; }
+        .dashboard-hero { padding: 60px 20px; text-align: center; }
+        .grid-layout { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; padding: 40px; max-width: 1200px; margin: 0 auto; }
+        .tile { background: #111827; border: 1px solid rgba(0,120,255,0.2); border-radius: 16px; padding: 30px; text-decoration: none; color: white; transition: 0.3s; }
+        .tile:hover { transform: translateY(-5px); border-color: #0078ff; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+    </style>
     <script>
+        function accessGranted() {
+            sessionStorage.setItem("ede-access", "granted");
+            document.getElementById("access-gate").style.display = "none";
+            document.getElementById("main-dashboard").style.display = "block";
+        }
         document.addEventListener("DOMContentLoaded", () => {
-            // Check state immediately on load
             if (sessionStorage.getItem("ede-access") === "granted") {
-                document.getElementById("access-gate").style.display = "none";
-                document.getElementById("main-content").style.display = "block";
+                accessGranted();
             }
         });
-
-        function confirmProceed() {
-            sessionStorage.setItem("ede-access", "granted");
-            // Instead of reloading, just toggle visibility
-            document.getElementById("access-gate").style.display = "none";
-            document.getElementById("main-content").style.display = "block";
-        }
     </script>
 </head>
 <body>
-    <div id="access-gate">
+    <div id="access-gate" class="gate-card">
         <h1>Restricted Access</h1>
-        <p>This library is confidential.</p>
-        <button onclick="confirmProceed()">Accept & Continue</button>
+        <p>This library contains proprietary frameworks. By continuing, you agree to confidentiality terms.</p>
+        <button onclick="accessGranted()" class="btn-primary">Accept & Continue</button>
     </div>
 
-    <div id="main-content" style="display:none;">
+    <div id="main-dashboard">
         <header>
             <div class="header-title"><span>EDE</span> / CEES / EEP Frameworks</div>
         </header>
-        <div class="container">
-            <div class="nav-grid">
-                <a class="nav-item" href="modules/cees-playbook.html">CEES Playbook</a>
-                <a class="nav-item" href="modules/eep-charter.html">EEP Charter</a>
-                </div>
+
+        <section class="dashboard-hero">
+            <h1>Select Your Path</h1>
+            <p>Welcome to the consolidated enterprise delivery library.</p>
+        </section>
+
+        <div class="grid-layout">
+            <a href="dashboards.html" class="tile">
+                <h2>📊 Dashboards</h2>
+                <p>Live operational views and performance tracking tools.</p>
+            </a>
+            <a href="modules/cees-playbook.html" class="tile">
+                <h2>🧩 Frameworks</h2>
+                <p>The complete CEES, EEP, and EDE reference library.</p>
+            </a>
+            <a href="engineer-dashboards.html" class="tile">
+                <h2>🚀 Engineer Apps</h2>
+                <p>Interactive delivery tools and command centers.</p>
+            </a>
         </div>
     </div>
 </body>
