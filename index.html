@@ -1,458 +1,64 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Secure Access — Delivery Excellence Framework</title>
-<link href="css/styles.css" rel="stylesheet"/>
-<style>
-    /* ── Deep Red & Neon Glow Theme Variables ── */
-    :root {
-      --bg-dark: #0a0a0f;
-      --bg-panel: #111116;
-      --text-main: #ffffff;
-      --text-muted: #8892a4;
-      --deep-red: #C62828;
-      --neon-red: #FF1744;
-      --dark-red: #8B0000;
-      --glow-subtle: rgba(255, 23, 68, 0.2);
-      --glow-strong: rgba(255, 23, 68, 0.5);
-    }
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Framework Library</title>
+    <link href="css/styles.css" rel="stylesheet"/>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const gate = document.getElementById("access-gate");
+            const main = document.getElementById("main-content");
+            
+            // Check if access was already granted
+            if (sessionStorage.getItem("ede-access") === "granted") {
+                if (gate) gate.style.display = "none";
+                if (main) main.style.display = "block";
+            }
+        });
 
-    body {
-      background-color: var(--bg-dark);
-      margin: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      color: var(--text-main);
-      -webkit-font-smoothing: antialiased;
-    }
-
-    /* ── Modern Gate UI & Mobile Responsiveness ── */
-    .gate-wrap {
-      width: 100%;
-      max-width: 760px;
-      margin: 0 auto;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      padding: 40px 24px;
-      box-sizing: border-box;
-      position: relative;
-      z-index: 10;
-    }
-
-    .warning-badge {
-      display: inline-block;
-      background: rgba(198, 40, 40, 0.1);
-      border: 1px solid var(--neon-red);
-      color: var(--neon-red);
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 3px;
-      text-transform: uppercase;
-      padding: 8px 24px;
-      border-radius: 30px;
-      margin-bottom: 24px;
-      box-shadow: 0 0 12px var(--glow-subtle);
-    }
-
-    .gate-header {
-      text-align: center;
-      width: 100%;
-    }
-
-    .gate-header h1 {
-      font-size: clamp(1.8rem, 5vw, 2.4rem);
-      font-weight: 800;
-      color: var(--text-main);
-      line-height: 1.2;
-      margin-bottom: 12px;
-      letter-spacing: -0.5px;
-    }
-
-    .gate-header p {
-      font-size: clamp(14px, 3vw, 16px);
-      color: var(--text-muted);
-      max-width: 520px;
-      margin: 0 auto 40px;
-      line-height: 1.6;
-    }
-
-    /* Consolidated Terms Panel */
-    .consolidated-terms {
-      background: linear-gradient(160deg, rgba(20,20,28,0.95) 0%, rgba(10,10,15,0.95) 100%);
-      border: 1px solid rgba(255, 23, 68, 0.2);
-      border-radius: 16px;
-      padding: 40px;
-      margin-bottom: 40px;
-      width: 100%;
-      box-sizing: border-box;
-      position: relative;
-      box-shadow: 0 20px 50px rgba(0,0,0,0.6), 0 0 30px rgba(255, 23, 68, 0.05);
-      text-align: left;
-    }
-
-    .consolidated-terms::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 3px;
-      background: linear-gradient(90deg, var(--dark-red), var(--neon-red), var(--dark-red));
-      border-radius: 16px 16px 0 0;
-    }
-
-    .terms-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 40px;
-    }
-
-    @media (max-width: 680px) {
-      .terms-grid { grid-template-columns: 1fr; gap: 32px; }
-      .consolidated-terms { padding: 32px 24px; }
-    }
-
-    .terms-section h3 {
-      font-size: 13px;
-      font-weight: 700;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      color: var(--neon-red);
-      margin-bottom: 12px;
-      text-shadow: 0 0 8px var(--glow-subtle);
-    }
-
-    .terms-section p {
-      font-size: 14px;
-      line-height: 1.7;
-      color: #b0bac8;
-      margin-bottom: 20px;
-    }
-
-    .prohibited-list {
-      list-style: none;
-      margin: 0;
-      padding: 0;
-    }
-
-    .prohibited-list li {
-      font-size: 14px;
-      line-height: 1.6;
-      color: #b0bac8;
-      padding: 8px 0 8px 26px;
-      position: relative;
-      border-bottom: 1px solid rgba(255,255,255,0.05);
-    }
-
-    .prohibited-list li:last-child { border-bottom: none; }
-    
-    .prohibited-list li::before {
-      content: '✕';
-      position: absolute;
-      left: 0;
-      color: var(--neon-red);
-      font-size: 12px;
-      top: 10px;
-      text-shadow: 0 0 5px var(--glow-strong);
-    }
-
-    /* Passcode & Action Area */
-    .action-area {
-      text-align: center;
-      width: 100%;
-      max-width: 360px;
-      margin: 0 auto;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    .passcode-input {
-      background: rgba(0,0,0,0.6);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      color: #fff;
-      padding: 16px 24px;
-      border-radius: 8px;
-      font-size: 16px;
-      width: 100%;
-      box-sizing: border-box;
-      text-align: center;
-      outline: none;
-      transition: all 0.3s ease;
-      letter-spacing: 3px;
-      margin-bottom: 20px;
-    }
-
-    .passcode-input:focus {
-      border-color: var(--neon-red);
-      box-shadow: 0 0 15px var(--glow-strong);
-    }
-
-    .passcode-input.error {
-      border-color: #ff0000;
-      color: #ff0000;
-      animation: shake 0.4s 1 linear;
-    }
-
-    @keyframes shake {
-      0%, 100% { transform: translateX(0); }
-      25% { transform: translateX(-5px); }
-      75% { transform: translateX(5px); }
-    }
-
-    .checkbox-wrap {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 12px;
-      font-size: 14px;
-      color: var(--text-muted);
-      cursor: pointer;
-      margin-bottom: 28px;
-      width: 100%;
-    }
-
-    .checkbox-wrap input[type="checkbox"] {
-      width: 18px;
-      height: 18px;
-      accent-color: var(--deep-red);
-      cursor: pointer;
-    }
-
-    .accept-btn {
-      width: 100%;
-      padding: 18px;
-      background: rgba(255,255,255,0.03);
-      color: #555;
-      border: 1px solid #333;
-      border-radius: 8px;
-      font-size: 14px;
-      font-weight: 700;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      cursor: not-allowed;
-      transition: all 0.3s ease;
-    }
-
-    .accept-btn.enabled {
-      background: linear-gradient(135deg, var(--deep-red), var(--dark-red));
-      color: #fff;
-      border-color: transparent;
-      cursor: pointer;
-      box-shadow: 0 4px 20px var(--glow-subtle);
-    }
-
-    .accept-btn.enabled:hover {
-      box-shadow: 0 8px 30px var(--glow-strong);
-      transform: translateY(-2px);
-      background: linear-gradient(135deg, var(--neon-red), var(--deep-red));
-    }
-
-    /* Modal */
-    .modal {
-      display: none;
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(0,0,0,0.85);
-      justify-content: center;
-      align-items: center;
-      z-index: 999;
-      backdrop-filter: blur(8px);
-      padding: 20px;
-      box-sizing: border-box;
-    }
-    
-    .modal-content {
-      background: var(--bg-panel);
-      border: 1px solid var(--neon-red);
-      border-radius: 12px;
-      padding: 40px;
-      text-align: center;
-      color: #fff;
-      max-width: 400px;
-      width: 100%;
-      box-shadow: 0 0 40px var(--glow-subtle);
-    }
-    
-    .modal-content h3 { 
-      color: var(--text-main); 
-      margin-bottom: 16px; 
-      font-size: 1.4rem; 
-      text-shadow: 0 0 10px var(--glow-subtle);
-    }
-    
-    .modal-content p { 
-      color: var(--text-muted); 
-      margin-bottom: 32px; 
-      line-height: 1.6; 
-      font-size: 0.95rem; 
-    }
-    
-    .modal-buttons { 
-      display: flex; 
-      gap: 16px; 
-      justify-content: center; 
-      flex-wrap: wrap;
-    }
-    
-    .modal-buttons button {
-      padding: 14px 28px;
-      border-radius: 6px;
-      font-size: 14px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: 0.2s;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      flex: 1;
-      min-width: 120px;
-    }
-    
-    .btn-confirm { 
-      background: var(--deep-red); 
-      color: #fff; 
-      border: none; 
-      box-shadow: 0 4px 15px var(--glow-subtle);
-    }
-    
-    .btn-confirm:hover { 
-      background: var(--neon-red); 
-      box-shadow: 0 6px 20px var(--glow-strong);
-    }
-    
-    .btn-cancel { 
-      background: transparent; 
-      color: var(--text-muted); 
-      border: 1px solid rgba(255,255,255,0.2); 
-    }
-    
-    .btn-cancel:hover { 
-      color: #fff; 
-      border-color: #fff; 
-      background: rgba(255,255,255,0.05);
-    }
-</style>
-
-<script>
-    function toggleAccept() {
-      const cb = document.getElementById("agree");
-      const btn = document.getElementById("acceptBtn");
-      btn.disabled = !cb.checked;
-      btn.classList.toggle("enabled", cb.checked);
-    }
-
-    function proceed() {
-      if (document.getElementById("acceptBtn").disabled) return;
-      
-      const inputField = document.getElementById("passcode");
-      const code = inputField.value.trim();
-      
-      // The secure passcode
-      if (code === "AUTHORITY-2026") {
-          localStorage.setItem("ConfidentialityAccepted", new Date().toLocaleString());
-          document.getElementById("confirmModal").style.display = "flex";
-      } else {
-          // Error state (Shakes and flashes red)
-          inputField.classList.add("error");
-          inputField.value = "";
-          inputField.placeholder = "INVALID ACCESS CODE";
-          setTimeout(() => {
-              inputField.classList.remove("error");
-              inputField.placeholder = "Enter Access Code";
-          }, 1500);
-      }
-    }
-
-    function confirmProceed() {
-      document.body.style.opacity = "0.3";
-      document.body.style.transition = "opacity 0.8s ease";
-      setTimeout(() => {
-        sessionStorage.setItem("ede-access", "granted");
-        window.location.href = "selection.html";
-      }, 1000);
-    }
-
-    function cancelModal() {
-      document.getElementById("confirmModal").style.display = "none";
-    }
-
-    document.addEventListener("DOMContentLoaded", () => {
-      // If they already authenticated this session, skip the gate
-      if (sessionStorage.getItem("ede-access") === "granted") {
-        window.location.href = "selection.html";
-      }
-    });
-</script>
+        function confirmProceed() {
+            sessionStorage.setItem("ede-access", "granted");
+            document.getElementById("access-gate").style.display = "none";
+            document.getElementById("main-content").style.display = "block";
+            document.getElementById("confirmModal").style.display = "none";
+        }
+    </script>
 </head>
 <body>
-<canvas id="particle-canvas" style="position:fixed; top:0; left:0; z-index:0;"></canvas>
+    <canvas id="particle-canvas"></canvas>
+    <div class="page-wrap">
+        <div id="access-gate">
+            </div>
 
-<div class="page-wrap">
-  <div id="access-gate">
-    <div class="gate-wrap">
-      
-      <div class="gate-header">
-        <div class="warning-badge">Restricted Vault</div>
-        <h1>Confidentiality Agreement</h1>
-        <p>This library contains proprietary operational frameworks and architectural playbooks. Access is strictly by invitation.</p>
-      </div>
-
-      <div class="consolidated-terms">
-        <div class="terms-grid">
-          
-          <div class="terms-section">
-            <h3>Intellectual Property</h3>
-            <p>All materials contained herein—including methodologies, operating runbooks, SLA structures, and dashboards—remain the exclusive property of the Framework Owner.</p>
-            
-            <h3>Permitted Use</h3>
-            <p>You are granted <strong>view-only access</strong> for the sole purpose of portfolio review. No license or ownership rights are transferred. Access may be revoked at any time.</p>
-          </div>
-
-          <div class="terms-section">
-            <h3>Strictly Prohibited</h3>
-            <ul class="prohibited-list">
-              <li>Copying, downloading, or exporting files</li>
-              <li>Screenshotting or screen-recording content</li>
-              <li>Sharing or redistributing this URL</li>
-              <li>Creating unauthorized derivative works</li>
-              <li>Incorporating IP into commercial deliverables</li>
-            </ul>
-          </div>
-
+        <div id="main-content" style="display:none;">
+            <header>
+                <div class="header-title">
+                    <span>EDE</span> / CEES / EEP &nbsp;Frameworks
+                </div>
+                <div class="header-badge">Restricted Access</div>
+            </header>
+            <div class="hero">
+                <div class="hero-glow"></div>
+                <h1>Your <span>Framework Library</span></h1>
+                <p>A structured, modern reference site for all CEES, EDEv4, and EEP materials. Select a module below to begin.</p>
+            </div>
+            <div class="container">
+                <div class="card">
+                    <h2>Modules</h2>
+                    <div class="nav-grid">
+                        <a class="nav-item" href="modules/operational-hygiene.html"><img src="assets/icons/operational-hygiene.png"/><span class="nav-item-label">Operational Hygiene</span></a>
+                        <a class="nav-item" href="modules/scoping-adaptive-polling.html"><img src="assets/icons/scoping-polling.png"/><span class="nav-item-label">Scoping & Adaptive Polling</span></a>
+                        <a class="nav-item" href="modules/csam-partnership.html"><img src="assets/icons/csam-partnership.png"/><span class="nav-item-label">CSAM Partnership</span></a>
+                        <a class="nav-item" href="modules/quickmatch-selfdispatch.html"><img src="assets/icons/quickmatch-selfdispatch.png"/><span class="nav-item-label">Quick Match & Self-Dispatch</span></a>
+                        <a class="nav-item" href="modules/ede-identity.html"><img src="assets/icons/ede-identity.png"/><span class="nav-item-label">EDE Identity</span></a>
+                        <a class="nav-item" href="modules/cees-playbook.html"><img src="assets/icons/cees-playbook.png"/><span class="nav-item-label">CEES Playbook</span></a>
+                        <a class="nav-item" href="modules/eep-charter.html"><img src="assets/icons/eep-charter.png"/><span class="nav-item-label">EEP Charter</span></a>
+                        <a class="nav-item" href="modules/self-accountability-scorecard.html"><img src="assets/icons/self-accountability.png"/><span class="nav-item-label">Self-Accountability Scorecard</span></a>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
-
-      <div class="action-area">
-        <input type="password" id="passcode" class="passcode-input" placeholder="Enter Access Code">
-        
-        <label class="checkbox-wrap">
-          <input id="agree" onclick="toggleAccept()" type="checkbox"/>
-          I have read and agree to the terms
-        </label>
-        
-        <button id="acceptBtn" class="accept-btn" disabled onclick="proceed()">
-          Unlock Vault
-        </button>
-      </div>
-
     </div>
-  </div>
-</div>
-
-<div class="modal" id="confirmModal">
-  <div class="modal-content">
-    <h3>Access Verified</h3>
-    <p>By continuing, you acknowledge the binding nature of the confidentiality terms outlined on the previous screen.</p>
-    <div class="modal-buttons">
-      <button class="btn-confirm" onclick="confirmProceed()">Enter Library</button>
-      <button class="btn-cancel" onclick="cancelModal()">Cancel</button>
-    </div>
-  </div>
-</div>
-
-<script src="js/main.js"></script>
-</body>
+    </body>
 </html>
