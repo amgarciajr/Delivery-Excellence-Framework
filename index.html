@@ -7,58 +7,51 @@
     <link href="css/styles.css" rel="stylesheet"/>
     <script>
         document.addEventListener("DOMContentLoaded", () => {
-            const gate = document.getElementById("access-gate");
-            const main = document.getElementById("main-content");
-            
-            // Check if access was already granted
             if (sessionStorage.getItem("ede-access") === "granted") {
-                if (gate) gate.style.display = "none";
-                if (main) main.style.display = "block";
+                document.getElementById("access-gate").style.display = "none";
+                document.getElementById("main-content").style.display = "block";
             }
         });
-
         function confirmProceed() {
             sessionStorage.setItem("ede-access", "granted");
             document.getElementById("access-gate").style.display = "none";
             document.getElementById("main-content").style.display = "block";
             document.getElementById("confirmModal").style.display = "none";
         }
+        function cancelModal() { document.getElementById("confirmModal").style.display = "none"; }
     </script>
 </head>
 <body>
     <canvas id="particle-canvas"></canvas>
     <div class="page-wrap">
         <div id="access-gate">
+            <div class="gate-card">
+                <h1>Restricted Access</h1>
+                <p>This library is confidential. Please confirm to proceed.</p>
+                <button class="btn-primary" onclick="document.getElementById('confirmModal').style.display='flex'">Accept & Continue</button>
             </div>
+        </div>
 
         <div id="main-content" style="display:none;">
             <header>
-                <div class="header-title">
-                    <span>EDE</span> / CEES / EEP &nbsp;Frameworks
-                </div>
-                <div class="header-badge">Restricted Access</div>
+                <div class="header-title"><span>EDE</span> / CEES / EEP &nbsp;Frameworks</div>
             </header>
-            <div class="hero">
-                <div class="hero-glow"></div>
-                <h1>Your <span>Framework Library</span></h1>
-                <p>A structured, modern reference site for all CEES, EDEv4, and EEP materials. Select a module below to begin.</p>
-            </div>
             <div class="container">
                 <div class="card">
                     <h2>Modules</h2>
                     <div class="nav-grid">
-                        <a class="nav-item" href="modules/operational-hygiene.html"><img src="assets/icons/operational-hygiene.png"/><span class="nav-item-label">Operational Hygiene</span></a>
-                        <a class="nav-item" href="modules/scoping-adaptive-polling.html"><img src="assets/icons/scoping-polling.png"/><span class="nav-item-label">Scoping & Adaptive Polling</span></a>
-                        <a class="nav-item" href="modules/csam-partnership.html"><img src="assets/icons/csam-partnership.png"/><span class="nav-item-label">CSAM Partnership</span></a>
-                        <a class="nav-item" href="modules/quickmatch-selfdispatch.html"><img src="assets/icons/quickmatch-selfdispatch.png"/><span class="nav-item-label">Quick Match & Self-Dispatch</span></a>
-                        <a class="nav-item" href="modules/ede-identity.html"><img src="assets/icons/ede-identity.png"/><span class="nav-item-label">EDE Identity</span></a>
-                        <a class="nav-item" href="modules/cees-playbook.html"><img src="assets/icons/cees-playbook.png"/><span class="nav-item-label">CEES Playbook</span></a>
-                        <a class="nav-item" href="modules/eep-charter.html"><img src="assets/icons/eep-charter.png"/><span class="nav-item-label">EEP Charter</span></a>
-                        <a class="nav-item" href="modules/self-accountability-scorecard.html"><img src="assets/icons/self-accountability.png"/><span class="nav-item-label">Self-Accountability Scorecard</span></a>
-                    </div>
+                        <a class="nav-item" href="modules/operational-hygiene.html"><span class="nav-item-label">Operational Hygiene</span></a>
+                        </div>
                 </div>
             </div>
         </div>
     </div>
-    </body>
+    <div id="confirmModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); justify-content:center; align-items:center;">
+        <div style="background:#111; padding:20px; color:#fff;">
+            <h3>Confirm Access</h3>
+            <button onclick="confirmProceed()">Continue</button>
+            <button onclick="cancelModal()">Cancel</button>
+        </div>
+    </div>
+</body>
 </html>
