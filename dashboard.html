@@ -5,14 +5,32 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>COMMAND CENTER — DELIVERY EXCELLENCE OS</title>
     <link href="css/styles.css" rel="stylesheet"/>
+    <style>
+        /* Enterprise-Ready Hero Panel (Teams-Inspired) */
+        .hero-panel { background: #ffffff; border: 1px solid #edebe9; border-radius: 4px; padding: 24px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-bottom: 32px; font-family: 'Segoe UI', sans-serif; }
+        
+        /* Grid Layout (Refined for high-density info) */
+        .nav-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); gap: 20px; }
+        
+        /* Module Card UI - Synced with Operational Hygiene aesthetic */
+        .nav-item { 
+            background: linear-gradient(160deg, rgba(17,24,39,0.97) 0%, rgba(10,14,36,0.97) 100%);
+            border: 1px solid rgba(0,200,255,0.18); 
+            padding: 24px; 
+            border-radius: 14px; 
+            display: flex; 
+            gap: 20px; 
+            transition: all 0.2s ease; 
+            text-decoration: none; 
+            color: #fff; 
+            align-items: flex-start;
+        }
+        .nav-item:hover { border-color: #00c8ff; transform: translateY(-2px); }
+        .nav-item-label { font-size: 0.95rem; font-weight: 700; color: #fff; margin-bottom: 8px; display: block; }
+        .nav-item-desc { font-size: 0.8rem; color: #8892a4; line-height: 1.6; }
+    </style>
     <script>
         if (sessionStorage.getItem("ede-access") !== "granted") { window.location.href = "index.html"; }
-        function toggleBio() {
-            const content = document.getElementById("expanded-bio");
-            const btn = document.getElementById("bio-btn");
-            content.classList.toggle("active");
-            btn.innerText = content.classList.contains("active") ? "Collapse Executive Profile ↑" : "View Bio & Framework Pitch →";
-        }
     </script>
 </head>
 <body>
@@ -24,18 +42,20 @@
         </header>
 
         <div class="dashboard-container" style="max-width: 1200px; margin: 40px auto; padding: 0 24px;">
-            <section style="background: linear-gradient(135deg, rgba(17, 24, 39, 0.9) 0%, rgba(13, 17, 48, 0.9) 100%); border: 1px solid #0078ff; border-radius: 16px; padding: 40px; margin-bottom: 40px;">
-                <div style="display: flex; align-items: center; gap: 32px;">
-                    <img src="assets/icons/profile.png" style="width: 110px; height: 110px; border-radius: 50%; border: 2px solid #0078ff;"/>
-                    <div>
-                        <div style="color: #0078ff; font-weight: 700; font-size: 0.75rem; text-transform: uppercase;">Architect & Framework Owner</div>
-                        <h2 style="color: #fff; margin: 5px 0;">Mike Garcia</h2>
-                        <p style="color: #ccc; max-width: 600px;">Architecting enterprise-grade technical delivery standards. This hub replaces reactive subject-matter expertise with a proactive system of outcome ownership.</p>
-                        <button id="bio-btn" onclick="toggleBio()" class="bio-trigger-btn" style="background: rgba(0, 120, 255, 0.1); border: 1px solid #0078ff; color: #fff; padding: 10px 20px; border-radius: 6px; font-size: 0.8rem; cursor: pointer; margin-top: 15px;">View Bio & Framework Pitch →</button>
+            
+            <section class="hero-panel">
+                <div style="display: flex; gap: 20px; align-items: flex-start;">
+                    <div style="position: relative;">
+                        <img src="assets/icons/profile.png" alt="Mike Garcia" style="width: 80px; height: 80px; border-radius: 4px;"/>
+                        <div style="position: absolute; bottom: -2px; right: -2px; width: 16px; height: 16px; background: #92C353; border: 3px solid #ffffff; border-radius: 50%;"></div>
                     </div>
-                </div>
-                <div id="expanded-bio" class="expandable-content" style="max-height: 0; overflow: hidden; transition: max-height 0.4s ease; color: #8892a4;">
-                    <p style="margin-top: 20px;">Leveraging a disciplined operational foundation from US Army aviation systems maintenance to design structural delivery frameworks for complex Microsoft stacks. This system organizes execution across five non-negotiable delivery pillars, ensuring absolute execution predictability.</p>
+                    <div>
+                        <h2 style="color: #323130; margin: 0; font-size: 1.25rem;">Mike Garcia</h2>
+                        <div style="color: #605e5c; font-size: 0.85rem; margin-bottom: 12px;">Strategic Technical Architect & AI Governance Leader</div>
+                        <p style="color: #323130; font-size: 0.9rem; line-height: 1.4; max-width: 650px;">
+                            Veteran-led technical orchestration. Managing 16+ enterprise accounts. Built a connected Power Platform system—5 apps, 6 training portals—and the EDE v4 operating model[cite: 8, 9]. Driving absolute execution predictability across security, Purview, and AI readiness.
+                        </p>
+                    </div>
                 </div>
             </section>
 
@@ -43,47 +63,48 @@
                 <a class="nav-item" href="dashboards.html">
                     <div class="ede-icon icon-dashboard"></div>
                     <div>
-                        <div class="nav-item-label">Operational Dashboards</div>
-                        <div class="nav-item-desc">Live performance telemetry and engagement health metrics.</div>
+                        <span class="nav-item-label">Operational Dashboards</span>
+                        <div class="nav-item-desc">• Real-time delivery telemetry.<br>• Health monitoring for 16+ accounts.<br>• Visualization of security drift.</div>
                     </div>
                 </a>
                 <a class="nav-item" href="modules/operational-hygiene.html">
                     <div class="ede-icon icon-hygiene"></div>
                     <div>
-                        <div class="nav-item-label">Operational Hygiene</div>
-                        <div class="nav-item-desc">Dispatch, cadence, and communication standards.</div>
+                        <span class="nav-item-label">Operational Hygiene</span>
+                        <div class="nav-item-desc">• Standardized dispatch cadences.<br>• Communication signal standards.<br>• Eliminating "hidden work".</div>
                     </div>
                 </a>
                 <a class="nav-item" href="modules/cees-playbook.html">
                     <div class="ede-icon icon-playbook"></div>
                     <div>
-                        <div class="nav-item-label">CEES Playbook</div>
-                        <div class="nav-item-desc">Standardized engagement pillars and delivery behavior.</div>
+                        <span class="nav-item-label">CEES Playbook</span>
+                        <div class="nav-item-desc">• Repeatable delivery pillars.<br>• Transformation playbooks for AI.<br>• High-stakes engagement behavior.</div>
                     </div>
                 </a>
                 <a class="nav-item" href="modules/eep-charter.html">
                     <div class="ede-icon icon-charter"></div>
                     <div>
-                        <div class="nav-item-label">EEP Charter</div>
-                        <div class="nav-item-desc">Governance, non-negotiable commitments, and certification levels.</div>
+                        <span class="nav-item-label">EEP Charter</span>
+                        <div class="nav-item-desc">• Governance models for trust.<br>• Non-negotiable commitment frameworks.<br>• The "Bar-Setter" standard.</div>
                     </div>
                 </a>
                 <a class="nav-item" href="modules/scoping-adaptive-polling.html">
                     <div class="ede-icon icon-polling"></div>
                     <div>
-                        <div class="nav-item-label">Scoping & Polling</div>
-                        <div class="nav-item-desc">Pre-delivery intelligence to align outcomes before Day One.</div>
+                        <span class="nav-item-label">Scoping & Polling</span>
+                        <div class="nav-item-desc">• Pre-delivery intelligence gathering.<br>• Aligning outcomes before Day One.<br>• Accurate project estimation tools.</div>
                     </div>
                 </a>
                 <a class="nav-item" href="modules/self-accountability-scorecard.html">
                     <div class="ede-icon icon-scorecard"></div>
                     <div>
-                        <div class="nav-item-label">Accountability Scorecard</div>
-                        <div class="nav-item-desc">Evidence-based scorecard trends and 30-day drift watch.</div>
+                        <span class="nav-item-label">Accountability Scorecard</span>
+                        <div class="nav-item-desc">• 30-day evidence-based loops.<br>• Proactive drift-watch alerts.<br>• Quantifiable impact tracking.</div>
                     </div>
                 </a>
             </div>
         </div>
+        <footer>EDE / CEES / EEP Operating System · Confidential · Authorized Personnel Only</footer>
     </div>
 </body>
 </html>
