@@ -7,16 +7,18 @@
     <link href="css/styles.css" rel="stylesheet"/>
     <script>
         document.addEventListener("DOMContentLoaded", () => {
+            // Check state immediately on load
             if (sessionStorage.getItem("ede-access") === "granted") {
-                const gate = document.getElementById("access-gate");
-                const main = document.getElementById("main-content");
-                if (gate) gate.style.display = "none";
-                if (main) main.style.display = "block";
+                document.getElementById("access-gate").style.display = "none";
+                document.getElementById("main-content").style.display = "block";
             }
         });
+
         function confirmProceed() {
             sessionStorage.setItem("ede-access", "granted");
-            window.location.reload(); // Simplest way to apply state
+            // Instead of reloading, just toggle visibility
+            document.getElementById("access-gate").style.display = "none";
+            document.getElementById("main-content").style.display = "block";
         }
     </script>
 </head>
@@ -35,7 +37,7 @@
             <div class="nav-grid">
                 <a class="nav-item" href="modules/cees-playbook.html">CEES Playbook</a>
                 <a class="nav-item" href="modules/eep-charter.html">EEP Charter</a>
-            </div>
+                </div>
         </div>
     </div>
 </body>
