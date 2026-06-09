@@ -3,211 +3,27 @@
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>SECURE ACCESS — DELIVERY EXCELLENCE FRAMEWORK</title>
+    <title>SECURE ACCESS — DELIVERY EXCELLENCE OS</title>
     <link href="css/styles.css" rel="stylesheet"/>
     <style>
-        /* Imposing Gate & Transition Logic */
-        #main-content { display: none; }
-        
-        .gate-wrap { 
-            max-width: 800px; 
-            margin: 8vh auto; 
-            padding: 60px; 
-            background: var(--bg2); 
-            border: 1px solid var(--accent); 
-            border-radius: var(--radius-lg); 
-            box-shadow: var(--shadow), var(--glow-shadow);
-            text-align: center;
-            position: relative;
-            z-index: 10;
-        }
-
-        .warning-badge {
-            display: inline-block;
-            background: #FF6200;
-            color: #fff;
-            font-size: 11px;
-            font-weight: 700;
-            letter-spacing: 3px;
-            text-transform: uppercase;
-            padding: 8px 24px;
-            border-radius: 2px;
-            margin-bottom: 28px;
-        }
-
-        .gate-card h1 { 
-            font-size: 2.5rem; 
-            font-weight: 800; 
-            color: #fff; 
-            text-transform: uppercase; 
-            letter-spacing: 2px; 
-            margin-bottom: 20px; 
-        }
-
-        .terms-box { 
-            text-align: left; 
-            background: rgba(0,0,0,0.4); 
-            padding: 25px; 
-            border-left: 3px solid #FF6200; 
-            margin: 30px 0; 
-            font-size: 0.9rem; 
-            line-height: 1.6;
-            color: var(--text);
-        }
-
-        /* Executive Profile Styling */
-        .profile-panel {
-            background: linear-gradient(135deg, rgba(17, 24, 39, 0.9) 0%, rgba(13, 17, 48, 0.9) 100%);
-            border: 1px solid var(--accent);
-            border-radius: var(--radius-lg);
-            padding: 40px;
-            display: flex;
-            align-items: center;
-            gap: 40px;
-            margin-bottom: 40px;
-            box-shadow: var(--shadow);
-        }
-
-        .profile-img {
-            width: 140px;
-            height: 140px;
-            border-radius: 50%;
-            border: 3px solid var(--accent2);
-            object-fit: cover;
-            box-shadow: 0 0 20px var(--accent-glow);
-        }
-
-        .profile-content h2 { font-size: 1.8rem; color: #fff; margin-bottom: 8px; }
-        .profile-content .title { color: var(--accent2); font-weight: 700; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; }
-        .profile-content p { color: var(--muted); line-height: 1.6; margin-bottom: 20px; max-width: 700px; }
-
-        .status-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 25px;
-            background: rgba(0, 120, 255, 0.1);
-            border: 1px solid var(--accent);
-            border-radius: var(--radius);
-            margin-bottom: 40px;
-        }
-
-        @media (max-width: 768px) {
-            .profile-panel { flex-direction: column; text-align: center; }
-            .gate-wrap { margin: 20px; padding: 30px; }
-        }
+        .gate-wrap { max-width: 800px; margin: 15vh auto; padding: 60px; background: #111827; border: 1px solid var(--accent); border-radius: var(--radius-lg); text-align: center; }
+        .gate-icon { width: 80px; margin-bottom: 20px; filter: drop-shadow(0 0 10px var(--accent)); }
+        h1.imposing { font-size: 2.5rem; font-weight: 800; color: #fff; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 20px; }
+        .divider { width: 80px; height: 4px; background: var(--accent); margin: 0 auto 30px; }
+        .terms-box { text-align: left; background: rgba(0,0,0,0.4); padding: 25px; border-left: 3px solid #FF6200; margin: 30px 0; font-size: 0.9rem; line-height: 1.6; color: var(--text); }
     </style>
-    <script>
-        function accessGranted() {
-            sessionStorage.setItem("ede-access", "granted");
-            document.getElementById("access-gate").style.display = "none";
-            document.getElementById("main-content").style.display = "block";
-            window.scrollTo(0,0);
-        }
-
-        document.addEventListener("DOMContentLoaded", () => {
-            if (sessionStorage.getItem("ede-access") === "granted") {
-                document.getElementById("access-gate").style.display = "none";
-                document.getElementById("main-content").style.display = "block";
-            }
-        });
-    </script>
 </head>
 <body>
     <canvas id="particle-canvas"></canvas>
-
-    <div class="page-wrap">
-        
-        <div id="access-gate" class="gate-wrap">
-            <div class="warning-badge">Restricted Environment</div>
-            <h1>Authorized Access Only</h1>
-            <div style="width: 80px; height: 3px; background: #FF6200; margin: 0 auto 30px;"></div>
-            
-            <p style="color: #fff; font-weight: 600;">You are attempting to access the Delivery Excellence Framework.</p>
-            
-            <div class="terms-box">
-                <strong style="color: #FF6200; display: block; margin-bottom: 10px; text-transform: uppercase; font-size: 0.75rem;">Confidentiality & IP Agreement</strong>
-                By proceeding, you acknowledge that all materials, including EDEv4, CEES, and EEP frameworks, are strictly proprietary. Access is granted for professional evaluation only. Any unauthorized reproduction, distribution, or commercial use of these methodologies without express written consent from Mike Garcia is strictly prohibited and protected under intellectual property law.
-            </div>
-
-            <button onclick="accessGranted()" class="btn-primary" style="padding: 18px 40px; font-size: 1rem;">Accept & Initialize System</button>
+    <div class="gate-wrap">
+        <img src="assets/icons/shield.png" class="gate-icon"/>
+        <h1 class="imposing">Authorized Access Only</h1>
+        <div class="divider"></div>
+        <p style="color: var(--muted); margin-bottom: 30px;">You are attempting to access the Delivery Excellence Operating System. All materials are strictly confidential.</p>
+        <div class="terms-box">
+            <strong>Confidentiality & IP Agreement:</strong> By proceeding, you acknowledge that all frameworks, playbooks, and diagnostic tools contained herein are the exclusive intellectual property of the Framework Owner. Unauthorized reproduction or distribution is strictly prohibited.
         </div>
-
-        <div id="main-content">
-            <header>
-                <div class="header-title"><span>EDE</span> / CEES / EEP OS</div>
-                <div class="header-badge">SYSTEM STATUS: RATIFIED</div>
-            </header>
-
-            <section class="hero">
-                <div class="hero-glow"></div>
-                <h1>System <span>Command Center</span></h1>
-                <p>Enterprise delivery standards, playbooks, and diagnostic intelligence.</p>
-            </section>
-
-            <div class="container">
-                
-                <div class="profile-panel">
-                    <img src="assets/icons/mike-garcia-profile.png" alt="Mike Garcia" class="profile-img">
-                    <div class="profile-content">
-                        <div class="title">Architect & Framework Owner</div>
-                        <h2>Mike Garcia</h2>
-                        <p>
-                            Senior Technology Leader specializing in Data Protection and Information Governance. 
-                            Leveraging a disciplined background in US Army aviation maintenance to architect 
-                            high-performance, zero-fail delivery frameworks for the Microsoft technology stack.
-                        </p>
-                        <a href="https://www.linkedin.com/in/amikegarcia/" target="_blank" class="btn-primary" style="padding: 10px 20px; font-size: 0.85rem; background: transparent; border: 1px solid var(--accent2);">
-                            Connect on LinkedIn →
-                        </a>
-                    </div>
-                </div>
-
-                <div class="status-header">
-                    <div>
-                        <span style="color: var(--muted); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px;">Current Version</span>
-                        <div style="color: #fff; font-weight: 700;">Q2.2026.v4</div>
-                    </div>
-                    <div style="text-align: right;">
-                        <span style="color: var(--muted); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px;">Security Level</span>
-                        <div style="color: var(--accent2); font-weight: 700;">PROPRIETARY / RESTRICTED</div>
-                    </div>
-                </div>
-
-                <div class="nav-grid">
-                    <a class="nav-item" href="dashboards.html">
-                        <img src="assets/icons/dashboards.png"/>
-                        <span class="nav-item-label">Operational Dashboards</span>
-                    </a>
-                    <a class="nav-item" href="modules/operational-hygiene.html">
-                        <img src="assets/icons/operational-hygiene.png"/>
-                        <span class="nav-item-label">Operational Hygiene</span>
-                    </a>
-                    <a class="nav-item" href="modules/cees-playbook.html">
-                        <img src="assets/icons/cees-playbook.png"/>
-                        <span class="nav-item-label">CEES Playbook</span>
-                    </a>
-                    <a class="nav-item" href="modules/eep-charter.html">
-                        <img src="assets/icons/eep-charter.png"/>
-                        <span class="nav-item-label">EEP Charter</span>
-                    </a>
-                    <a class="nav-item" href="modules/scoping-adaptive-polling.html">
-                        <img src="assets/icons/scoping-polling.png"/>
-                        <span class="nav-item-label">Scoping & Polling</span>
-                    </a>
-                    <a class="nav-item" href="modules/self-accountability-scorecard.html">
-                        <img src="assets/icons/self-accountability.png"/>
-                        <span class="nav-item-label">Accountability Scorecard</span>
-                    </a>
-                </div>
-            </div>
-            
-            <footer>
-                EDE / CEES / EEP Frameworks · Confidential · Mike Garcia 2026
-            </footer>
-        </div>
+        <button onclick="window.location.href='dashboard.html'" class="btn-primary" style="padding: 18px 40px; font-size: 1rem;">Accept & Initialize System</button>
     </div>
-    
-    <script src="js/main.js"></script>
 </body>
 </html>
