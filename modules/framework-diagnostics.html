@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enterprise Diagnostics Engine — Delivery Excellence OS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        dark: '#0a0a0f',
+                        panel: '#111116',
+                        brandRed: '#C62828',
+                        neonRed: '#FF1744',
+                        darkRed: '#8B0000',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+        .glass-panel {
+            background: linear-gradient(160deg, rgba(20,20,28,0.95) 0%, rgba(10,10,15,0.95) 100%);
+            border: 1px solid rgba(255, 23, 68, 0.15);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+    </style>
+</head>
+<body class="bg-dark text-gray-300 antialiased selection:bg-brandRed selection:text-white">
+
+    <!-- Navigation Bar -->
+    <nav class="fixed w-full z-50 bg-dark/90 backdrop-blur-md border-b border-white/5">
+        <div class="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="text-white font-bold tracking-widest text-sm uppercase flex items-center gap-3">
+                <span class="w-2 h-2 rounded-full bg-neonRed shadow-[0_0_8px_#FF1744]"></span>
+                Enterprise Diagnostics Engine
+            </div>
+            <!-- Adjust the href path depending on where this file lives in your repo -->
+            <a href="../selection.html" class="text-sm text-gray-400 hover:text-white transition-colors duration-200">
+                &larr; Back to Hub
+            </a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="max-w-4xl mx-auto px-6 pt-32 pb-20">
+        <div class="inline-block border border-neonRed/30 bg-brandRed/10 text-neonRed font-bold text-xs tracking-widest uppercase px-4 py-2 rounded-full mb-6">
+            Assessment & Telemetry
+        </div>
+        <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight text-white mb-6 leading-tight">
+            The Enterprise Diagnostics Engine
+        </h1>
+        <p class="text-lg text-gray-400 leading-relaxed max-w-3xl">
+            The Diagnostics Engine provides the quantitative measurement for the behavioral standard. It replaces subjective performance reviews with a 30-day evidence loop to catch quiet operational drift before it impacts customer trust.
+        </p>
+    </header>
+
+    <!-- Content Grid -->
+    <section class="max-w-5xl mx-auto px-6 py-12">
+        
+        <!-- Identity -->
+        <div class="mb-16">
+            <h2 class="text-sm font-bold mb-6 uppercase tracking-widest text-neonRed">01 / Telemetry Identity</h2>
+            <div class="glass-panel p-8 rounded-2xl border-l-4 border-l-brandRed">
+                <p class="text-gray-300 leading-relaxed mb-4">
+                    If an operating model is not measured, it is merely a suggestion. The Diagnostics Engine is built on the principle that <strong>"Quiet Drift becomes Culture."</strong> We use specific, verifiable checkpoints rather than generalized surveys.
+                </p>
+            </div>
+        </div>
+
+        <!-- The Mechanics -->
+        <div class="mb-16">
+            <h2 class="text-sm font-bold mb-6 uppercase tracking-widest text-neonRed">02 / Diagnostic Mechanics</h2>
+            <div class="grid md:grid-cols-2 gap-6">
+                
+                <div class="glass-panel p-6 rounded-xl hover:border-neonRed/40 transition-colors duration-300">
+                    <h3 class="text-lg font-bold text-white mb-2">Self-Accountability Scorecard</h3>
+                    <p class="text-sm text-gray-400 mb-4">A mandatory 30-day reflection cycle for all Outcome Owners.</p>
+                    <ul class="text-sm text-gray-400 space-y-2 list-disc pl-5">
+                        <li><strong>Grade Deflation:</strong> Over-scoring without evidence triggers an immediate review. Honesty about friction is rewarded.</li>
+                        <li><strong>The One Lesson:</strong> Every scorecard must extract a single, reusable behavioral lesson learned during the prior 30 days.</li>
+                    </ul>
+                </div>
+
+                <div class="glass-panel p-6 rounded-xl hover:border-neonRed/40 transition-colors duration-300">
+                    <h3 class="text-lg font-bold text-white mb-2">Signal vs. Status Logging</h3>
+                    <p class="text-sm text-gray-400 mb-4">The telemetry system monitors the <em>quality</em> of internal communication.</p>
+                    <ul class="text-sm text-gray-400 space-y-2 list-disc pl-5">
+                        <li>Tracks the ratio of task-based updates (noise) versus risk-based signals (intelligence) brought to weekly reviews.</li>
+                        <li>Measures "Ownership Follow-Through" via strict red/amber/green health indicators.</li>
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- The SLA -->
+        <div class="mb-16">
+            <h2 class="text-sm font-bold mb-6 uppercase tracking-widest text-neonRed">03 / The Pre-Engagement SLA</h2>
+            <div class="glass-panel p-8 rounded-2xl">
+                <div class="mb-6">
+                    <h3 class="text-xl font-bold text-white">Scoping & Adaptive Polling</h3>
+                    <p class="text-sm text-gray-400">Before technical execution begins, the engine requires a formal scoping pass. We do not dispatch engineers into ambiguous environments.</p>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="border-b border-white/10">
+                                <th class="py-4 text-white font-bold">Phase</th>
+                                <th class="py-4 text-white font-bold">Action</th>
+                                <th class="py-4 text-white font-bold">Exit Condition</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-sm text-gray-400">
+                            <tr class="border-b border-white/5 hover:bg-white/5 transition-colors">
+                                <td class="py-4 font-bold text-neonRed">1. Polling</td>
+                                <td class="py-4">Extract the true business pain point using the Three Tests.</td>
+                                <td class="py-4">Customer explicitly confirms the drafted success criteria.</td>
+                            </tr>
+                            <tr class="border-b border-white/5 hover:bg-white/5 transition-colors">
+                                <td class="py-4 font-bold text-yellow-500">2. Dispatch</td>
+                                <td class="py-4">Determine routing via Quick Match or structured alignment.</td>
+                                <td class="py-4">A single Outcome Owner is assigned.</td>
+                            </tr>
+                            <tr class="hover:bg-white/5 transition-colors">
+                                <td class="py-4 font-bold text-blue-500">3. Lock</td>
+                                <td class="py-4">Establish the communication rhythm and establish stakes.</td>
+                                <td class="py-4">Kickoff document is signed and logged.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </section>
+
+    <!-- Footer -->
+    <footer class="border-t border-white/10 mt-10">
+        <div class="max-w-5xl mx-auto px-6 py-8 flex justify-between items-center text-xs text-gray-500">
+            <p>Delivery Excellence OS &copy; 2026</p>
+            <p>Confidential & Proprietary</p>
+        </div>
+    </footer>
+
+</body>
+</html>
