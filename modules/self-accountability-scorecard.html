@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Self-Accountability Scorecard &#8212; EDE Frameworks</title>
+  <link rel="stylesheet" href="../css/styles.css">
+  <style>
+    .mod-hero{position:relative;padding:48px 0 36px;text-align:center;overflow:hidden}
+    .mod-hero-glow{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:600px;height:300px;background:url('../assets/glows/hero-glow.png') center/contain no-repeat;opacity:0.4;pointer-events:none}
+    .mod-eyebrow{font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#f87171;margin-bottom:12px}
+    .mod-title{font-size:2.2rem;font-weight:800;color:#fff;margin-bottom:12px;text-shadow:0 0 30px rgba(248,113,113,0.3)}
+    .mod-subtitle{font-size:1rem;color:#8892a4;max-width:600px;margin:0 auto;line-height:1.7}
+    .stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:28px}
+    .stat-card{background:linear-gradient(160deg,rgba(17,24,39,0.97) 0%,rgba(10,14,36,0.97) 100%);border:1px solid rgba(248,113,113,0.18);border-radius:14px;padding:20px 18px;position:relative;overflow:hidden;text-align:center}
+    .stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#dc2626,#f87171)}
+    .stat-num{font-size:2rem;font-weight:800;color:#f87171;line-height:1;margin-bottom:6px}
+    .stat-label{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#8892a4}
+    .stat-desc{font-size:0.78rem;color:#b0bac8;margin-top:4px}
+    .panel{background:linear-gradient(160deg,rgba(17,24,39,0.97) 0%,rgba(10,14,36,0.97) 100%);border:1px solid rgba(248,113,113,0.15);border-radius:14px;padding:24px 28px;position:relative;overflow:hidden;margin-bottom:20px}
+    .panel::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(248,113,113,0.4),transparent)}
+    .panel-title{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#f87171;margin-bottom:16px}
+    .scale-row{display:flex;gap:0;border-radius:10px;overflow:hidden;margin-bottom:20px}
+    .scale-item{flex:1;padding:14px 8px;text-align:center}
+    .scale-1{background:rgba(220,38,38,0.25);color:#f87171}
+    .scale-2{background:rgba(220,38,38,0.15);color:#fca5a5}
+    .scale-3{background:rgba(217,119,6,0.2);color:#fbbf24}
+    .scale-4{background:rgba(5,150,105,0.15);color:#6ee7b7}
+    .scale-5{background:rgba(5,150,105,0.25);color:#34d399}
+    .scale-num{font-size:1.4rem;font-weight:800;margin-bottom:4px}
+    .scale-label{font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase}
+    .rubric-table{width:100%;border-collapse:collapse;font-size:0.78rem}
+    .rubric-table th{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#8892a4;padding:0 8px 12px 0;text-align:left;border-bottom:1px solid rgba(255,255,255,0.06)}
+    .rubric-table td{padding:10px 8px 10px 0;border-bottom:1px solid rgba(255,255,255,0.04);vertical-align:top;line-height:1.5;color:#b0bac8}
+    .rubric-table tr:last-child td{border-bottom:none}
+    .rubric-table td:first-child{font-weight:700;color:#fff;white-space:nowrap;min-width:120px}
+    .rubric-table td.at-std{color:#34d399}
+    .rubric-table td.above-std{color:#a78bfa}
+    .two-col{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px}
+    .pillar-row{display:flex;align-items:flex-start;gap:14px;padding:14px 0;border-bottom:1px solid rgba(255,255,255,0.05)}
+    .pillar-row:last-child{border-bottom:none}
+    .pillar-icon{width:36px;height:36px;border-radius:10px;background:rgba(248,113,113,0.1);border:1px solid rgba(248,113,113,0.25);display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0}
+    .pillar-title{font-size:0.88rem;font-weight:700;color:#fff;margin-bottom:4px}
+    .pillar-body{font-size:0.78rem;color:#8892a4;line-height:1.6}
+    .drift-card{border-radius:10px;padding:16px 18px;margin-bottom:12px;border:1px solid rgba(248,113,113,0.2);background:rgba(220,38,38,0.07)}
+    .drift-card:last-child{margin-bottom:0}
+    .drift-title{font-size:0.88rem;font-weight:700;color:#f87171;margin-bottom:6px}
+    .drift-body{font-size:0.78rem;color:#8892a4;line-height:1.6}
+    .callout{border-radius:10px;padding:16px 20px;margin:16px 0;border:1px solid rgba(248,113,113,0.3);background:rgba(220,38,38,0.07)}
+    .callout-text{font-size:0.88rem;color:#e8eaf6;line-height:1.7;font-style:italic}
+    .callout-attr{font-size:0.75rem;color:#f87171;font-weight:700;margin-top:8px}
+    .narrative-step{display:flex;align-items:flex-start;gap:14px;padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.05)}
+    .narrative-step:last-child{border-bottom:none}
+    .ns-num{width:28px;height:28px;border-radius:50%;background:rgba(248,113,113,0.15);border:1px solid rgba(248,113,113,0.3);display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:800;color:#f87171;flex-shrink:0;line-height:28px;text-align:center}
+    .ns-title{font-size:0.85rem;font-weight:700;color:#fff;margin-bottom:3px}
+    .ns-body{font-size:0.78rem;color:#8892a4;line-height:1.5}
+    @media(max-width:900px){.two-col,.stat-row{grid-template-columns:1fr 1fr}.scale-row{flex-wrap:wrap}}
+    @media(max-width:600px){.two-col,.stat-row{grid-template-columns:1fr}.mod-title{font-size:1.6rem}}
+  </style>
+</head>
+<body>
+<canvas id="particle-canvas"></canvas>
+<div class="page-wrap">
+  <header>
+    <div class="header-title"><span>EDE</span> / CEES / EEP &nbsp;Frameworks</div>
+    <button class="pdf-btn" onclick="exportPDF()">&#11015; Export PDF</button>
+  </header>
+  <div class="container">
+    <div style="margin-bottom:16px;"><a class="back-btn" href="../index.html">&#8592; Back to Framework Library</a></div>
+    <div class="mod-hero">
+      <div class="mod-hero-glow"></div>
+      <div class="mod-eyebrow">Self-Accountability &#8212; 30-Day Evidence Loop</div>
+      <h1 class="mod-title">Self-Accountability Scorecard</h1>
+      <p class="mod-subtitle">A 12-criterion scorecard for grading yourself against the standard you set, with evidence and trend tracking every 30 days across five pillars.</p>
+    </div>
+    <div class="stat-row">
+      <div class="stat-card"><div class="stat-num">12</div><div class="stat-label">Criteria</div><div class="stat-desc">Across five accountability pillars</div></div>
+      <div class="stat-card"><div class="stat-num">1&#8211;5</div><div class="stat-label">Scoring Scale</div><div class="stat-desc">Absent &#8594; Embedded</div></div>
+      <div class="stat-card"><div class="stat-num">5</div><div class="stat-label">Pillars</div><div class="stat-desc">CX, Clarity, Ownership, Signal, Accountability</div></div>
+      <div class="stat-card"><div class="stat-num">30 days</div><div class="stat-label">Review Cycle</div><div class="stat-desc">Evidence required for every score</div></div>
+    </div>
+    <div class="panel">
+      <div class="panel-title">The 1&#8211;5 Scoring Scale</div>
+      <div class="scale-row">
+        <div class="scale-item scale-1"><div class="scale-num">1</div><div class="scale-label">Absent</div></div>
+        <div class="scale-item scale-2"><div class="scale-num">2</div><div class="scale-label">Developing</div></div>
+        <div class="scale-item scale-3"><div class="scale-num">3</div><div class="scale-label">At Standard</div></div>
+        <div class="scale-item scale-4"><div class="scale-num">4</div><div class="scale-label">Above Std</div></div>
+        <div class="scale-item scale-5"><div class="scale-num">5</div><div class="scale-label">Embedded</div></div>
+      </div>
+      <div class="callout" style="margin-top:0;">
+        <div class="callout-text">"Ratings must be supported by observable evidence. A rating of At Standard or Above Standard requires documentation a second reader can verify &#8212; an output, an observation, a dated log entry, or a specific client interaction record. Ratings without supporting evidence are treated as Developing pending documentation."</div>
+        <div class="callout-attr">&#8212; Rating Integrity Rule, EEP Scorecard Standard</div>
+      </div>
+    </div>
+    <div class="two-col">
+      <div class="panel">
+        <div class="panel-title">Five Accountability Pillars</div>
+        <div class="pillar-row">
+          <div class="pillar-icon">&#127775;</div>
+          <div><div class="pillar-title">Customer Experience (CX)</div><div class="pillar-body">Client-first decisions. Clarity over technical elegance. Measured by: client articulation of value, CPE score trend, validation question completion rate.</div></div>
+        </div>
+        <div class="pillar-row">
+          <div class="pillar-icon">&#128172;</div>
+          <div><div class="pillar-title">Clarity</div><div class="pillar-body">Three Tests compliance rate. Clarification request frequency. Communication quality measured by client action rate, not communication volume.</div></div>
+        </div>
+        <div class="pillar-row">
+          <div class="pillar-icon">&#128100;</div>
+          <div><div class="pillar-title">Ownership</div><div class="pillar-body">Outcome Owner assignment rate. Issue orphan count. Runbook adherence. Measured by: named OO on every engagement, zero orphaned issues.</div></div>
+        </div>
+        <div class="pillar-row">
+          <div class="pillar-icon">&#128225;</div>
+          <div><div class="pillar-title">Signal</div><div class="pillar-body">Signal language usage rate. Signal stream monitoring consistency. Measured by: % of updates that qualify as signal vs. status, weekly review attendance.</div></div>
+        </div>
+        <div class="pillar-row">
+          <div class="pillar-icon">&#127919;</div>
+          <div><div class="pillar-title">Accountability</div><div class="pillar-body">CEES Session attendance. Playbook contribution rate. Quarterly narrative submission. Measured by: cadence adherence, evidence documentation rate.</div></div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-title">Drift Watch &#8212; Identifying Quiet Regressions</div>
+        <p style="font-size:0.82rem;color:#8892a4;line-height:1.7;margin-bottom:16px;">Drift Watch is the practice of identifying score declines before they become visible failures. A single week of lower performance is noise. Three consecutive weeks of decline is a drift signal that requires active intervention.</p>
+        <div class="drift-card">
+          <div class="drift-title">&#128269; What Drift Looks Like</div>
+          <div class="drift-body">No single dramatic failure. Instead: Three Tests compliance drops from 94% to 87% over three weeks. Signal language usage declines from 82% to 68% over four weeks. Each week looks "fine" in isolation. The trend is the problem.</div>
+        </div>
+        <div class="drift-card">
+          <div class="drift-title">&#128680; Drift Watch Triggers</div>
+          <div class="drift-body">Any pillar declining for 3+ consecutive weeks &#183; Evidence rate below 80% for 2+ weeks &#183; CEES Session attendance below 100% for 2 consecutive cycles &#183; Three Tests compliance below 90% for any week</div>
+        </div>
+        <div class="drift-card">
+          <div class="drift-title">&#9989; Drift Response</div>
+          <div class="drift-body">Name the drift in the next Signal Review. Identify the specific behavior that changed. Design one concrete corrective action. Measure for two weeks. Document in quarterly narrative.</div>
+        </div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="panel-title">Six-Dimension Skills Rubric</div>
+      <div style="overflow-x:auto;">
+        <table class="rubric-table">
+          <thead>
+            <tr>
+              <th>Dimension</th>
+              <th>Below Standard</th>
+              <th>Developing</th>
+              <th class="at-std">At Standard &#10003;</th>
+              <th class="above-std">Above Standard &#9733;</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Signal Intelligence</td>
+              <td>Reactive; client surfaces problems first</td>
+              <td>Partial monitoring; inconsistent signal language</td>
+              <td class="at-std">All 3 streams, weekly, 48hr surface, signal language always</td>
+              <td class="above-std">Pre-emptive interventions; teaches signal language to peers</td>
+            </tr>
+            <tr>
+              <td>Ownership Clarity</td>
+              <td>Ambiguous ownership; silent handoffs; "not my scope"</td>
+              <td>Named at kickoff; client comm sometimes delayed</td>
+              <td class="at-std">Named, communicated in writing pre-delivery; full runbook; no orphans</td>
+              <td class="above-std">Closes others&#39; gaps; models runbook under pressure</td>
+            </tr>
+            <tr>
+              <td>Comm. Discipline</td>
+              <td>No systematic quality check; tests fail regularly</td>
+              <td>Tests applied to major comms only; minor comms bypass</td>
+              <td class="at-std">All 3 tests, every comm, rewrite when fails, no exceptions</td>
+              <td class="above-std">Referenced as model; volunteers to review peers; WGLL contributor</td>
+            </tr>
+            <tr>
+              <td>Outcome Validation</td>
+              <td>Closes on task completion; no validation questions</td>
+              <td>Validation inconsistent; client sometimes can&#39;t articulate value</td>
+              <td class="at-std">3 validation questions every close; client articulates value in writing</td>
+              <td class="above-std">Close generates reference, expansion, or testimonial</td>
+            </tr>
+            <tr>
+              <td>Trust Architecture</td>
+              <td>No structured trust approach; relies on relationship only</td>
+              <td>Knows model; inconsistent application in delivery</td>
+              <td class="at-std">Identifies active trust layer; applies behaviors; uses vocabulary</td>
+              <td class="above-std">Designs trust moments; documented referenceability outcome</td>
+            </tr>
+            <tr>
+              <td>Program Stewardship</td>
+              <td>Participates when required; no contributions</td>
+              <td>1 scenario/quarter; minimal playbook updates</td>
+              <td class="at-std">1 complete lesson/6 months; anti-patterns surfaced early; active quarterly review</td>
+              <td class="above-std">3+ lessons; program evolution proposed; active mentoring</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="panel-title">Quarterly Narrative &#8212; Format</div>
+      <div class="narrative-step">
+        <div class="ns-num">1</div>
+        <div><div class="ns-title">Where the Standard Held</div><div class="ns-body">Identify 2&#8211;3 specific instances where you applied the EEP standard under pressure and it held. Name the engagement, the situation, and the behavior. Evidence required.</div></div>
+      </div>
+      <div class="narrative-step">
+        <div class="ns-num">2</div>
+        <div><div class="ns-title">Where the Standard Slipped</div><div class="ns-body">Identify 1&#8211;2 specific instances where your behavior fell below the standard. Name the engagement, the situation, and what you did instead of the standard. No blame externalization.</div></div>
+      </div>
+      <div class="narrative-step">
+        <div class="ns-num">3</div>
+        <div><div class="ns-title">What Changes Next Cycle</div><div class="ns-body">One specific, measurable behavioral change for the next 30 days. Not "I will communicate better." Instead: "I will apply all Three Tests to every client-facing email before sending, and log the review in ESXP."</div></div>
+      </div>
+      <div class="narrative-step">
+        <div class="ns-num">4</div>
+        <div><div class="ns-title">Drift Watch Items</div><div class="ns-body">Name any pillar that declined for 2+ consecutive weeks. State the specific behavior that changed. State the corrective action and the measurement method for the next cycle.</div></div>
+      </div>
+    </div>
+    <div style="margin-top:32px;padding-top:24px;border-top:1px solid rgba(255,255,255,0.06);">
+      <a class="back-btn" href="../index.html">&#8592; Back to Framework Library</a>
+    </div>
+  </div>
+  <footer>EDE / CEES / EEP Frameworks &nbsp;&#183;&nbsp; Confidential &nbsp;&#183;&nbsp; Authorized Personnel Only</footer>
+</div>
+<script src="../js/main.js"></script>
+</body>
+</html>

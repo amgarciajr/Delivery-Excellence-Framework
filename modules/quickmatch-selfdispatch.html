@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Quick Match &amp; Self-Dispatch — EDE Frameworks</title>
+<link href="../css/styles.css" rel="stylesheet"/>
+<style>
+    .mod-hero { position:relative; padding:48px 0 36px; text-align:center; overflow:hidden; }
+    .mod-hero-glow { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:600px; height:300px; background:url('../assets/glows/hero-glow.png?expires=1783578208&signature=a8c7881b712ad3c043c1cb27a589dc5775b44fcab36d432e416a451bb5d757cf') center/contain no-repeat; opacity:0.4; pointer-events:none; }
+    .mod-eyebrow { font-size:11px; font-weight:700; letter-spacing:3px; text-transform:uppercase; color:#fbbf24; margin-bottom:12px; }
+    .mod-title { font-size:2.2rem; font-weight:800; color:#fff; margin-bottom:12px; text-shadow:0 0 30px rgba(251,191,36,0.3); }
+    .mod-subtitle { font-size:1rem; color:#8892a4; max-width:600px; margin:0 auto; line-height:1.7; }
+    .stat-row { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:28px; }
+    .stat-card { background:linear-gradient(160deg,rgba(17,24,39,0.97) 0%,rgba(10,14,36,0.97) 100%); border:1px solid rgba(251,191,36,0.18); border-radius:14px; padding:20px 18px; position:relative; overflow:hidden; text-align:center; }
+    .stat-card::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background:linear-gradient(90deg,#d97706,#fbbf24); }
+    .stat-num { font-size:2rem; font-weight:800; color:#fbbf24; line-height:1; margin-bottom:6px; }
+    .stat-label { font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:#8892a4; }
+    .stat-desc { font-size:0.78rem; color:#b0bac8; margin-top:4px; }
+    .panel { background:linear-gradient(160deg,rgba(17,24,39,0.97) 0%,rgba(10,14,36,0.97) 100%); border:1px solid rgba(251,191,36,0.15); border-radius:14px; padding:24px 28px; position:relative; overflow:hidden; margin-bottom:20px; }
+    .panel::before { content:''; position:absolute; top:0; left:0; right:0; height:1px; background:linear-gradient(90deg,transparent,rgba(251,191,36,0.4),transparent); }
+    .panel-title { font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:#fbbf24; margin-bottom:16px; }
+    .dispatch-card { border-radius:12px; padding:20px; margin-bottom:14px; border:1px solid; position:relative; overflow:hidden; }
+    .dispatch-card::before { content:''; position:absolute; top:0; left:0; bottom:0; width:4px; border-radius:2px 0 0 2px; }
+    .dispatch-card.proactive { background:rgba(0,120,255,0.07); border-color:rgba(96,165,250,0.2); }
+    .dispatch-card.proactive::before { background:#0078ff; }
+    .dispatch-card.quickmatch { background:rgba(251,191,36,0.07); border-color:rgba(251,191,36,0.2); }
+    .dispatch-card.quickmatch::before { background:#fbbf24; }
+    .dispatch-card.rmot { background:rgba(124,58,237,0.07); border-color:rgba(167,139,250,0.2); }
+    .dispatch-card.rmot::before { background:#7c3aed; }
+    .dispatch-card.selfdispatch { background:rgba(52,211,153,0.07); border-color:rgba(52,211,153,0.2); }
+    .dispatch-card.selfdispatch::before { background:#34d399; }
+    .dispatch-type { font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase; margin-bottom:6px; }
+    .dispatch-card.proactive .dispatch-type { color:#60a5fa; }
+    .dispatch-card.quickmatch .dispatch-type { color:#fbbf24; }
+    .dispatch-card.rmot .dispatch-type { color:#a78bfa; }
+    .dispatch-card.selfdispatch .dispatch-type { color:#34d399; }
+    .dispatch-title { font-size:1rem; font-weight:800; color:#fff; margin-bottom:8px; }
+    .dispatch-body { font-size:0.82rem; color:#8892a4; line-height:1.6; margin-bottom:10px; }
+    .dispatch-tags { display:flex; flex-wrap:wrap; gap:6px; }
+    .dispatch-tag { font-size:9px; font-weight:700; letter-spacing:1px; text-transform:uppercase; padding:3px 8px; border-radius:10px; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.1); color:#8892a4; }
+    .two-col { display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom:20px; }
+    .checklist { list-style:none; padding:0; }
+    .checklist-item { display:flex; align-items:flex-start; gap:12px; padding:12px 0; border-bottom:1px solid rgba(255,255,255,0.05); }
+    .checklist-item:last-child { border-bottom:none; }
+    .check-icon { font-size:1rem; flex-shrink:0; margin-top:2px; }
+    .check-title { font-size:0.88rem; font-weight:700; color:#fff; margin-bottom:3px; }
+    .check-body { font-size:0.78rem; color:#8892a4; line-height:1.5; }
+    .mini-card { background:rgba(0,0,0,0.25); border:1px solid rgba(255,255,255,0.07); border-radius:10px; padding:16px; margin-bottom:12px; }
+    .mini-card:last-child { margin-bottom:0; }
+    .mini-card-title { font-size:0.85rem; font-weight:700; color:#fff; margin-bottom:6px; }
+    .mini-card-body { font-size:0.78rem; color:#8892a4; line-height:1.6; }
+    .callout { border-radius:10px; padding:16px 20px; margin:16px 0; border:1px solid rgba(251,191,36,0.3); background:rgba(251,191,36,0.07); }
+    .callout-text { font-size:0.88rem; color:#e8eaf6; line-height:1.7; font-style:italic; }
+    .callout-attr { font-size:0.75rem; color:#fbbf24; font-weight:700; margin-top:8px; }
+    .compare-table { width:100%; border-collapse:collapse; }
+    .compare-table th { font-size:9px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:#8892a4; padding:0 10px 12px 0; text-align:left; border-bottom:1px solid rgba(255,255,255,0.06); }
+    .compare-table td { font-size:0.82rem; color:#e8eaf6; padding:10px 10px 10px 0; border-bottom:1px solid rgba(255,255,255,0.04); vertical-align:top; line-height:1.6; }
+    .compare-table tr:last-child td { border-bottom:none; }
+    @media(max-width:900px){ .two-col,.stat-row{ grid-template-columns:1fr 1fr; } }
+    @media(max-width:600px){ .two-col,.stat-row{ grid-template-columns:1fr; } .mod-title{ font-size:1.6rem; } }
+  </style>
+</head>
+<body>
+<canvas id="particle-canvas"></canvas>
+<div class="page-wrap">
+<header>
+<div class="header-title"><span>EDE</span> / CEES / EEP  Frameworks</div>
+<button class="pdf-btn" onclick="exportPDF()">⬇ Export PDF</button>
+</header>
+<div class="container">
+<div style="margin-bottom:16px;"><a class="back-btn" href="../index.html">← Back to Framework Library</a></div>
+<div class="mod-hero">
+<div class="mod-hero-glow"></div>
+<div class="mod-eyebrow">EDEv4 · Dispatch Layer — Queue Discipline</div>
+<h1 class="mod-title">Quick Match &amp; Self-Dispatch</h1>
+<p class="mod-subtitle">Dispatch type changes entry, not the standard. Queue discipline, first-48-hour actions, and the single Outcome Owner rule apply regardless of how the engagement was assigned.</p>
+</div>
+<!-- Stats -->
+<div class="stat-row">
+<div class="stat-card"><div class="stat-num">4</div><div class="stat-label">Dispatch Types</div><div class="stat-desc">Proactive, Quick Match, RMOT, Self-Dispatch</div></div>
+<div class="stat-card"><div class="stat-num">48hrs</div><div class="stat-label">Action Window</div><div class="stat-desc">CSAM contact, scoping, recap, pre-poll</div></div>
+<div class="stat-card"><div class="stat-num">1</div><div class="stat-label">OO Per RMOT Pool</div><div class="stat-desc">Single named owner regardless of pool size</div></div>
+<div class="stat-card"><div class="stat-num">Zero</div><div class="stat-label">Polling Exceptions</div><div class="stat-desc">Short engagements still require polling</div></div>
+</div>
+<!-- Overview -->
+<div class="panel">
+<div class="panel-title">The Core Principle — Entry Changes, Standard Doesn't</div>
+<p style="color:#e8eaf6;line-height:1.8;font-size:0.97rem;margin-bottom:14px;">Quick Match and self-dispatch are different entry points into the delivery queue — not different delivery standards. An engineer who receives a Quick Match dispatch has less pre-engagement lead time than one who receives a proactive dispatch. That changes the timeline for completing the six pre-delivery steps. It does not change the requirement to complete them. The standard is the standard regardless of how the engagement arrived.</p>
+<div class="callout">
+<div class="callout-text">"Dispatch type changes entry, not the standard. A Quick Match engagement that skips polling is not an efficient delivery — it is a non-compliant one."</div>
+<div class="callout-attr">— EDEv4 Dispatch Standard</div>
+</div>
+</div>
+<!-- Four Dispatch Types -->
+<div class="panel">
+<div class="panel-title">Four Dispatch Types — Taxonomy</div>
+<div class="dispatch-card proactive">
+<div class="dispatch-type">Type 01 — Proactive</div>
+<div class="dispatch-title">Proactive Dispatch</div>
+<div class="dispatch-body">Standard pre-engagement lead time. Full six-step ValueAdd Chain applies with normal timing. CSAM-initiated. Scoping call 2–4 weeks pre-delivery. All pre-delivery steps completed before Day One.</div>
+<div class="dispatch-tags"><span class="dispatch-tag">Full lead time</span><span class="dispatch-tag">CSAM-initiated</span><span class="dispatch-tag">Standard timeline</span></div>
+</div>
+<div class="dispatch-card quickmatch">
+<div class="dispatch-type">Type 02 — Quick Match</div>
+<div class="dispatch-title">Quick Match</div>
+<div class="dispatch-body">Compressed lead time. All six pre-delivery steps still required — compressed into the available window. First 48 hours are critical: CSAM contact, scoping, recap, pre-poll must all be initiated immediately. Weekly Quick Match check required to maintain queue discipline.</div>
+<div class="dispatch-tags"><span class="dispatch-tag">Compressed timeline</span><span class="dispatch-tag">48hr window critical</span><span class="dispatch-tag">Weekly check required</span></div>
+</div>
+<div class="dispatch-card rmot">
+<div class="dispatch-type">Type 03 — RMOT</div>
+<div class="dispatch-title">RMOT (Shared Pool)</div>
+<div class="dispatch-body">Multiple engineers in a shared delivery pool. Single Outcome Owner assigned per engagement regardless of pool size. Shared ownership is no ownership — one name, communicated to the client in writing. RMOT does not modify the polling or communication standards.</div>
+<div class="dispatch-tags"><span class="dispatch-tag">Shared pool</span><span class="dispatch-tag">Single OO required</span><span class="dispatch-tag">Standard applies</span></div>
+</div>
+<div class="dispatch-card selfdispatch">
+<div class="dispatch-type">Type 04 — Self-Dispatch</div>
+<div class="dispatch-title">Self-Dispatch</div>
+<div class="dispatch-body">Engineer-initiated engagement. Same standard applies — no exceptions for self-initiated work. The fact that you chose the engagement does not reduce the pre-delivery requirements. All six steps, full polling, Outcome Owner assignment in writing before delivery begins.</div>
+<div class="dispatch-tags"><span class="dispatch-tag">Engineer-initiated</span><span class="dispatch-tag">Same standard</span><span class="dispatch-tag">No exceptions</span></div>
+</div>
+</div>
+<!-- First 48 Hours + RMOT Rules -->
+<div class="two-col">
+<div class="panel">
+<div class="panel-title">First 48 Hours — Required Actions</div>
+<ul class="checklist">
+<li class="checklist-item">
+<span class="check-icon">📞</span>
+<div><div class="check-title">CSAM Contact</div><div class="check-body">Notify CSAM within 48hrs of dispatch acceptance. Confirm they are aware of the engagement and aligned on the approach. Never proceed without CSAM awareness.</div></div>
+</li>
+<li class="checklist-item">
+<span class="check-icon">🎯</span>
+<div><div class="check-title">Scoping Call Scheduled</div><div class="check-body">Schedule the scoping call immediately — even if compressed. Discover the real business problem before any delivery planning begins. Use TPL-SCOP.</div></div>
+</li>
+<li class="checklist-item">
+<span class="check-icon">📧</span>
+<div><div class="check-title">Recap Email Sent</div><div class="check-body">Written alignment before delivery. Apply Three Tests. Tag #Scoping. Confirm scope, Outcome Owner, and delivery dates in writing.</div></div>
+</li>
+<li class="checklist-item">
+<span class="check-icon">📋</span>
+<div><div class="check-title">Pre-Poll Deployed</div><div class="check-body">Send pre-poll immediately — even for short engagements. Tag #AdaptivePolling. Apply Three Tests. Review results before Day One.</div></div>
+</li>
+<li class="checklist-item">
+<span class="check-icon">👤</span>
+<div><div class="check-title">Outcome Owner Assigned in Writing</div><div class="check-body">Named, communicated to client before delivery begins. Non-Negotiable I. No engagement proceeds without this documented.</div></div>
+</li>
+</ul>
+</div>
+<div class="panel">
+<div class="panel-title">RMOT Pool — Single Outcome Owner Rule</div>
+<div class="callout" style="margin-top:0;">
+<div class="callout-text">"Shared ownership is no ownership. In an RMOT pool of four engineers, exactly one is the Outcome Owner — named, communicated to the client in writing, accountable for the outcome."</div>
+</div>
+<div class="mini-card" style="margin-top:16px;">
+<div class="mini-card-title" style="color:#34d399;">✅ Correct RMOT Structure</div>
+<div class="mini-card-body">Pool of 3 engineers. One named Outcome Owner communicated to client before delivery. Other engineers deliver under the OO's accountability. Client knows exactly who owns the outcome.</div>
+</div>
+<div class="mini-card">
+<div class="mini-card-title" style="color:#f87171;">❌ RMOT Anti-Pattern</div>
+<div class="mini-card-body">"We're all responsible" — this is the most common RMOT failure. When everyone owns it, no one owns it. The client cannot answer "who owns this?" and trust erodes immediately.</div>
+</div>
+<div class="mini-card">
+<div class="mini-card-title">📋 Weekly RMOT Check</div>
+<div class="mini-card-body">Review all RMOT engagements weekly. Confirm OO assignment is current. Confirm client has OO name in writing. Confirm no orphaned issues in the pool.</div>
+</div>
+</div>
+</div>
+<!-- Dispatch Comparison Table -->
+<div class="panel">
+<div class="panel-title">Dispatch Type Comparison — Entry vs. Standard</div>
+<table class="compare-table">
+<thead><tr><th>Dispatch Type</th><th>Entry Difference</th><th>Polling Required?</th><th>OO Required?</th><th>Three Tests Required?</th></tr></thead>
+<tbody>
+<tr><td><strong style="color:#60a5fa;">Proactive</strong></td><td>Full lead time · CSAM-initiated</td><td><span style="color:#34d399;">✅ Yes</span></td><td><span style="color:#34d399;">✅ Yes</span></td><td><span style="color:#34d399;">✅ Yes</span></td></tr>
+<tr><td><strong style="color:#fbbf24;">Quick Match</strong></td><td>Compressed timeline · 48hr window</td><td><span style="color:#34d399;">✅ Yes</span></td><td><span style="color:#34d399;">✅ Yes</span></td><td><span style="color:#34d399;">✅ Yes</span></td></tr>
+<tr><td><strong style="color:#a78bfa;">RMOT</strong></td><td>Shared pool · Single OO rule</td><td><span style="color:#34d399;">✅ Yes</span></td><td><span style="color:#34d399;">✅ Yes (1 per pool)</span></td><td><span style="color:#34d399;">✅ Yes</span></td></tr>
+<tr><td><strong style="color:#34d399;">Self-Dispatch</strong></td><td>Engineer-initiated</td><td><span style="color:#34d399;">✅ Yes</span></td><td><span style="color:#34d399;">✅ Yes</span></td><td><span style="color:#34d399;">✅ Yes</span></td></tr>
+<tr><td><strong style="color:#f87171;">Short Engagement</strong></td><td>Reduced duration only</td><td><span style="color:#34d399;">✅ Yes — no exception</span></td><td><span style="color:#34d399;">✅ Yes</span></td><td><span style="color:#34d399;">✅ Yes</span></td></tr>
+</tbody>
+</table>
+<div class="callout" style="margin-top:16px;">
+<div class="callout-text">"The table above has one message: the standard column never changes. Dispatch type is an entry variable. The EEP standard is a constant."</div>
+</div>
+</div>
+</div>
+<footer>EDE / CEES / EEP Frameworks  ·  Confidential  ·  Authorized Personnel Only</footer>
+</div>
+<script src="../js/main.js"></script>
+</body>
+</html>

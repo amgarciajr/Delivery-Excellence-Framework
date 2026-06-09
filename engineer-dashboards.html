@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Engineer Dashboards — EDE Frameworks</title>
+<link href="css/styles.css" rel="stylesheet"/>
+<style>
+
+    .dash-wrap { position:relative; z-index:1; padding:48px 24px 80px; }
+    .dash-back  { max-width:1100px; margin:0 auto 24px; }
+
+    /* ── Page Header ── */
+    .page-header { max-width:1100px; margin:0 auto 48px; text-align:center; }
+    .page-header .eyebrow { font-size:11px; font-weight:700; letter-spacing:3px; text-transform:uppercase; color:#FF6200; margin-bottom:14px; }
+    .page-header h1 { font-size:2.4rem; font-weight:800; color:#fff; margin-bottom:14px; text-shadow:0 0 30px rgba(255,98,0,0.2); }
+    .page-header p  { font-size:1rem; color:#8892a4; max-width:600px; margin:0 auto; line-height:1.7; }
+
+    /* ── App Grid ── */
+    .app-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:24px; max-width:1200px; margin:0 auto 40px; }
+
+    /* ── App Tile ── */
+    .app-tile {
+      background:linear-gradient(160deg,rgba(17,24,39,0.97) 0%,rgba(10,14,36,0.97) 100%);
+      border:1px solid rgba(255,98,0,0.15);
+      border-radius:20px;
+      padding:36px 32px 28px;
+      display:flex; flex-direction:column;
+      position:relative; overflow:hidden;
+      transition:transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+      text-decoration:none; color:inherit;
+    }
+    .app-tile::before {
+      content:''; position:absolute; top:0; left:0; right:0; height:3px; border-radius:20px 20px 0 0;
+    }
+    .app-tile:nth-child(1)::before { background:linear-gradient(90deg,#FF6200,#ffaa50); }
+    .app-tile:nth-child(2)::before { background:linear-gradient(90deg,#0078ff,#00c8ff); }
+    .app-tile:nth-child(3)::before { background:linear-gradient(90deg,#7c3aed,#a78bfa); }
+    .app-tile:nth-child(4)::before { background:linear-gradient(90deg,#059669,#34d399); }
+
+    .app-tile:hover { transform:translateY(-5px); }
+    .app-tile:nth-child(1):hover { border-color:rgba(255,98,0,0.45);   box-shadow:0 20px 60px rgba(255,98,0,0.18); }
+    .app-tile:nth-child(2):hover { border-color:rgba(0,120,255,0.45);  box-shadow:0 20px 60px rgba(0,120,255,0.18); }
+    .app-tile:nth-child(3):hover { border-color:rgba(124,58,237,0.45); box-shadow:0 20px 60px rgba(124,58,237,0.18); }
+    .app-tile:nth-child(4):hover { border-color:rgba(5,150,105,0.45);  box-shadow:0 20px 60px rgba(5,150,105,0.18); }
+
+    /* Glow blob */
+    .app-tile::after {
+      content:''; position:absolute; width:280px; height:280px; border-radius:50%;
+      top:-80px; right:-80px; pointer-events:none; opacity:0.06; transition:opacity 0.3s;
+    }
+    .app-tile:nth-child(1)::after { background:#FF6200; }
+    .app-tile:nth-child(2)::after { background:#0078ff; }
+    .app-tile:nth-child(3)::after { background:#7c3aed; }
+    .app-tile:nth-child(4)::after { background:#059669; }
+    .app-tile:hover::after { opacity:0.12; }
+    .app-tile:nth-child(5)::before { background:linear-gradient(90deg,#0078ff,#00c8ff); }
+    .app-tile:nth-child(5):hover { border-color:rgba(0,120,255,0.45); box-shadow:0 20px 60px rgba(0,120,255,0.2); }
+    .app-tile:nth-child(5)::after { background:#0078ff; }
+
+    /* App number */
+    .app-num { font-size:10px; font-weight:700; letter-spacing:3px; text-transform:uppercase; margin-bottom:16px; opacity:0.7; }
+    .app-tile:nth-child(1) .app-num { color:#FF6200; }
+    .app-tile:nth-child(2) .app-num { color:#00c8ff; }
+    .app-tile:nth-child(3) .app-num { color:#a78bfa; }
+    .app-tile:nth-child(4) .app-num { color:#34d399; }
+    .app-tile:nth-child(5) .app-num { color:#00c8ff; }
+
+    /* App icon */
+    .app-icon { font-size:2.6rem; margin-bottom:18px; display:block; line-height:1; }
+
+    /* Status pill */
+    .status-pill { position:absolute; top:20px; right:20px; font-size:9px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; padding:3px 10px; border-radius:20px; }
+    .status-live   { background:rgba(5,150,105,0.15); color:#34d399; border:1px solid rgba(52,211,153,0.3); }
+    .status-preview{ background:rgba(0,120,255,0.15); color:#60a5fa; border:1px solid rgba(96,165,250,0.3); }
+
+    /* App title & desc */
+    .app-title { font-size:1.25rem; font-weight:800; color:#fff; margin-bottom:10px; line-height:1.3; }
+    .app-desc  { font-size:0.88rem; color:#8892a4; line-height:1.75; flex-grow:1; margin-bottom:20px; }
+
+    /* Feature tags */
+    .feature-tags { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:24px; }
+    .feature-tag  { font-size:9px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; padding:4px 10px; border-radius:20px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); color:#8892a4; }
+
+    /* CTA */
+    .app-cta { display:inline-flex; align-items:center; gap:8px; font-size:0.85rem; font-weight:700; letter-spacing:0.04em; text-transform:uppercase; padding:11px 22px; border-radius:10px; transition:all 0.2s ease; align-self:flex-start; text-decoration:none; }
+    .app-tile:nth-child(1) .app-cta { background:linear-gradient(135deg,#FF6200,#cc4e00); color:#fff; box-shadow:0 4px 16px rgba(255,98,0,0.3); }
+    .app-tile:nth-child(2) .app-cta { background:linear-gradient(135deg,#0078ff,#0055cc); color:#fff; box-shadow:0 4px 16px rgba(0,120,255,0.3); }
+    .app-tile:nth-child(3) .app-cta { background:linear-gradient(135deg,#7c3aed,#5b21b6); color:#fff; box-shadow:0 4px 16px rgba(124,58,237,0.3); }
+    .app-tile:nth-child(4) .app-cta { background:linear-gradient(135deg,#059669,#047857); color:#fff; box-shadow:0 4px 16px rgba(5,150,105,0.3); }
+    .app-tile:nth-child(1):hover .app-cta { box-shadow:0 6px 24px rgba(255,98,0,0.5); gap:12px; }
+    .app-tile:nth-child(2):hover .app-cta { box-shadow:0 6px 24px rgba(0,120,255,0.5); gap:12px; }
+    .app-tile:nth-child(3):hover .app-cta { box-shadow:0 6px 24px rgba(124,58,237,0.5); gap:12px; }
+    .app-tile:nth-child(4):hover .app-cta { box-shadow:0 6px 24px rgba(5,150,105,0.5); gap:12px; }
+    .app-tile:nth-child(5) .app-cta { background:linear-gradient(135deg,#0078ff,#0055cc); color:#fff; box-shadow:0 4px 16px rgba(0,120,255,0.3); }
+    .app-tile:nth-child(5):hover .app-cta { box-shadow:0 6px 24px rgba(0,120,255,0.5); gap:12px; }
+    .app-tile:nth-child(6)::before { background:linear-gradient(90deg,#d97706,#fbbf24); }
+    .app-tile:nth-child(6):hover { border-color:rgba(217,119,6,0.45); box-shadow:0 20px 60px rgba(217,119,6,0.2); }
+    .app-tile:nth-child(6)::after { background:#d97706; }
+    .app-tile:nth-child(6) .app-num { color:#fbbf24; }
+    .app-tile:nth-child(6) .app-cta { background:linear-gradient(135deg,#d97706,#b45309); color:#fff; box-shadow:0 4px 16px rgba(217,119,6,0.3); }
+    .app-tile:nth-child(6):hover .app-cta { box-shadow:0 6px 24px rgba(217,119,6,0.5); gap:12px; }
+
+    /* ── Info Banner ── */
+    .info-banner { max-width:1100px; margin:0 auto 32px; background:rgba(255,98,0,0.07); border:1px solid rgba(255,98,0,0.2); border-radius:14px; padding:18px 24px; display:flex; align-items:flex-start; gap:16px; }
+    .info-banner-icon { font-size:1.4rem; flex-shrink:0; margin-top:2px; }
+    .info-banner-title { font-size:0.9rem; font-weight:700; color:#FF6200; margin-bottom:5px; }
+    .info-banner-body  { font-size:0.82rem; color:#8892a4; line-height:1.7; }
+
+    @media(max-width:1024px){ .app-grid{grid-template-columns:repeat(2,1fr);} }
+    @media(max-width:640px){ .app-grid{grid-template-columns:1fr;} .page-header h1{font-size:1.7rem;} }
+  </style>
+</head>
+<body>
+<canvas id="particle-canvas"></canvas>
+<div class="page-wrap">
+<header>
+<div class="header-title"><span>EDE</span> / CEES / EEP  Frameworks</div>
+<div class="header-badge">Restricted Access</div>
+</header>
+<div class="dash-wrap">
+<div class="dash-back"><a class="back-btn" href="selection.html">← Back to Selection</a></div>
+<!-- Page Header -->
+<div class="page-header">
+<div class="eyebrow">Engineer Tools — Interactive Apps</div>
+<h1>Engineer Dashboards</h1>
+<p>Fully interactive delivery tools built on the EEP framework. Each app opens in your browser — no installation required.</p>
+</div>
+<!-- Info Banner -->
+<div class="info-banner">
+<div class="info-banner-icon">💡</div>
+<div>
+<div class="info-banner-title">These are standalone interactive applications</div>
+<div class="info-banner-body">Each tool below opens as a full single-page application with its own navigation, interactive features, and data persistence. Built on original frameworks by Mike Garcia — EDEv4 · CEEDS · CE Framework. All tools are self-contained and require no external dependencies or server.</div>
+</div>
+</div>
+<!-- App Grid -->
+<div class="app-grid">
+<!-- 1. Engineer Delivery Dashboard -->
+<a class="app-tile" href="dashboards/engineer-delivery-dashboard.html" target="_blank">
+<span class="status-pill status-live">● Live</span>
+<div class="app-num">App 01</div>
+<span class="app-icon">🚀</span>
+<div class="app-title">Engineer Delivery Dashboard</div>
+<p class="app-desc">
+          Your daily delivery command center. Manage engagements, track compliance, monitor signal intelligence, apply the Three Tests to communications, run scoping checklists, and access email templates — all in one place.
+        </p>
+<div class="feature-tags">
+<span class="feature-tag">Work Priority Inbox</span>
+<span class="feature-tag">Engagement Tracker</span>
+<span class="feature-tag">Signal Intelligence</span>
+<span class="feature-tag">Three Tests Checker</span>
+<span class="feature-tag">Scoping Checklist</span>
+<span class="feature-tag">Email Templates</span>
+<span class="feature-tag">CEES Scenarios</span>
+<span class="feature-tag">Skills Self-Assessment</span>
+<span class="feature-tag">M365 Advisory Builder</span>
+</div>
+<span class="app-cta">Launch App →</span>
+</a>
+<!-- 2. EEP Command Center (Unbranded) -->
+<a class="app-tile" href="dashboards/eep-command-center.html" target="_blank">
+<span class="status-pill status-live">● Live</span>
+<div class="app-num">App 02</div>
+<span class="app-icon">🎛️</span>
+<div class="app-title">EEP Command Center</div>
+<p class="app-desc">
+          The full EEP &amp; Security Modernization reference hub. 17 pages across 5 sections covering program architecture, certification paths, CEES scenario simulator, domain maturity tracker, and the complete security modernization field guide.
+        </p>
+<div class="feature-tags">
+<span class="feature-tag">Program Architecture</span>
+<span class="feature-tag">30/60/90 Planner</span>
+<span class="feature-tag">CEES Simulator</span>
+<span class="feature-tag">Certification Path</span>
+<span class="feature-tag">Skills Rubric</span>
+<span class="feature-tag">Security Field Guide</span>
+<span class="feature-tag">Domain Maturity Tracker</span>
+<span class="feature-tag">Director Mode</span>
+</div>
+<span class="app-cta">Launch App →</span>
+</a>
+<!-- 3. EEP Command Center M365 Preview -->
+<a class="app-tile" href="dashboards/eep-command-center-m365.html" target="_blank">
+<span class="status-pill status-preview">◈ Preview</span>
+<div class="app-num">App 03</div>
+<span class="app-icon">☁️</span>
+<div class="app-title">EEP Command Center — M365 Edition</div>
+<p class="app-desc">
+          The M365-integrated preview of the EEP Command Center. Includes all core EEP content plus Microsoft 365 connectivity features — calendar integration, inbox access, and live tenant data hooks for pre-engagement intelligence.
+        </p>
+<div class="feature-tags">
+<span class="feature-tag">M365 Integration</span>
+<span class="feature-tag">Calendar &amp; Inbox</span>
+<span class="feature-tag">Tenant Intelligence</span>
+<span class="feature-tag">All EEP Content</span>
+<span class="feature-tag">Security Modernization</span>
+<span class="feature-tag">Live Data Preview</span>
+</div>
+<span class="app-cta">Launch App →</span>
+</a>
+<!-- 4. EEP Self-Assessment Tool -->
+<a class="app-tile" href="dashboards/eep-self-assessment.html" target="_blank">
+<span class="status-pill status-live">● Live</span>
+<div class="app-num">App 04</div>
+<span class="app-icon">📊</span>
+<div class="app-title">EEP Self-Assessment Tool</div>
+<p class="app-desc">
+          Rate yourself across all 6 EEP competency dimensions with a live radar chart that updates in real time. Track your scores over time with localStorage persistence, view personalized insights, and monitor your certification readiness.
+        </p>
+<div class="feature-tags">
+<span class="feature-tag">Live Radar Chart</span>
+<span class="feature-tag">6 Dimensions</span>
+<span class="feature-tag">At Standard Benchmark</span>
+<span class="feature-tag">Smart Insights</span>
+<span class="feature-tag">Score History</span>
+<span class="feature-tag">Cert Readiness</span>
+<span class="feature-tag">Print-Ready</span>
+<span class="feature-tag">No Dependencies</span>
+</div>
+<span class="app-cta">Launch App →</span>
+</a>
+</div><!-- /app-grid -->
+</div><!-- /dash-wrap -->
+<footer>EDE / CEES / EEP Frameworks  ·  Confidential  ·  Authorized Personnel Only</footer>
+</div><!-- /page-wrap -->
+<script src="js/main.js"></script>
+</body>
+</html>

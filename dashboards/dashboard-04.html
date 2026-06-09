@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>CSAM Partnership Pulse — EDE Dashboards</title>
+<link href="../css/styles.css" rel="stylesheet"/>
+<style>
+    .dash-wrap { position:relative; z-index:1; padding:40px 24px 80px; }
+    .dash-back { max-width:1200px; margin:0 auto 24px; }
+    .dash-page-header { max-width:1200px; margin:0 auto 36px; }
+    .dash-page-header .eyebrow { font-size:11px; font-weight:700; letter-spacing:3px; text-transform:uppercase; color:#059669; margin-bottom:10px; }
+    .dash-page-header h1 { font-size:2rem; font-weight:800; color:#fff; margin-bottom:8px; }
+    .dash-page-header p { font-size:0.95rem; color:#8892a4; max-width:680px; line-height:1.7; }
+
+    .kpi-row { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; max-width:1200px; margin:0 auto 28px; }
+    .kpi-card { background:linear-gradient(160deg,rgba(17,24,39,0.97) 0%,rgba(10,14,36,0.97) 100%); border:1px solid rgba(5,150,105,0.18); border-radius:14px; padding:22px 24px; position:relative; overflow:hidden; }
+    .kpi-card::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; }
+    .kpi-card.c1::before { background:linear-gradient(90deg,#059669,#34d399); }
+    .kpi-card.c2::before { background:linear-gradient(90deg,#0078ff,#00c8ff); }
+    .kpi-card.c3::before { background:linear-gradient(90deg,#d97706,#fbbf24); }
+    .kpi-card.c4::before { background:linear-gradient(90deg,#dc2626,#f87171); }
+    .kpi-label { font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:#8892a4; margin-bottom:10px; }
+    .kpi-value { font-size:2.4rem; font-weight:800; line-height:1; margin-bottom:6px; }
+    .kpi-card.c1 .kpi-value { color:#34d399; }
+    .kpi-card.c2 .kpi-value { color:#00c8ff; }
+    .kpi-card.c3 .kpi-value { color:#fbbf24; }
+    .kpi-card.c4 .kpi-value { color:#f87171; }
+    .kpi-sub { font-size:0.78rem; color:#8892a4; }
+
+    .main-grid { display:grid; grid-template-columns:1fr 1fr; gap:20px; max-width:1200px; margin:0 auto 20px; }
+    .full-width { max-width:1200px; margin:0 auto 20px; }
+    .panel { background:linear-gradient(160deg,rgba(17,24,39,0.97) 0%,rgba(10,14,36,0.97) 100%); border:1px solid rgba(5,150,105,0.12); border-radius:14px; padding:24px 28px; position:relative; overflow:hidden; }
+    .panel::before { content:''; position:absolute; top:0; left:0; right:0; height:1px; background:linear-gradient(90deg,transparent,rgba(52,211,153,0.4),transparent); }
+    .panel-title { font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:#34d399; margin-bottom:18px; }
+
+    /* CSAM table */
+    .csam-table { width:100%; border-collapse:collapse; }
+    .csam-table th { font-size:9px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:#8892a4; padding:0 10px 12px 0; text-align:left; border-bottom:1px solid rgba(255,255,255,0.06); }
+    .csam-table td { font-size:0.83rem; color:#e8eaf6; padding:12px 10px 12px 0; border-bottom:1px solid rgba(255,255,255,0.04); vertical-align:middle; }
+    .csam-table tr:last-child td { border-bottom:none; }
+    .csam-name { font-weight:700; color:#fff; }
+    .csam-sub { font-size:0.75rem; color:#8892a4; margin-top:2px; }
+
+    .badge { display:inline-block; font-size:9px; font-weight:700; letter-spacing:1px; text-transform:uppercase; padding:3px 10px; border-radius:20px; }
+    .badge-green  { background:rgba(5,150,105,0.15);  color:#34d399; border:1px solid rgba(52,211,153,0.3); }
+    .badge-amber  { background:rgba(217,119,6,0.15);  color:#fbbf24; border:1px solid rgba(251,191,36,0.3); }
+    .badge-red    { background:rgba(220,38,38,0.15);  color:#f87171; border:1px solid rgba(248,113,113,0.3); }
+    .badge-blue   { background:rgba(0,120,255,0.15);  color:#60a5fa; border:1px solid rgba(96,165,250,0.3); }
+    .badge-gray   { background:rgba(255,255,255,0.06); color:#8892a4; border:1px solid rgba(255,255,255,0.1); }
+
+    /* Trust score bar */
+    .trust-bar-wrap { display:flex; align-items:center; gap:10px; }
+    .trust-bar-bg { flex:1; height:6px; background:rgba(255,255,255,0.07); border-radius:3px; overflow:hidden; }
+    .trust-bar-fill { height:100%; border-radius:3px; }
+    .trust-val { font-size:0.82rem; font-weight:700; min-width:28px; text-align:right; }
+
+    /* Principles list */
+    .principle-row { display:flex; align-items:flex-start; gap:14px; padding:14px 0; border-bottom:1px solid rgba(255,255,255,0.05); }
+    .principle-row:last-child { border-bottom:none; }
+    .principle-num { width:28px; height:28px; background:rgba(5,150,105,0.15); border:1px solid rgba(52,211,153,0.3); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.75rem; font-weight:700; color:#34d399; flex-shrink:0; text-align:center; line-height:28px; }
+    .principle-title { font-size:0.88rem; font-weight:700; color:#fff; margin-bottom:4px; }
+    .principle-body { font-size:0.78rem; color:#8892a4; line-height:1.6; }
+
+    /* OO call tracker */
+    .oo-row { display:flex; align-items:center; justify-content:space-between; padding:11px 0; border-bottom:1px solid rgba(255,255,255,0.05); }
+    .oo-row:last-child { border-bottom:none; }
+    .oo-name { font-size:0.85rem; font-weight:700; color:#fff; }
+    .oo-sub { font-size:0.75rem; color:#8892a4; margin-top:2px; }
+    .oo-date { font-size:0.82rem; color:#34d399; font-weight:600; }
+    .oo-date.overdue { color:#f87171; }
+    .oo-date.pending { color:#fbbf24; }
+
+    /* Surprise index */
+    .surprise-row { display:flex; align-items:flex-start; gap:14px; padding:14px 16px; border-radius:10px; margin-bottom:10px; border:1px solid; }
+    .surprise-row.none { background:rgba(5,150,105,0.07); border-color:rgba(52,211,153,0.2); }
+    .surprise-row.low  { background:rgba(217,119,6,0.07); border-color:rgba(251,191,36,0.2); }
+    .surprise-row.high { background:rgba(220,38,38,0.07); border-color:rgba(248,113,113,0.2); }
+    .surprise-title { font-size:0.88rem; font-weight:700; margin-bottom:4px; }
+    .surprise-row.none .surprise-title { color:#34d399; }
+    .surprise-row.low  .surprise-title { color:#fbbf24; }
+    .surprise-row.high .surprise-title { color:#f87171; }
+    .surprise-body { font-size:0.78rem; color:#8892a4; line-height:1.6; }
+
+    @media(max-width:900px){ .main-grid{grid-template-columns:1fr;} .kpi-row{grid-template-columns:repeat(2,1fr);} }
+    @media(max-width:500px){ .kpi-row{grid-template-columns:1fr;} }
+  </style>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+<canvas id="particle-canvas"></canvas>
+<div class="page-wrap">
+<header>
+<div class="header-title"><span>EDE</span> / CEES / EEP  Frameworks</div>
+<div class="header-badge">Restricted Access</div>
+</header>
+<div class="dash-wrap">
+<div class="dash-back"><a class="back-btn" href="../dashboards.html">← Back to Dashboards</a></div>
+<div class="dash-page-header">
+<div class="eyebrow">Dashboard 04 — Live</div>
+<h1>CSAM Partnership Pulse</h1>
+<p>Track the health of CSAM relationships across all active accounts. Monitor weekly check-in completion, Outcome Owner call cadence, surprise incidents, and routing trust scores by CSAM.</p>
+</div>
+<!-- KPI Row -->
+<div class="kpi-row">
+<div class="kpi-card c1">
+<div class="kpi-label">Check-In Rate</div>
+<div class="kpi-value">88%</div>
+<div class="kpi-sub">Weekly CSAM check-ins complete</div>
+</div>
+<div class="kpi-card c2">
+<div class="kpi-label">OO Calls This Week</div>
+<div class="kpi-value">7 / 9</div>
+<div class="kpi-sub">Outcome Owner calls held</div>
+</div>
+<div class="kpi-card c3">
+<div class="kpi-label">Surprise Index</div>
+<div class="kpi-value">Low</div>
+<div class="kpi-sub">1 unplanned escalation this month</div>
+</div>
+<div class="kpi-card c4">
+<div class="kpi-label">At-Risk CSAMs</div>
+<div class="kpi-value">1</div>
+<div class="kpi-sub">Routing trust score below threshold</div>
+</div>
+</div>
+<!-- Main Grid -->
+<div class="main-grid">
+<!-- CSAM Register -->
+<div class="panel">
+<div class="panel-title">CSAM Partnership Register</div>
+<table class="csam-table">
+<thead>
+<tr>
+<th>CSAM</th>
+<th>Accounts</th>
+<th>Check-In</th>
+<th>OO Call</th>
+<th>Routing Trust</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><div class="csam-name">A. Williams</div><div class="csam-sub">Enterprise West</div></td>
+<td>4</td>
+<td><span class="badge badge-green">Done</span></td>
+<td><span class="badge badge-green">Jun 6</span></td>
+<td>
+<div class="trust-bar-wrap">
+<div class="trust-bar-bg"><div class="trust-bar-fill" style="width:92%;background:linear-gradient(90deg,#059669,#34d399);"></div></div>
+<span class="trust-val" style="color:#34d399;">92</span>
+</div>
+</td>
+</tr>
+<tr>
+<td><div class="csam-name">B. Nguyen</div><div class="csam-sub">Mid-Market Central</div></td>
+<td>3</td>
+<td><span class="badge badge-green">Done</span></td>
+<td><span class="badge badge-green">Jun 5</span></td>
+<td>
+<div class="trust-bar-wrap">
+<div class="trust-bar-bg"><div class="trust-bar-fill" style="width:85%;background:linear-gradient(90deg,#059669,#34d399);"></div></div>
+<span class="trust-val" style="color:#34d399;">85</span>
+</div>
+</td>
+</tr>
+<tr>
+<td><div class="csam-name">C. Okafor</div><div class="csam-sub">Enterprise East</div></td>
+<td>2</td>
+<td><span class="badge badge-amber">Pending</span></td>
+<td><span class="badge badge-amber">Pending</span></td>
+<td>
+<div class="trust-bar-wrap">
+<div class="trust-bar-bg"><div class="trust-bar-fill" style="width:71%;background:linear-gradient(90deg,#d97706,#fbbf24);"></div></div>
+<span class="trust-val" style="color:#fbbf24;">71</span>
+</div>
+</td>
+</tr>
+<tr>
+<td><div class="csam-name">D. Reyes</div><div class="csam-sub">SMB South</div></td>
+<td>2</td>
+<td><span class="badge badge-red">Missed</span></td>
+<td><span class="badge badge-red">Overdue</span></td>
+<td>
+<div class="trust-bar-wrap">
+<div class="trust-bar-bg"><div class="trust-bar-fill" style="width:48%;background:linear-gradient(90deg,#dc2626,#f87171);"></div></div>
+<span class="trust-val" style="color:#f87171;">48</span>
+</div>
+</td>
+</tr>
+<tr>
+<td><div class="csam-name">E. Kim</div><div class="csam-sub">Enterprise North</div></td>
+<td>3</td>
+<td><span class="badge badge-green">Done</span></td>
+<td><span class="badge badge-green">Jun 7</span></td>
+<td>
+<div class="trust-bar-wrap">
+<div class="trust-bar-bg"><div class="trust-bar-fill" style="width:89%;background:linear-gradient(90deg,#059669,#34d399);"></div></div>
+<span class="trust-val" style="color:#34d399;">89</span>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- OO Call Tracker + Principles -->
+<div style="display:flex;flex-direction:column;gap:20px;">
+<div class="panel">
+<div class="panel-title">Outcome Owner Call Schedule</div>
+<div class="oo-row">
+<div><div class="oo-name">Contoso — A. Williams / M. Garcia</div><div class="oo-sub">Enterprise · Weekly</div></div>
+<div class="oo-date">Jun 9 ✓</div>
+</div>
+<div class="oo-row">
+<div><div class="oo-name">Fabrikam — B. Nguyen / S. Patel</div><div class="oo-sub">Enterprise · Weekly</div></div>
+<div class="oo-date">Jun 8 ✓</div>
+</div>
+<div class="oo-row">
+<div><div class="oo-name">Northwind — C. Okafor / R. Chen</div><div class="oo-sub">Mid-Market · Bi-weekly</div></div>
+<div class="oo-date pending">Jun 11 — Pending</div>
+</div>
+<div class="oo-row">
+<div><div class="oo-name">Tailspin — D. Reyes / J. Torres</div><div class="oo-sub">Mid-Market · Weekly</div></div>
+<div class="oo-date overdue">Jun 6 — Overdue</div>
+</div>
+<div class="oo-row">
+<div><div class="oo-name">Woodgrove — E. Kim / S. Patel</div><div class="oo-sub">Enterprise · Weekly</div></div>
+<div class="oo-date">Jun 9 ✓</div>
+</div>
+</div>
+<div class="panel">
+<div class="panel-title">Surprise Index — This Month</div>
+<div class="surprise-row none">
+<div style="font-size:1.1rem;flex-shrink:0;">✅</div>
+<div><div class="surprise-title">A. Williams — Zero Surprises</div><div class="surprise-body">No unplanned escalations. CSAM consistently prepared. Signal-over-status maintained across all 4 accounts.</div></div>
+</div>
+<div class="surprise-row low">
+<div style="font-size:1.1rem;flex-shrink:0;">⚠️</div>
+<div><div class="surprise-title">C. Okafor — 1 Unplanned Escalation</div><div class="surprise-body">Client raised concern directly to CSAM without prior EDE notification. CSAM was not prepared. Apply "no surprises" principle immediately.</div></div>
+</div>
+<div class="surprise-row high">
+<div style="font-size:1.1rem;flex-shrink:0;">🔴</div>
+<div><div class="surprise-title">D. Reyes — Routing Trust at Risk</div><div class="surprise-body">Missed weekly check-in. OO call overdue. Routing trust score 48 — below 60 threshold. Immediate escalation required.</div></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Partnership Principles -->
+<div class="full-width">
+<div class="panel">
+<div class="panel-title">CSAM Partnership Principles — EEP Standard</div>
+<div class="principle-row">
+<div class="principle-num">1</div>
+<div><div class="principle-title">Make the CSAM look prepared — no surprises</div><div class="principle-body">The CSAM owns the relationship; you own the outcome. Every client-facing moment must be coordinated. If the CSAM is surprised, the relationship is at risk. Pre-brief before every client interaction above routine status.</div></div>
+</div>
+<div class="principle-row">
+<div class="principle-num">2</div>
+<div><div class="principle-title">Signal-over-status updates</div><div class="principle-body">Updates to the CSAM must communicate what changes decisions — not just what happened. "The client re-asked the same question twice this week" is signal. "The call went well" is not.</div></div>
+</div>
+<div class="principle-row">
+<div class="principle-num">3</div>
+<div><div class="principle-title">Disagree in private, align in public</div><div class="principle-body">Disagreements between EDE and CSAM are resolved before the client interaction — never in front of the client. A unified front is non-negotiable. Raise concerns in the weekly check-in, not in the client call.</div></div>
+</div>
+<div class="principle-row">
+<div class="principle-num">4</div>
+<div><div class="principle-title">Outcome Owner call — shared between EDE and CSAM</div><div class="principle-body">The Outcome Owner call is a joint accountability moment. Both EDE and CSAM are present. The client sees a unified team with a single named owner. This is the primary trust-building cadence in the partnership model.</div></div>
+</div>
+<div class="principle-row">
+<div class="principle-num">5</div>
+<div><div class="principle-title">Weekly CSAM check-in — non-negotiable</div><div class="principle-body">The weekly check-in is not a status call — it is a signal-sharing session. What friction indicators did you observe? What communications are going out this week? What does the CSAM need to know before their next client interaction?</div></div>
+</div>
+</div>
+</div>
+</div>
+<footer>EDE / CEES / EEP Frameworks  ·  Confidential  ·  Authorized Personnel Only</footer>
+</div>
+<script src="../js/main.js"></script>
+
+<script>
+Chart.defaults.color = '#8892a4';
+Chart.defaults.borderColor = 'rgba(255,255,255,0.06)';
+Chart.defaults.font.family = '"Segoe UI", Roboto, sans-serif';
+
+// ── CSAM Trust Score Horizontal Bar Chart
+(function(){
+  const ctx = document.getElementById('trustScoreBar');
+  if(!ctx) return;
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: ['A. Williams','B. Nguyen','E. Kim','C. Okafor','D. Reyes'],
+      datasets:[{
+        label: 'Trust Score',
+        data: [92, 85, 89, 71, 48],
+        backgroundColor: [
+          'rgba(52,211,153,0.75)',
+          'rgba(52,211,153,0.75)',
+          'rgba(52,211,153,0.75)',
+          'rgba(251,191,36,0.75)',
+          'rgba(248,113,113,0.75)'
+        ],
+        borderColor: ['#34d399','#34d399','#34d399','#fbbf24','#f87171'],
+        borderWidth: 1, borderRadius: 6
+      }]
+    },
+    options: {
+      responsive:true, maintainAspectRatio:true, indexAxis:'y',
+      plugins:{
+        legend:{ display:false },
+        tooltip:{ backgroundColor:'rgba(10,14,36,0.95)', borderColor:'rgba(52,211,153,0.3)', borderWidth:1,
+          callbacks:{ label: ctx => ` Trust Score: ${ctx.parsed.x}/100` } }
+      },
+      scales:{
+        x:{ min:0, max:100, grid:{ color:'rgba(255,255,255,0.05)' }, ticks:{ color:'#8892a4', callback: v => v } },
+        y:{ grid:{ display:false }, ticks:{ color:'#e8eaf6' } }
+      }
+    }
+  });
+})();
+
+// ── OO Call Completion Line Chart
+(function(){
+  const ctx = document.getElementById('ooCallLine');
+  if(!ctx) return;
+  new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: ['Wk 1','Wk 2','Wk 3','Wk 4','Wk 5','Wk 6'],
+      datasets:[
+        { label:'Scheduled', data:[9,9,9,9,9,9], borderColor:'rgba(255,255,255,0.15)', borderDash:[5,5], pointRadius:0, fill:false },
+        { label:'Completed', data:[7,8,9,8,7,7], borderColor:'#34d399', backgroundColor:'rgba(52,211,153,0.08)', tension:0.4, pointRadius:5, pointHoverRadius:7, fill:true },
+        { label:'Overdue',   data:[2,1,0,1,2,2], borderColor:'#f87171', backgroundColor:'rgba(248,113,113,0.06)', tension:0.4, pointRadius:5, pointHoverRadius:7, fill:true },
+      ]
+    },
+    options: {
+      responsive:true, maintainAspectRatio:true,
+      plugins:{
+        legend:{ position:'bottom', labels:{ boxWidth:10, padding:14, color:'#8892a4' } },
+        tooltip:{ backgroundColor:'rgba(10,14,36,0.95)', borderColor:'rgba(52,211,153,0.3)', borderWidth:1 }
+      },
+      scales:{
+        x:{ grid:{ color:'rgba(255,255,255,0.05)' }, ticks:{ color:'#8892a4' } },
+        y:{ min:0, max:10, grid:{ color:'rgba(255,255,255,0.05)' }, ticks:{ color:'#8892a4', stepSize:2 } }
+      }
+    }
+  });
+})();
+</script>
+</body>
+</html>

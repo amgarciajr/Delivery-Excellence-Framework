@@ -1,0 +1,1645 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EEP & Security Modernization — Command Center</title>
+<style>
+:root{--orange:#FF6200;--orange-dark:#CC4E00;--charcoal:#1C1C1C;--white:#FFFFFF;--light-gray:#F5F5F5;--mid-gray:#9E9E9E;--border:#E0E0E0;--green:#2E7D32;--amber:#F57C00;--red:#C62828;--blue:#1565C0;--sidebar-w:260px}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Calibri','Segoe UI',Arial,sans-serif;background:var(--light-gray);color:var(--charcoal);display:flex;min-height:100vh;font-size:15px}
+#sidebar{width:var(--sidebar-w);background:var(--charcoal);color:var(--white);position:fixed;top:0;left:0;bottom:0;overflow-y:auto;z-index:100;display:flex;flex-direction:column}
+.sidebar-logo{padding:20px 18px 14px;border-bottom:2px solid var(--orange)}
+.prog-badge{background:var(--orange);color:#fff;font-size:10px;font-weight:700;letter-spacing:1.5px;padding:3px 8px;border-radius:3px;display:inline-block;margin-bottom:8px}
+.sidebar-logo h1{font-size:15px;font-weight:700;line-height:1.3;color:#fff}
+.sidebar-logo p{font-size:10px;color:var(--mid-gray);margin-top:4px}
+.nav-section{padding:10px 0 4px}
+.nav-section-label{font-size:9px;font-weight:700;letter-spacing:2px;color:var(--mid-gray);padding:6px 18px 4px;text-transform:uppercase}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 18px;cursor:pointer;font-size:13px;color:#ccc;border-left:3px solid transparent;transition:all .15s;text-decoration:none}
+.nav-item:hover{background:rgba(255,255,255,.06);color:#fff}
+.nav-item.active{background:rgba(255,98,0,.15);color:var(--orange);border-left-color:var(--orange);font-weight:600}
+.nav-item .icon{font-size:15px;width:18px;text-align:center;flex-shrink:0}
+.sidebar-footer{margin-top:auto;padding:14px 18px;border-top:1px solid #333;font-size:10px;color:var(--mid-gray);line-height:1.5}
+#main{margin-left:var(--sidebar-w);flex:1;min-height:100vh}
+.topbar{background:var(--white);border-bottom:1px solid var(--border);padding:14px 32px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
+.topbar-title{font-size:18px;font-weight:700;color:var(--charcoal)}
+.topbar-sub{font-size:12px;color:var(--mid-gray);margin-top:2px}
+.topbar-badge{background:var(--orange);color:#fff;font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;letter-spacing:.5px}
+.page{display:none;padding:28px 32px 48px}
+.page.active{display:block}
+.card{background:var(--white);border-radius:8px;border:1px solid var(--border);padding:24px;margin-bottom:20px}
+.card-title{font-size:16px;font-weight:700;color:var(--charcoal);margin-bottom:4px;display:flex;align-items:center;gap:10px}
+.card-title .icon{color:var(--orange);font-size:18px}
+.card-sub{font-size:12px;color:var(--mid-gray);margin-bottom:16px}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.stat-tile{background:var(--white);border:1px solid var(--border);border-radius:8px;padding:20px;text-align:center;border-top:3px solid var(--orange)}
+.stat-tile .num{font-size:32px;font-weight:700;color:var(--orange)}
+.stat-tile .label{font-size:12px;color:var(--mid-gray);margin-top:4px}
+.stat-tile .desc{font-size:13px;font-weight:600;color:var(--charcoal);margin-top:6px}
+.section-header{border-left:4px solid var(--orange);padding-left:14px;margin-bottom:20px}
+.section-header h2{font-size:20px;font-weight:700}
+.section-header p{font-size:13px;color:var(--mid-gray);margin-top:4px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{background:var(--charcoal);color:var(--white);padding:10px 14px;text-align:left;font-size:11px;letter-spacing:.5px;font-weight:700}
+td{padding:10px 14px;border-bottom:1px solid var(--border);vertical-align:top}
+tr:nth-child(even) td{background:var(--light-gray)}
+tr:hover td{background:#FFF3EC}
+.badge{display:inline-block;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:700;letter-spacing:.3px}
+.badge-orange{background:#FFF0E6;color:var(--orange-dark)}
+.badge-green{background:#E8F5E9;color:var(--green)}
+.badge-amber{background:#FFF8E1;color:var(--amber)}
+.badge-red{background:#FFEBEE;color:var(--red)}
+.badge-blue{background:#E3F2FD;color:var(--blue)}
+.badge-gray{background:#F5F5F5;color:#555}
+.callout{border-radius:6px;padding:14px 18px;margin:14px 0;font-size:13px;line-height:1.6;border-left:4px solid}
+.callout-orange{background:#FFF3EC;border-color:var(--orange)}
+.callout-red{background:#FFEBEE;border-color:var(--red)}
+.callout-green{background:#E8F5E9;border-color:var(--green)}
+.callout-blue{background:#E3F2FD;border-color:var(--blue)}
+.callout-amber{background:#FFF8E1;border-color:var(--amber)}
+.callout strong{font-weight:700}
+.tab-bar{display:flex;gap:4px;border-bottom:2px solid var(--border);margin-bottom:20px;flex-wrap:wrap}
+.tab-btn{padding:9px 18px;font-size:13px;font-weight:600;cursor:pointer;border:none;background:none;color:var(--mid-gray);border-bottom:3px solid transparent;margin-bottom:-2px;transition:all .15s;font-family:inherit}
+.tab-btn:hover{color:var(--charcoal)}
+.tab-btn.active{color:var(--orange);border-bottom-color:var(--orange)}
+.tab-content{display:none}
+.tab-content.active{display:block}
+.cert-level{border:2px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:20px}
+.cert-level-header{padding:16px 20px;display:flex;align-items:center;gap:14px;cursor:pointer}
+.cert-badge-big{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:900;color:#fff;flex-shrink:0}
+.cert-level-body{padding:0 20px 20px;display:none}
+.cert-level-body.open{display:block}
+.req-item{display:flex;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);font-size:13px;line-height:1.5}
+.req-item:last-child{border-bottom:none}
+.req-num{width:24px;height:24px;background:var(--orange);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;margin-top:1px}
+.rubric-dim{border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:16px}
+.rubric-dim-header{background:var(--charcoal);color:#fff;padding:12px 18px;display:flex;align-items:center;justify-content:space-between;cursor:pointer}
+.rubric-dim-header h3{font-size:14px;font-weight:700}
+.rubric-dim-body{display:none}
+.rubric-dim-body.open{display:block}
+.rubric-level{padding:14px 18px;border-bottom:1px solid var(--border);display:grid;grid-template-columns:130px 1fr 1fr;gap:16px;font-size:13px;line-height:1.5}
+.rubric-level:last-child{border-bottom:none}
+.signal-stream{border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:16px}
+.signal-stream-header{padding:14px 18px;display:flex;align-items:center;justify-content:space-between;cursor:pointer}
+.signal-stream-title{font-size:15px;font-weight:700}
+.signal-flag{padding:4px 14px;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer;border:none;font-family:inherit}
+.flag-green{background:#E8F5E9;color:var(--green)}
+.flag-amber{background:#FFF8E1;color:var(--amber)}
+.flag-red{background:#FFEBEE;color:var(--red)}
+.signal-stream-body{padding:0 18px 16px;display:none}
+.signal-stream-body.open{display:block}
+.scenario-card{border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:16px}
+.scenario-header{background:var(--charcoal);color:#fff;padding:14px 18px;display:flex;align-items:center;justify-content:space-between}
+.scenario-header h3{font-size:14px;font-weight:700}
+.scenario-body{padding:18px}
+.scenario-situation{background:var(--light-gray);border-radius:6px;padding:14px;font-size:13px;line-height:1.6;margin-bottom:14px;border-left:3px solid var(--orange)}
+.scenario-options{display:flex;flex-direction:column;gap:8px;margin-bottom:14px}
+.scenario-option{padding:10px 14px;border:2px solid var(--border);border-radius:6px;cursor:pointer;font-size:13px;line-height:1.5;transition:all .15s;background:#fff;text-align:left;font-family:inherit;width:100%}
+.scenario-option:hover{border-color:var(--orange);background:#FFF3EC}
+.scenario-option.correct{border-color:var(--green);background:#E8F5E9}
+.scenario-option.incorrect{border-color:var(--red);background:#FFEBEE}
+.scenario-reveal{display:none}
+.scenario-reveal.show{display:block}
+.phase-block{border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:16px}
+.phase-header{padding:14px 20px;display:flex;align-items:center;gap:14px;cursor:pointer}
+.phase-num{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:900;color:#fff;flex-shrink:0}
+.phase-body{padding:0 20px 20px;display:none}
+.phase-body.open{display:block}
+.milestone-item{display:flex;align-items:flex-start;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);font-size:13px;line-height:1.5}
+.milestone-item:last-child{border-bottom:none}
+.milestone-check{width:20px;height:20px;border:2px solid var(--border);border-radius:4px;cursor:pointer;flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;font-size:12px;transition:all .15s;user-select:none}
+.milestone-check.checked{background:var(--green);border-color:var(--green);color:#fff}
+.progress-bar-wrap{background:var(--border);border-radius:10px;height:8px;overflow:hidden;margin:8px 0}
+.progress-bar-fill{height:100%;background:var(--orange);border-radius:10px;transition:width .3s}
+.domain-card{border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:16px}
+.domain-header{padding:14px 18px;display:flex;align-items:center;justify-content:space-between;cursor:pointer}
+.domain-title{font-size:15px;font-weight:700;display:flex;align-items:center;gap:10px}
+.maturity-score{display:flex;gap:4px}
+.maturity-dot{width:14px;height:14px;border-radius:50%;background:var(--border);cursor:pointer;transition:all .15s}
+.maturity-dot.filled{background:var(--orange)}
+.domain-body{padding:0 18px 18px;display:none}
+.domain-body.open{display:block}
+.motion-card{background:var(--white);border:1px solid var(--border);border-radius:8px;padding:18px;border-top:3px solid var(--orange)}
+.motion-card h3{font-size:14px;font-weight:700;margin-bottom:6px}
+.motion-card .freq{font-size:11px;color:var(--orange);font-weight:700;letter-spacing:.5px;margin-bottom:8px}
+.motion-card p{font-size:13px;color:#555;line-height:1.5}
+.commitment-card{border:1px solid var(--border);border-radius:8px;padding:18px;border-left:4px solid var(--orange);margin-bottom:12px;background:#fff}
+.commitment-card .num{font-size:11px;font-weight:700;color:var(--orange);letter-spacing:1px;margin-bottom:6px}
+.commitment-card h3{font-size:15px;font-weight:700;margin-bottom:8px}
+.commitment-card p{font-size:13px;color:#555;line-height:1.6}
+#director-overlay{display:none;position:fixed;inset:0;background:var(--charcoal);z-index:1000;overflow-y:auto;padding:40px}
+#director-overlay.show{display:block}
+.director-slide{max-width:900px;margin:0 auto 40px;background:#222;border-radius:12px;padding:40px;border-top:4px solid var(--orange)}
+.director-slide h2{font-size:28px;font-weight:700;color:#fff;margin-bottom:8px}
+.director-slide .slide-sub{font-size:14px;color:var(--mid-gray);margin-bottom:24px}
+.director-slide p{font-size:15px;color:#ccc;line-height:1.7;margin-bottom:14px}
+.director-slide ul{list-style:none}
+.director-slide ul li{padding:8px 0;font-size:14px;color:#ccc;border-bottom:1px solid #333;display:flex;gap:10px}
+.director-slide ul li::before{content:"▸";color:var(--orange)}
+.director-close{position:fixed;top:20px;right:24px;background:var(--orange);color:#fff;border:none;border-radius:6px;padding:10px 20px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;z-index:1001}
+.vibe-box{background:var(--charcoal);border-radius:8px;padding:20px;margin-top:20px}
+.vibe-box h3{color:var(--orange);font-size:14px;font-weight:700;margin-bottom:10px}
+.vibe-box pre{color:#aaa;font-size:12px;line-height:1.6;white-space:pre-wrap;word-break:break-word;font-family:'Consolas',monospace}
+.copy-btn{background:var(--orange);color:#fff;border:none;border-radius:4px;padding:6px 14px;font-size:12px;font-weight:700;cursor:pointer;margin-top:10px;font-family:inherit}
+.divider{height:2px;background:var(--orange);margin:24px 0;border-radius:2px}
+ul.check-list{list-style:none}
+ul.check-list li{padding:5px 0;font-size:13px;display:flex;gap:8px;line-height:1.5}
+ul.check-list li::before{content:"✓";color:var(--green);font-weight:700;flex-shrink:0}
+ul.bullet-list{list-style:none}
+ul.bullet-list li{padding:5px 0;font-size:13px;display:flex;gap:8px;line-height:1.5}
+ul.bullet-list li::before{content:"▸";color:var(--orange);flex-shrink:0}
+.qr-card{background:var(--charcoal);color:#fff;border-radius:8px;padding:20px;margin-bottom:16px}
+.qr-card h3{font-size:14px;font-weight:700;color:var(--orange);margin-bottom:12px;border-bottom:1px solid #333;padding-bottom:8px}
+.qr-card ul{list-style:none}
+.qr-card ul li{padding:5px 0;font-size:13px;color:#ddd;border-bottom:1px solid #2a2a2a;display:flex;gap:8px}
+.qr-card ul li::before{content:"▸";color:var(--orange);flex-shrink:0}
+@media(max-width:900px){.grid-2,.grid-3,.grid-4{grid-template-columns:1fr}#sidebar{width:220px}#main{margin-left:220px}.page{padding:16px}.topbar{padding:12px 16px}}
+</style>
+</head>
+<body>
+<!-- SIDEBAR -->
+<nav id="sidebar">
+  <div class="sidebar-logo">
+    <div class="prog-badge">AVANADE · INTERNAL</div>
+    <h1>EEP & Security<br>Command Center</h1>
+    <p>Built on frameworks by Mike Garcia</p>
+  </div>
+  <div class="nav-section">
+    <div class="nav-section-label">Overview</div>
+    <a class="nav-item active" onclick="showPage('home')"><span class="icon">🏠</span> Home Dashboard</a>
+    <a class="nav-item" onclick="showPage('director')"><span class="icon">📊</span> Director Narrative</a>
+  </div>
+  <div class="nav-section">
+    <div class="nav-section-label">EEP Program</div>
+    <a class="nav-item" onclick="showPage('architecture')"><span class="icon">🏗️</span> Program Architecture</a>
+    <a class="nav-item" onclick="showPage('charter')"><span class="icon">📋</span> Program Charter</a>
+    <a class="nav-item" onclick="showPage('operating')"><span class="icon">⚙️</span> Operating Model</a>
+    <a class="nav-item" onclick="showPage('signals')"><span class="icon">📡</span> Signal Intelligence</a>
+    <a class="nav-item" onclick="showPage('deployment')"><span class="icon">🚀</span> 30/60/90 Deployment</a>
+    <a class="nav-item" onclick="showPage('roadmap')"><span class="icon">🗺️</span> Capability Roadmap</a>
+  </div>
+  <div class="nav-section">
+    <div class="nav-section-label">Certification</div>
+    <a class="nav-item" onclick="showPage('certification')"><span class="icon">🎓</span> Certification Path</a>
+    <a class="nav-item" onclick="showPage('rubric')"><span class="icon">📏</span> Skills Rubric</a>
+    <a class="nav-item" onclick="showPage('personas')"><span class="icon">👥</span> Learner Personas</a>
+  </div>
+  <div class="nav-section">
+    <div class="nav-section-label">Practice</div>
+    <a class="nav-item" onclick="showPage('scenarios')"><span class="icon">🎯</span> CEES Scenario Simulator</a>
+    <a class="nav-item" onclick="showPage('measurement')"><span class="icon">📈</span> Measurement Model</a>
+  </div>
+  <div class="nav-section">
+    <div class="nav-section-label">Security Modernization</div>
+    <a class="nav-item" onclick="showPage('sec-overview')"><span class="icon">🔐</span> Framework Overview</a>
+    <a class="nav-item" onclick="showPage('sec-fieldguide')"><span class="icon">🗂️</span> Field Guide</a>
+    <a class="nav-item" onclick="showPage('sec-domains')"><span class="icon">🛡️</span> Domain Maturity Tracker</a>
+  </div>
+  <div class="nav-section">
+    <div class="nav-section-label">Resources</div>
+    <a class="nav-item" onclick="showPage('vibe')"><span class="icon">✨</span> Vibe Prompt</a>
+  </div>
+  <div class="sidebar-footer">
+    Built on original frameworks by Mike Garcia<br>
+    EDEv4 · CEEDS · CE Framework<br>
+    Version 1.0 · June 2026
+  </div>
+</nav>
+
+<main id="main">
+  <div class="topbar">
+    <div>
+      <div class="topbar-title" id="topbar-title">Home Dashboard</div>
+      <div class="topbar-sub" id="topbar-sub">Engagement Excellence Program · Security Modernization</div>
+    </div>
+    <div style="display:flex;gap:10px;align-items:center;">
+      <button class="topbar-badge" onclick="openDirectorMode()" style="cursor:pointer;border:none;font-family:inherit;">🎤 Director Mode</button>
+    </div>
+  </div>
+<!-- PAGE: HOME -->
+<div class="page active" id="page-home">
+  <div class="section-header"><h2>Engagement Excellence Program</h2><p>Engineering client trust at scale — a unified delivery operating model by Mike Garcia</p></div>
+  <div class="grid-4" style="margin-bottom:24px;">
+    <div class="stat-tile"><div class="num">4</div><div class="desc">Program Components</div><div class="label">EDEv4 · CEEDS · CE Framework · Gov App</div></div>
+    <div class="stat-tile"><div class="num">3</div><div class="desc">Certification Levels</div><div class="label">Practitioner · Lead · Trainer</div></div>
+    <div class="stat-tile"><div class="num">5</div><div class="desc">Non-Negotiables</div><div class="label">Outcome · Comms · Value · Runbook · Cadence</div></div>
+    <div class="stat-tile"><div class="num">90</div><div class="desc">Day Deployment Plan</div><div class="label">Define · Operationalize · Embed</div></div>
+  </div>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title"><span class="icon">💡</span> The Core Premise</div>
+      <div class="card-sub">Why EEP exists</div>
+      <p style="font-size:14px;line-height:1.7;color:#333;">Individual engineers routinely deliver excellent technical work. Teams do not consistently translate that work into durable client trust. The gap between delivery quality and client experience outcomes is the program's primary target.</p>
+      <div class="callout callout-orange" style="margin-top:14px;"><strong>"Trustworthy by design, not by default."</strong><br>Client trust is not a byproduct of technical quality. It is a distinct output, with its own drivers, its own failure modes, and its own standards.</div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span class="icon">🎯</span> Three Core Commitments</div>
+      <div class="card-sub">The operational floor of the program</div>
+      <div style="display:flex;flex-direction:column;gap:10px;margin-top:8px;">
+        <div style="display:flex;gap:12px;align-items:flex-start;font-size:13px;"><span style="background:var(--orange);color:#fff;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;">1</span><div><strong>Outcome Ownership</strong> — Every engagement has a named Outcome Owner, visible to the client in writing before delivery begins.</div></div>
+        <div style="display:flex;gap:12px;align-items:flex-start;font-size:13px;"><span style="background:var(--orange);color:#fff;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;">2</span><div><strong>Communication Discipline</strong> — Every client-facing communication passes three quality tests before sending. No exceptions.</div></div>
+        <div style="display:flex;gap:12px;align-items:flex-start;font-size:13px;"><span style="background:var(--orange);color:#fff;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;">3</span><div><strong>Validated Value Closure</strong> — Every engagement closes with validated client articulation of value received — not task completion.</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title"><span class="icon">🏗️</span> Four-Component Architecture</div>
+    <div class="card-sub">Each component performs a distinct function — together they constitute the complete operating model</div>
+    <div class="grid-4" style="margin-top:8px;">
+      <div style="background:var(--light-gray);border-radius:8px;padding:16px;border-top:3px solid var(--orange);"><div style="font-size:11px;font-weight:700;color:var(--orange);letter-spacing:1px;margin-bottom:6px;">COMPONENT 1</div><div style="font-size:15px;font-weight:700;margin-bottom:6px;">EDEv4</div><div style="font-size:12px;color:#555;line-height:1.5;">The Delivery Engine — 4 layers: Signal Intelligence, Ownership Clarity, Communication Discipline, Outcome Validation</div></div>
+      <div style="background:var(--light-gray);border-radius:8px;padding:16px;border-top:3px solid var(--orange);"><div style="font-size:11px;font-weight:700;color:var(--orange);letter-spacing:1px;margin-bottom:6px;">COMPONENT 2</div><div style="font-size:15px;font-weight:700;margin-bottom:6px;">CEEDS</div><div style="font-size:12px;color:#555;line-height:1.5;">The Team Operating Standard — 4 pillars, 5 operating motions, CEES simulation sessions</div></div>
+      <div style="background:var(--light-gray);border-radius:8px;padding:16px;border-top:3px solid var(--orange);"><div style="font-size:11px;font-weight:700;color:var(--orange);letter-spacing:1px;margin-bottom:6px;">COMPONENT 3</div><div style="font-size:15px;font-weight:700;margin-bottom:6px;">CE Framework</div><div style="font-size:12px;color:#555;line-height:1.5;">The Client Trust Architecture — Credibility → Reliability → Referenceability model</div></div>
+      <div style="background:var(--light-gray);border-radius:8px;padding:16px;border-top:3px solid var(--orange);"><div style="font-size:11px;font-weight:700;color:var(--orange);letter-spacing:1px;margin-bottom:6px;">COMPONENT 4</div><div style="font-size:15px;font-weight:700;margin-bottom:6px;">Gov App</div><div style="font-size:12px;color:#555;line-height:1.5;">The Intelligence Layer — Pre-engagement maturity baseline, governance tracking, portfolio visibility</div></div>
+    </div>
+  </div>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title"><span class="icon">🔐</span> Security Modernization</div>
+      <div class="card-sub">Identity-First · Zero Trust · Enterprise-Grade</div>
+      <p style="font-size:13px;line-height:1.6;color:#333;margin-bottom:12px;">Identity is the new perimeter. Over 80% of breaches involve compromised credentials — making identity the single highest-leverage investment in any security modernization effort.</p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;"><span class="badge badge-orange">Identity & Access</span><span class="badge badge-blue">Data Protection</span><span class="badge badge-green">Governance & Resilience</span><span class="badge badge-amber">Zero Trust</span></div>
+      <button onclick="showPage('sec-overview')" style="margin-top:14px;background:var(--orange);color:#fff;border:none;border-radius:6px;padding:8px 16px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;">View Framework →</button>
+    </div>
+    <div class="card">
+      <div class="card-title"><span class="icon">📅</span> Quick Navigation</div>
+      <div class="card-sub">Jump to key sections</div>
+      <div style="display:flex;flex-direction:column;gap:6px;margin-top:8px;">
+        <button onclick="showPage('scenarios')" style="background:var(--light-gray);border:1px solid var(--border);border-radius:6px;padding:9px 14px;font-size:13px;font-weight:600;cursor:pointer;text-align:left;font-family:inherit;color:var(--charcoal);">🎯 Practice CEES Scenarios</button>
+        <button onclick="showPage('signals')" style="background:var(--light-gray);border:1px solid var(--border);border-radius:6px;padding:9px 14px;font-size:13px;font-weight:600;cursor:pointer;text-align:left;font-family:inherit;color:var(--charcoal);">📡 Track Engagement Signals</button>
+        <button onclick="showPage('deployment')" style="background:var(--light-gray);border:1px solid var(--border);border-radius:6px;padding:9px 14px;font-size:13px;font-weight:600;cursor:pointer;text-align:left;font-family:inherit;color:var(--charcoal);">🚀 30/60/90 Deployment Planner</button>
+        <button onclick="showPage('certification')" style="background:var(--light-gray);border:1px solid var(--border);border-radius:6px;padding:9px 14px;font-size:13px;font-weight:600;cursor:pointer;text-align:left;font-family:inherit;color:var(--charcoal);">🎓 Certification Requirements</button>
+        <button onclick="showPage('sec-fieldguide')" style="background:var(--light-gray);border:1px solid var(--border);border-radius:6px;padding:9px 14px;font-size:13px;font-weight:600;cursor:pointer;text-align:left;font-family:inherit;color:var(--charcoal);">🗂️ Security Field Guide</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- PAGE: DIRECTOR -->
+<div class="page" id="page-director">
+  <div class="section-header"><h2>Director Narrative</h2><p>Strategic overview for senior leadership — Classification: Internal · Director Distribution · Author: Mike Garcia · June 2026</p></div>
+  <div class="callout callout-orange"><strong>For Senior Leadership:</strong> This section presents the EEP as a strategic investment. Use <strong>Director Mode</strong> (top-right button) for a clean, full-screen presentation view.</div>
+  <div class="tab-bar">
+    <button class="tab-btn active" onclick="switchTab(this,'dir-tabs','dir-exec')">Executive Summary</button>
+    <button class="tab-btn" onclick="switchTab(this,'dir-tabs','dir-case')">Business Case</button>
+    <button class="tab-btn" onclick="switchTab(this,'dir-tabs','dir-trust')">Trust Architecture</button>
+    <button class="tab-btn" onclick="switchTab(this,'dir-tabs','dir-ask')">The Director Ask</button>
+  </div>
+  <div id="dir-tabs">
+    <div class="tab-content active" id="dir-exec">
+      <div class="card">
+        <div class="card-title"><span class="icon">📋</span> Executive Summary</div>
+        <p style="font-size:14px;line-height:1.8;color:#333;margin-bottom:16px;">The Engagement Excellence Program (EEP) is a unified, enterprise-grade delivery operating model designed to make client trust a consistent, engineered output of every engagement. It is not a collection of best practices assembled after the fact, nor a policy document produced in response to a single poor outcome. It is an engineered system built on four interdependent components.</p>
+        <p style="font-size:14px;line-height:1.8;color:#333;margin-bottom:16px;">The program was developed by Mike Garcia from approximately eight years of real delivery experience across enterprise clients in regulated industries — including healthcare, energy, financial services, and life sciences. Every element of EEP was field-tested in actual engagements before being codified as a standard.</p>
+        <div class="callout callout-blue"><strong>The Core Problem:</strong> Individual engineers routinely deliver excellent technical work. Teams do not consistently translate that work into durable client trust. The gap between delivery quality and client experience outcomes is the program's primary target.</div>
+      </div>
+      <div class="grid-3">
+        <div class="commitment-card"><div class="num">COMMITMENT I</div><h3>Outcome Ownership</h3><p>Every engagement has a named Outcome Owner, visible to the client in writing before delivery begins. Trust without accountability is hope.</p></div>
+        <div class="commitment-card"><div class="num">COMMITMENT II</div><h3>Communication Discipline</h3><p>Every client-facing communication passes three quality tests before sending — the Repeat-Back Test, the Stakes Test, and the Next-Step Test.</p></div>
+        <div class="commitment-card"><div class="num">COMMITMENT III</div><h3>Validated Value Closure</h3><p>Every engagement closes with validated client articulation of value received — not task completion, not milestone sign-off.</p></div>
+      </div>
+    </div>
+    <div class="tab-content" id="dir-case">
+      <div class="card">
+        <div class="card-title"><span class="icon">💼</span> The Business Case</div>
+        <p style="font-size:14px;line-height:1.8;color:#333;margin-bottom:16px;">The cost of inconsistent client experience outcomes is not primarily measured in CSAT scores. It is measured in the decisions clients make quietly, without announcement: the renewal that does not come, the reference that is not given, the expansion conversation that never starts.</p>
+        <div class="grid-3" style="margin-top:16px;">
+          <div style="background:var(--light-gray);border-radius:8px;padding:16px;text-align:center;"><div style="font-size:28px;font-weight:700;color:var(--orange);">5%</div><div style="font-size:13px;font-weight:600;margin:6px 0;">Client Retention Increase</div><div style="font-size:12px;color:#555;">Can increase profitability by 25–95% (Bain & Company)</div></div>
+          <div style="background:var(--light-gray);border-radius:8px;padding:16px;text-align:center;"><div style="font-size:28px;font-weight:700;color:var(--orange);">$4.88M</div><div style="font-size:13px;font-weight:600;margin:6px 0;">Average Breach Cost</div><div style="font-size:12px;color:#555;">IBM Cost of a Data Breach, 2024 — structural discipline is risk management</div></div>
+          <div style="background:var(--light-gray);border-radius:8px;padding:16px;text-align:center;"><div style="font-size:28px;font-weight:700;color:var(--orange);">80%+</div><div style="font-size:13px;font-weight:600;margin:6px 0;">Breaches via Credentials</div><div style="font-size:12px;color:#555;">Identity is the single highest-leverage security investment</div></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title"><span class="icon">📊</span> Two Scenarios: Why Technical Quality Isn't Enough</div>
+        <div class="grid-2" style="margin-top:8px;">
+          <div style="background:#E8F5E9;border-radius:8px;padding:16px;border-left:4px solid var(--green);"><div style="font-size:12px;font-weight:700;color:var(--green);margin-bottom:8px;">SCENARIO A — The Escalation That Built Trust</div><p style="font-size:13px;line-height:1.6;color:#333;">Team detects a critical integration issue mid-project. They immediately notify the client, name an Outcome Owner, communicate the stakes and resolution path clearly, and close the issue on the committed timeline. The engagement experienced a significant problem. <strong>The client's trust increases.</strong></p></div>
+          <div style="background:#FFEBEE;border-radius:8px;padding:16px;border-left:4px solid var(--red);"><div style="font-size:12px;font-weight:700;color:var(--red);margin-bottom:8px;">SCENARIO B — The Smooth Delivery That Didn't</div><p style="font-size:13px;line-height:1.6;color:#333;">Engagement completes on time, on budget, to specification. But the client was never clearly oriented to what was being built or why. At closure, the client cannot articulate what they received. <strong>No reference is given. No renewal conversation starts.</strong></p></div>
+        </div>
+      </div>
+    </div>
+    <div class="tab-content" id="dir-trust">
+      <div class="card">
+        <div class="card-title"><span class="icon">🏛️</span> CE Framework — Trust Architecture</div>
+        <div class="card-sub">Three layers, three dimensions — all must be active simultaneously</div>
+        <div class="grid-3" style="margin-top:8px;">
+          <div style="background:var(--charcoal);color:#fff;border-radius:8px;padding:20px;text-align:center;"><div style="font-size:32px;margin-bottom:8px;">🥇</div><div style="font-size:16px;font-weight:700;color:var(--orange);margin-bottom:8px;">Credibility</div><div style="font-size:13px;color:#ccc;line-height:1.5;">The client believes we know what we are doing. Established early — in pre-engagement, kickoff, and first deliverable.</div></div>
+          <div style="background:var(--charcoal);color:#fff;border-radius:8px;padding:20px;text-align:center;"><div style="font-size:32px;margin-bottom:8px;">🔄</div><div style="font-size:16px;font-weight:700;color:var(--orange);margin-bottom:8px;">Reliability</div><div style="font-size:13px;color:#ccc;line-height:1.5;">The client can predict how we will behave. Built through consistent follow-through, predictable communication rhythms, behavioral consistency under pressure.</div></div>
+          <div style="background:var(--charcoal);color:#fff;border-radius:8px;padding:20px;text-align:center;"><div style="font-size:32px;margin-bottom:8px;">⭐</div><div style="font-size:16px;font-weight:700;color:var(--orange);margin-bottom:8px;">Referenceability</div><div style="font-size:13px;color:#ccc;line-height:1.5;">The client actively advocates for working with us. The ultimate output — the client stakes their professional reputation on recommending the team.</div></div>
+        </div>
+        <div class="divider"></div>
+        <div class="grid-3">
+          <div style="padding:14px;background:var(--light-gray);border-radius:8px;"><div style="font-size:12px;font-weight:700;color:var(--orange);margin-bottom:6px;">KNOW</div><div style="font-size:13px;color:#333;line-height:1.5;">The client believes we understand their environment, their constraints, and their definition of success.</div></div>
+          <div style="padding:14px;background:var(--light-gray);border-radius:8px;"><div style="font-size:12px;font-weight:700;color:var(--orange);margin-bottom:6px;">DO</div><div style="font-size:13px;color:#333;line-height:1.5;">The client observes us executing in alignment with what we said we would do.</div></div>
+          <div style="padding:14px;background:var(--light-gray);border-radius:8px;"><div style="font-size:12px;font-weight:700;color:var(--orange);margin-bottom:6px;">TELL</div><div style="font-size:13px;color:#333;line-height:1.5;">The client experiences us communicating proactively, honestly, and with appropriate context.</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="tab-content" id="dir-ask">
+      <div class="card">
+        <div class="card-title"><span class="icon">🤝</span> The Director Ask</div>
+        <div class="card-sub">Three specific accountabilities — not aspirational, operational</div>
+        <div style="display:flex;flex-direction:column;gap:14px;margin-top:8px;">
+          <div class="commitment-card"><div class="num">ASK 1</div><h3>Air Cover</h3><p>When the program's standards create friction — when a client escalates, when an internal stakeholder pushes back — senior leadership is visible in backing the standard. Not just acknowledging the program exists, but actively defending it on hard cases.</p></div>
+          <div class="commitment-card"><div class="num">ASK 2</div><h3>Sponsorship</h3><p>Treat the EEP as an operational requirement, not an optional excellence initiative. Reference it in performance conversations, include it in team-level objectives, and visibly prioritize it alongside revenue targets.</p></div>
+          <div class="commitment-card"><div class="num">ASK 3</div><h3>Visibility of Wins</h3><p>Actively surface and amplify program wins — client trust outcomes, renewals, expansions, and references attributable to EEP practices — not just to recognize individuals, but to generate organizational demand for the standard beyond the founding team.</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- PAGE: ARCHITECTURE -->
+<div class="page" id="page-architecture">
+  <div class="section-header"><h2>Program Architecture</h2><p>Four components, one system — each performs a distinct function, together they constitute the complete operating model</p></div>
+  <div class="tab-bar">
+    <button class="tab-btn active" onclick="switchTab(this,'arch-tabs','arch-edev')">EDEv4</button>
+    <button class="tab-btn" onclick="switchTab(this,'arch-tabs','arch-ceeds')">CEEDS</button>
+    <button class="tab-btn" onclick="switchTab(this,'arch-tabs','arch-ce')">CE Framework</button>
+    <button class="tab-btn" onclick="switchTab(this,'arch-tabs','arch-gov')">Gov App</button>
+  </div>
+  <div id="arch-tabs">
+    <div class="tab-content active" id="arch-edev">
+      <div class="card">
+        <div class="card-title"><span class="icon">⚡</span> EDEv4 — The Delivery Engine</div>
+        <div class="card-sub">Four layers, causally sequenced — each depends on the one before it</div>
+        <div style="display:flex;flex-direction:column;gap:12px;margin-top:8px;">
+          <div style="display:flex;gap:16px;align-items:flex-start;padding:16px;background:var(--light-gray);border-radius:8px;border-left:4px solid var(--orange);"><div style="background:var(--orange);color:#fff;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0;">1</div><div><div style="font-size:15px;font-weight:700;margin-bottom:6px;">Signal Intelligence</div><div style="font-size:13px;color:#555;line-height:1.6;">Weekly monitoring across three signal streams: Customer Friction, Communication Clarity, and Ownership Follow-Through. Signals are monitored weekly — not in post-mortems. Weekly cadence transforms signal intelligence from retrospective to predictive.</div></div></div>
+          <div style="display:flex;gap:16px;align-items:flex-start;padding:16px;background:var(--light-gray);border-radius:8px;border-left:4px solid var(--orange);"><div style="background:var(--orange);color:#fff;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0;">2</div><div><div style="font-size:15px;font-weight:700;margin-bottom:6px;">Ownership Clarity</div><div style="font-size:13px;color:#555;line-height:1.6;">Every engagement has one named Outcome Owner. Every open issue has one named Outcome Owner. Every escalation has one named Outcome Owner. That name is communicated to the client in writing before delivery begins. The client's experience of accountability is determined by whether they can answer "who owns this?" without ambiguity.</div></div></div>
+          <div style="display:flex;gap:16px;align-items:flex-start;padding:16px;background:var(--light-gray);border-radius:8px;border-left:4px solid var(--orange);"><div style="background:var(--orange);color:#fff;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0;">3</div><div><div style="font-size:15px;font-weight:700;margin-bottom:6px;">Communication Discipline</div><div style="font-size:13px;color:#555;line-height:1.6;">Three quality tests applied to every client-facing communication: <strong>Repeat-Back Test</strong> (could the client restate the key content?), <strong>Stakes Test</strong> (does the client understand what happens next?), <strong>Next-Step Test</strong> (is the immediate next action crystal clear?). No exceptions for seniority or schedule pressure.</div></div></div>
+          <div style="display:flex;gap:16px;align-items:flex-start;padding:16px;background:var(--light-gray);border-radius:8px;border-left:4px solid var(--orange);"><div style="background:var(--orange);color:#fff;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0;">4</div><div><div style="font-size:15px;font-weight:700;margin-bottom:6px;">Outcome Validation</div><div style="font-size:13px;color:#555;line-height:1.6;">The standard is not task completion. It is not milestone sign-off. It is client articulation of value received, elicited through three structured validation questions. An engagement that closes with a signed milestone document but no client articulation of value has not closed cleanly under the EEP standard.</div></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="tab-content" id="arch-ceeds">
+      <div class="card">
+        <div class="card-title"><span class="icon">🏢</span> CEEDS — The Team Operating Standard</div>
+        <div class="card-sub">Four pillars, five operating motions — governs how the team operates day-to-day</div>
+        <div class="grid-2" style="margin-top:8px;">
+          <div>
+            <div style="font-size:14px;font-weight:700;margin-bottom:12px;color:var(--orange);">THE FOUR PILLARS</div>
+            <div style="display:flex;flex-direction:column;gap:8px;">
+              <div style="padding:12px;background:var(--light-gray);border-radius:6px;font-size:13px;"><strong>Customer Experience Over Technical Perfection</strong> — When a choice must be made between technically elegant but confusing vs. technically sufficient but clearly understood, choose clarity.</div>
+              <div style="padding:12px;background:var(--light-gray);border-radius:6px;font-size:13px;"><strong>Clarity Over Complexity</strong> — The measure of a communication is not sophistication but comprehension. The standard is always the client's ability to act.</div>
+              <div style="padding:12px;background:var(--light-gray);border-radius:6px;font-size:13px;"><strong>Ownership Without Boundaries</strong> — An EEP team member does not leave an issue unaddressed because it falls outside their defined role. Ownership is volunteered, not assigned by default.</div>
+              <div style="padding:12px;background:var(--light-gray);border-radius:6px;font-size:13px;"><strong>Signal Over Opinion</strong> — Engagement health is assessed through observable, tracked indicators rather than individual intuition or seniority-weighted opinion.</div>
+            </div>
+          </div>
+          <div>
+            <div style="font-size:14px;font-weight:700;margin-bottom:12px;color:var(--orange);">THE FIVE OPERATING MOTIONS</div>
+            <div style="display:flex;flex-direction:column;gap:8px;">
+              <div style="padding:12px;background:var(--charcoal);color:#fff;border-radius:6px;font-size:13px;"><strong style="color:var(--orange);">Weekly</strong> Customer Signal Review — Diagnostic session to surface early indicators before they become incidents.</div>
+              <div style="padding:12px;background:var(--charcoal);color:#fff;border-radius:6px;font-size:13px;"><strong style="color:var(--orange);">Per-Engagement</strong> Ownership Kickoff — Establishes Outcome Owner model at the start of every engagement.</div>
+              <div style="padding:12px;background:var(--charcoal);color:#fff;border-radius:6px;font-size:13px;"><strong style="color:var(--orange);">Per-Issue</strong> Outcome Owner Assignment — Maintains accountability structure throughout the engagement.</div>
+              <div style="padding:12px;background:var(--charcoal);color:#fff;border-radius:6px;font-size:13px;"><strong style="color:var(--orange);">Bi-Weekly</strong> CEES Session — Scenario-based practice; the program's primary learning mechanism.</div>
+              <div style="padding:12px;background:var(--charcoal);color:#fff;border-radius:6px;font-size:13px;"><strong style="color:var(--orange);">Quarterly</strong> Signal Framework Review — Evaluates whether signal streams remain calibrated to current engagement reality.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="tab-content" id="arch-ce">
+      <div class="card">
+        <div class="card-title"><span class="icon">🏛️</span> CE Framework — The Client Trust Architecture</div>
+        <div class="card-sub">The theoretical and architectural foundation — explains which behaviors build trust and why sequencing matters</div>
+        <div class="grid-3" style="margin-top:8px;">
+          <div style="background:var(--charcoal);color:#fff;border-radius:8px;padding:20px;"><div style="font-size:11px;font-weight:700;color:var(--orange);letter-spacing:1px;margin-bottom:8px;">LAYER 1</div><div style="font-size:18px;font-weight:700;margin-bottom:10px;">Credibility</div><div style="font-size:13px;color:#ccc;line-height:1.6;">The client believes we know what we are doing. Established early in the engagement arc — in pre-engagement assessment, kickoff framing, and first deliverable. A team that cannot establish credibility quickly will struggle to recover regardless of subsequent technical quality.</div></div>
+          <div style="background:var(--charcoal);color:#fff;border-radius:8px;padding:20px;"><div style="font-size:11px;font-weight:700;color:var(--orange);letter-spacing:1px;margin-bottom:8px;">LAYER 2</div><div style="font-size:18px;font-weight:700;margin-bottom:10px;">Reliability</div><div style="font-size:13px;color:#ccc;line-height:1.6;">The client can predict how we will behave. Built through consistent follow-through on commitments, predictable communication rhythms, and behavioral consistency under pressure. Converts a positive first impression into an enduring trust relationship.</div></div>
+          <div style="background:var(--charcoal);color:#fff;border-radius:8px;padding:20px;"><div style="font-size:11px;font-weight:700;color:var(--orange);letter-spacing:1px;margin-bottom:8px;">LAYER 3</div><div style="font-size:18px;font-weight:700;margin-bottom:10px;">Referenceability</div><div style="font-size:13px;color:#ccc;line-height:1.6;">The client actively advocates for working with us. The ultimate output of the program — the condition in which the client has experienced sufficient credibility and reliability that they are willing to stake their own professional reputation on recommending the team.</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="tab-content" id="arch-gov">
+      <div class="card">
+        <div class="card-title"><span class="icon">🖥️</span> Governance Assessment App — The Intelligence Layer</div>
+        <div class="card-sub">Pre-engagement intelligence that allows all three components to begin from an informed baseline</div>
+        <p style="font-size:14px;line-height:1.7;color:#333;margin-bottom:16px;">Before delivery begins, the app establishes a maturity baseline across the client's Microsoft 365 workload environment — capturing governance posture, adoption readiness, and configuration health across the workloads relevant to the engagement scope.</p>
+        <div class="grid-2">
+          <div class="callout callout-green"><strong>Function 1 — Informed Starting Point:</strong> Gives the engagement team the informed starting point they need to calibrate their delivery approach.</div>
+          <div class="callout callout-blue"><strong>Function 2 — Credibility Signal:</strong> Gives the client a structured, credibility-building experience of working with a team that arrives prepared.</div>
+        </div>
+        <div class="callout callout-orange" style="margin-top:8px;"><strong>Key Benefit:</strong> Clients who experience a rigorous, data-informed pre-engagement assessment begin the engagement with a materially higher baseline trust level than those who receive a generic kickoff.</div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- PAGE: CHARTER -->
+<div class="page" id="page-charter">
+  <div class="section-header"><h2>Program Charter</h2><p>Version 1.0 · Effective Q2 2026 · Program Lead: Mike Garcia · Classification: Operational Standard — Mandatory Compliance</p></div>
+  <div class="callout callout-red"><strong>Charter Notice:</strong> From the date of ratification, the EEP ceases to be an initiative, pilot, or enhancement effort and becomes the expected and enforced standard of delivery excellence for all client-facing engagements.</div>
+  <div class="card" style="margin-top:16px;">
+    <div class="card-title"><span class="icon">🚫</span> The Five Non-Negotiable Commitments</div>
+    <div class="card-sub">Non-negotiable, non-waivable, non-optional — apply to every engagement without exception</div>
+    <div class="commitment-card"><div class="num">NON-NEGOTIABLE I</div><h3>Outcome Ownership</h3><p>Every engagement has a named Outcome Owner, visible to the client in writing, before delivery begins. No engagement may proceed to active delivery without this designation in place.</p></div>
+    <div class="commitment-card"><div class="num">NON-NEGOTIABLE II</div><h3>Communication Standards</h3><p>Every client-facing communication passes the Three Communication Tests before it is sent — no exceptions. Communications that do not pass all three tests are not sent. There is no expedience exception.</p></div>
+    <div class="commitment-card"><div class="num">NON-NEGOTIABLE III</div><h3>Value Validation at Close</h3><p>Every engagement closes with validated client articulation of value received. No engagement is administratively closed without this record in the engagement file.</p></div>
+    <div class="commitment-card"><div class="num">NON-NEGOTIABLE IV</div><h3>Runbook Adherence</h3><p>Every delivery incident follows the applicable Runbook — Escalation, Communication, Handoff, or Incident Response — without improvisation in high-pressure scenarios. The Runbook is the judgment.</p></div>
+    <div class="commitment-card"><div class="num">NON-NEGOTIABLE V</div><h3>Operating Cadences</h3><p>The four operating cadences are non-negotiable standing commitments, not optional enhancements. They are not to be cancelled, deferred, or abbreviated due to schedule pressure or workload.</p></div>
+  </div>
+  <div class="card">
+    <div class="card-title"><span class="icon">📊</span> Scope — No Exclusions</div>
+    <table style="margin-top:8px;">
+      <thead><tr><th>Dimension</th><th>Applies To</th><th>Exclusions</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Personnel</strong></td><td>All client-facing team members, all levels</td><td><span class="badge badge-red">None</span></td></tr>
+        <tr><td><strong>Engagement Type</strong></td><td>Implementation, Advisory, Migration, Modernization, Managed Services</td><td><span class="badge badge-red">None</span></td></tr>
+        <tr><td><strong>Engagement Size</strong></td><td>All sizes — small, mid-market, enterprise</td><td><span class="badge badge-red">None</span></td></tr>
+        <tr><td><strong>Duration</strong></td><td>All durations — days, months, years</td><td><span class="badge badge-red">None</span></td></tr>
+        <tr><td><strong>Geography</strong></td><td>All delivery locations and remote models</td><td><span class="badge badge-red">None</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="card">
+    <div class="card-title"><span class="icon">👥</span> Governance RACI</div>
+    <table style="margin-top:8px;">
+      <thead><tr><th>Activity</th><th>Program Lead</th><th>Engagement Lead</th><th>Senior Leadership</th></tr></thead>
+      <tbody>
+        <tr><td>Program standard definition and updates</td><td><span class="badge badge-orange">R/A</span></td><td><span class="badge badge-gray">I</span></td><td><span class="badge badge-blue">C</span></td></tr>
+        <tr><td>Weekly Signal Review</td><td><span class="badge badge-orange">A</span></td><td><span class="badge badge-orange">R</span></td><td><span class="badge badge-gray">I (summary)</span></td></tr>
+        <tr><td>Outcome Owner assignment</td><td><span class="badge badge-blue">C</span></td><td><span class="badge badge-orange">R/A</span></td><td><span class="badge badge-gray">I</span></td></tr>
+        <tr><td>CEES Session delivery</td><td><span class="badge badge-orange">R/A</span></td><td><span class="badge badge-gray">I</span></td><td><span class="badge badge-gray">I</span></td></tr>
+        <tr><td>Level 1/2 certification</td><td><span class="badge badge-orange">R/A</span></td><td><span class="badge badge-gray">I</span></td><td><span class="badge badge-blue">C</span></td></tr>
+        <tr><td>Public reinforcement of the standard</td><td><span class="badge badge-blue">C</span></td><td><span class="badge badge-gray">I</span></td><td><span class="badge badge-orange">R/A</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- PAGE: OPERATING MODEL -->
+<div class="page" id="page-operating">
+  <div class="section-header"><h2>Operating Model</h2><p>Five recurring motions, four runbooks, three signal streams — the minimum operational infrastructure to run at EEP standard</p></div>
+  <div class="card">
+    <div class="card-title"><span class="icon">⚙️</span> Five Operating Motions</div>
+    <div class="grid-3" style="margin-top:8px;">
+      <div class="motion-card"><div class="freq">WEEKLY</div><h3>Customer Signal Review</h3><p>Engagement health status; early risk flags surfaced and assigned. Owner: Program Lead / Engagement Lead.</p></div>
+      <div class="motion-card"><div class="freq">PER ENGAGEMENT</div><h3>Ownership Kickoff</h3><p>Named Outcome Owner documented and communicated to client in writing. Owner: Engagement Lead.</p></div>
+      <div class="motion-card"><div class="freq">PER ISSUE</div><h3>Owner Assignment</h3><p>Every open issue has a named owner and a committed resolution date. Owner: Engagement Lead.</p></div>
+      <div class="motion-card"><div class="freq">BI-WEEKLY</div><h3>CEES Simulation Session</h3><p>Team judgment calibrated; scenario library updated with real cases. Owner: Program Lead / Certified Trainer.</p></div>
+      <div class="motion-card"><div class="freq">QUARTERLY</div><h3>Signal Framework Review</h3><p>Signal indicators updated to reflect current portfolio and client environment. Owner: Program Lead.</p></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title"><span class="icon">📖</span> Four Runbooks</div>
+    <div class="card-sub">Pre-decided decision frameworks that remove improvisation from high-stakes moments</div>
+    <div class="grid-2" style="margin-top:8px;">
+      <div style="padding:16px;background:var(--light-gray);border-radius:8px;border-left:4px solid var(--orange);"><div style="font-size:13px;font-weight:700;margin-bottom:6px;">📞 Escalation Runbook</div><div style="font-size:13px;color:#555;line-height:1.5;">Defines exactly how an issue is escalated: who is notified, in what sequence, with what information, and on what timeline.</div></div>
+      <div style="padding:16px;background:var(--light-gray);border-radius:8px;border-left:4px solid var(--orange);"><div style="font-size:13px;font-weight:700;margin-bottom:6px;">✉️ Communication Runbook</div><div style="font-size:13px;color:#555;line-height:1.5;">Applies the Three Tests to client communications and defines who approves client-facing messages above a defined sensitivity threshold.</div></div>
+      <div style="padding:16px;background:var(--light-gray);border-radius:8px;border-left:4px solid var(--orange);"><div style="font-size:13px;font-weight:700;margin-bottom:6px;">🔄 Handoff Runbook</div><div style="font-size:13px;color:#555;line-height:1.5;">Governs how engagement ownership transitions between team members or project phases without losing the client's accumulated trust context.</div></div>
+      <div style="padding:16px;background:var(--light-gray);border-radius:8px;border-left:4px solid var(--orange);"><div style="font-size:13px;font-weight:700;margin-bottom:6px;">🚨 Incident Response Runbook</div><div style="font-size:13px;color:#555;line-height:1.5;">Defines the structured response to delivery incidents that carry client relationship risk — including communication sequence, Outcome Owner assignment, and post-incident review.</div></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title"><span class="icon">📊</span> Signal Framework — Flag Conditions</div>
+    <table style="margin-top:8px;">
+      <thead><tr><th>Signal Stream</th><th>Leading Indicators</th><th>Amber Flag</th><th>Red Flag</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Customer Friction</strong></td><td>Client re-asks answered questions; escalates without warning; reduces engagement in status calls</td><td><span class="badge badge-amber">One indicator in two consecutive weeks</span></td><td><span class="badge badge-red">Two+ indicators simultaneously; client mentions concern to non-engagement contact</span></td></tr>
+        <tr><td><strong>Communication Clarity</strong></td><td>Client requests clarification within 24hrs; action delayed or incorrect; client forwards comms without context</td><td><span class="badge badge-amber">Two clarification requests in one week</span></td><td><span class="badge badge-red">Client expresses confusion about program status; missed action traceable to our communication failure</span></td></tr>
+        <tr><td><strong>Ownership Follow-Through</strong></td><td>Committed action not completed on stated date; client asks "what happened with X?"; open issue count grows</td><td><span class="badge badge-amber">One missed commitment with no proactive notification</span></td><td><span class="badge badge-red">Client raises missed commitment in formal communication; issues aged beyond agreed resolution window</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+<!-- PAGE: SIGNALS -->
+<div class="page" id="page-signals">
+  <div class="section-header"><h2>Signal Intelligence Tracker</h2><p>Three signal streams — monitor weekly, surface within 48 hours, use signal language not status language</p></div>
+  <div class="callout callout-orange"><strong>Signal Language vs. Status Language:</strong> "I'm seeing a pattern of..." (signal) vs. "Things are going well" (status). Signal language is observable, specific, and actionable. Status language is vague and reactive.</div>
+  <div style="margin-top:16px;">
+    <div class="signal-stream" id="stream-friction">
+      <div class="signal-stream-header" onclick="toggleStream('stream-friction')" style="background:#FFF8E1;">
+        <div><div class="signal-stream-title">📊 Stream 1: Customer Friction</div><div style="font-size:12px;color:#555;margin-top:3px;">Indicators that the client is experiencing confusion, dissatisfaction, or unmet expectation</div></div>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <button class="signal-flag flag-green" onclick="setFlag(event,'stream-friction','green')">🟢 Green</button>
+          <button class="signal-flag flag-amber" onclick="setFlag(event,'stream-friction','amber')">🟡 Amber</button>
+          <button class="signal-flag flag-red" onclick="setFlag(event,'stream-friction','red')">🔴 Red</button>
+        </div>
+      </div>
+      <div class="signal-stream-body" id="stream-friction-body">
+        <table style="margin-top:8px;"><thead><tr><th>Leading Indicators</th><th>Amber Flag Condition</th><th>Red Flag Condition</th></tr></thead><tbody><tr><td>Client re-asks questions already answered; client escalates without warning; client reduces engagement in status calls</td><td><span class="badge badge-amber">One friction indicator observed in two consecutive weeks</span></td><td><span class="badge badge-red">Two or more friction indicators simultaneously; client mentions concern to a non-engagement contact</span></td></tr></tbody></table>
+      </div>
+    </div>
+    <div class="signal-stream" id="stream-clarity">
+      <div class="signal-stream-header" onclick="toggleStream('stream-clarity')" style="background:#E3F2FD;">
+        <div><div class="signal-stream-title">💬 Stream 2: Communication Clarity</div><div style="font-size:12px;color:#555;margin-top:3px;">Indicators that our outbound messaging is landing with the intended meaning and producing the intended next action</div></div>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <button class="signal-flag flag-green" onclick="setFlag(event,'stream-clarity','green')">🟢 Green</button>
+          <button class="signal-flag flag-amber" onclick="setFlag(event,'stream-clarity','amber')">🟡 Amber</button>
+          <button class="signal-flag flag-red" onclick="setFlag(event,'stream-clarity','red')">🔴 Red</button>
+        </div>
+      </div>
+      <div class="signal-stream-body" id="stream-clarity-body">
+        <table style="margin-top:8px;"><thead><tr><th>Leading Indicators</th><th>Amber Flag Condition</th><th>Red Flag Condition</th></tr></thead><tbody><tr><td>Client requests clarification within 24 hours; client action is delayed or incorrect relative to our ask; client forwards our communication without adding context</td><td><span class="badge badge-amber">Two clarification requests in one week; one delayed action traceable to communication ambiguity</span></td><td><span class="badge badge-red">Client expresses confusion about program status or next steps; missed action traceable to our communication failure</span></td></tr></tbody></table>
+      </div>
+    </div>
+    <div class="signal-stream" id="stream-ownership">
+      <div class="signal-stream-header" onclick="toggleStream('stream-ownership')" style="background:#E8F5E9;">
+        <div><div class="signal-stream-title">🎯 Stream 3: Ownership Follow-Through</div><div style="font-size:12px;color:#555;margin-top:3px;">Indicators that commitments made to the client are being tracked and closed on schedule</div></div>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <button class="signal-flag flag-green" onclick="setFlag(event,'stream-ownership','green')">🟢 Green</button>
+          <button class="signal-flag flag-amber" onclick="setFlag(event,'stream-ownership','amber')">🟡 Amber</button>
+          <button class="signal-flag flag-red" onclick="setFlag(event,'stream-ownership','red')">🔴 Red</button>
+        </div>
+      </div>
+      <div class="signal-stream-body" id="stream-ownership-body">
+        <table style="margin-top:8px;"><thead><tr><th>Leading Indicators</th><th>Amber Flag Condition</th><th>Red Flag Condition</th></tr></thead><tbody><tr><td>Committed action not completed on stated date; client asks "what happened with X?"; open issue count grows week-over-week</td><td><span class="badge badge-amber">One missed commitment with no proactive client notification; open issue count increasing for two consecutive weeks</span></td><td><span class="badge badge-red">Client raises a missed commitment in a formal communication; open issues aged beyond agreed resolution window</span></td></tr></tbody></table>
+      </div>
+    </div>
+  </div>
+  <div class="card" style="margin-top:20px;">
+    <div class="card-title"><span class="icon">📋</span> Three Communication Tests — Quick Reference</div>
+    <div class="grid-3" style="margin-top:8px;">
+      <div style="padding:16px;background:var(--charcoal);color:#fff;border-radius:8px;"><div style="font-size:12px;font-weight:700;color:var(--orange);margin-bottom:8px;">TEST 1</div><div style="font-size:15px;font-weight:700;margin-bottom:8px;">Repeat-Back Test</div><div style="font-size:13px;color:#ccc;line-height:1.5;">Could the client accurately restate the key content of this communication in their own words after one reading?</div></div>
+      <div style="padding:16px;background:var(--charcoal);color:#fff;border-radius:8px;"><div style="font-size:12px;font-weight:700;color:var(--orange);margin-bottom:8px;">TEST 2</div><div style="font-size:15px;font-weight:700;margin-bottom:8px;">Stakes Test</div><div style="font-size:13px;color:#ccc;line-height:1.5;">Does the client understand what happens next if they do or do not take the requested action?</div></div>
+      <div style="padding:16px;background:var(--charcoal);color:#fff;border-radius:8px;"><div style="font-size:12px;font-weight:700;color:var(--orange);margin-bottom:8px;">TEST 3</div><div style="font-size:15px;font-weight:700;margin-bottom:8px;">Next-Step Test</div><div style="font-size:13px;color:#ccc;line-height:1.5;">Is the immediate next action crystal clear — who does it, when, and how will completion be confirmed?</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE: DEPLOYMENT -->
+<div class="page" id="page-deployment">
+  <div class="section-header"><h2>30/60/90 Deployment Planner</h2><p>Three phases, each with a distinct operational mandate — check off milestones as you complete them</p></div>
+  <div class="callout callout-orange"><strong>"The first 90 days define whether this is a standard or a memo."</strong> A standard is embedded in recurring behavior, reinforced by leadership, and visible in daily operations. The difference is determined entirely by what happens in the first 90 days.</div>
+  <div id="deployment-progress" style="margin:16px 0;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;"><span style="font-size:13px;font-weight:700;">Overall Deployment Progress</span><span id="progress-pct" style="font-size:13px;font-weight:700;color:var(--orange);">0%</span></div>
+    <div class="progress-bar-wrap"><div class="progress-bar-fill" id="progress-fill" style="width:0%"></div></div>
+  </div>
+  <div class="phase-block" id="phase1">
+    <div class="phase-header" onclick="togglePhase('phase1')" style="background:#FFF3EC;">
+      <div class="phase-num" style="background:var(--orange);">1</div>
+      <div><div style="font-size:16px;font-weight:700;">Days 1–30: Define &amp; Diagnose</div><div style="font-size:12px;color:#555;margin-top:3px;">Publish the standard · Baseline current reality · Stand up signal review and ownership model</div></div>
+      <span id="phase1-count" style="font-size:12px;color:var(--mid-gray);margin-left:auto;">0/4 complete</span>
+    </div>
+    <div class="phase-body" id="phase1-body">
+      <div class="milestone-item"><div class="milestone-check" onclick="toggleMilestone(this,'phase1')"></div><div><strong>EEP standard published</strong> — Facilitated introduction giving the team context for why the standard exists, what it requires, and what leadership's role will be.</div></div>
+      <div class="milestone-item"><div class="milestone-check" onclick="toggleMilestone(this,'phase1')"></div><div><strong>Baseline assessment complete</strong> — Current delivery practice assessed across three signal streams. Which engagements have a documented communication protocol?</div></div>
+      <div class="milestone-item"><div class="milestone-check" onclick="toggleMilestone(this,'phase1')"></div><div><strong>Ownership Kickoff active on all engagements</strong> — Every active engagement has an identified Outcome Owner.</div></div>
+      <div class="milestone-item"><div class="milestone-check" onclick="toggleMilestone(this,'phase1')"></div><div><strong>First Signal Review conducted</strong> — Before Day 30, the first Weekly Customer Signal Review is held.</div></div>
+    </div>
+  </div>
+  <div class="phase-block" id="phase2">
+    <div class="phase-header" onclick="togglePhase('phase2')" style="background:#E3F2FD;">
+      <div class="phase-num" style="background:var(--blue);">2</div>
+      <div><div style="font-size:16px;font-weight:700;">Days 31–60: Operationalize &amp; Teach</div><div style="font-size:12px;color:#555;margin-top:3px;">Convert philosophy to runbooks · Launch CEES Sessions · Begin signal tracking · First certifications</div></div>
+      <span id="phase2-count" style="font-size:12px;color:var(--mid-gray);margin-left:auto;">0/4 complete</span>
+    </div>
+    <div class="phase-body" id="phase2-body">
+      <div class="milestone-item"><div class="milestone-check" onclick="toggleMilestone(this,'phase2')"></div><div><strong>All four runbooks published</strong> — Escalation, Communication, Handoff, and Incident Response runbooks completed with team input from real scenarios.</div></div>
+      <div class="milestone-item"><div class="milestone-check" onclick="toggleMilestone(this,'phase2')"></div><div><strong>CEES Session cadence launched</strong> — First two sessions addressing scenarios most relevant to current portfolio risk. Week 5 start.</div></div>
+      <div class="milestone-item"><div class="milestone-check" onclick="toggleMilestone(this,'phase2')"></div><div><strong>Signal tracking active across portfolio</strong> — Every engagement has an assigned Outcome Owner; Weekly Signal Review producing real engagement health data.</div></div>
+      <div class="milestone-item"><div class="milestone-check" onclick="toggleMilestone(this,'phase2')"></div><div><strong>First Level 1 certifications complete</strong> — Team members ready to demonstrate the standard have completed EEP Practitioner certification.</div></div>
+    </div>
+  </div>
+  <div class="phase-block" id="phase3">
+    <div class="phase-header" onclick="togglePhase('phase3')" style="background:#E8F5E9;">
+      <div class="phase-num" style="background:var(--green);">3</div>
+      <div><div style="font-size:16px;font-weight:700;">Days 61–90: Embed &amp; Enforce</div><div style="font-size:12px;color:#555;margin-top:3px;">100% Outcome Owner coverage · First playbook revision · Adjacent teams briefed · Leadership reinforcement</div></div>
+      <span id="phase3-count" style="font-size:12px;color:var(--mid-gray);margin-left:auto;">0/4 complete</span>
+    </div>
+    <div class="phase-body" id="phase3-body">
+      <div class="milestone-item"><div class="milestone-check" onclick="toggleMilestone(this,'phase3')"></div><div><strong>100% Outcome Owner coverage</strong> — Every active engagement running with a documented Outcome Owner and at least one completed Three Tests communication review.</div></div>
+      <div class="milestone-item"><div class="milestone-check" onclick="toggleMilestone(this,'phase3')"></div><div><strong>First playbook revision published</strong> — Driven by real signal data from the first sixty days, demonstrating the program is a living system.</div></div>
+      <div class="milestone-item"><div class="milestone-check" onclick="toggleMilestone(this,'phase3')"></div><div><strong>Adjacent teams briefed</strong> — Client success, pre-sales, practice leadership understand how their work intersects with the EEP.</div></div>
+      <div class="milestone-item"><div class="milestone-check" onclick="toggleMilestone(this,'phase3')"></div><div><strong>Visible leadership reinforcement</strong> — Leadership has backed the standard on at least one hard case — not just acknowledged the program exists.</div></div>
+    </div>
+  </div>
+</div>
+<!-- PAGE: ROADMAP -->
+<div class="page" id="page-roadmap">
+  <div class="section-header"><h2>Capability Roadmap</h2><p>12-month trajectory organized into four quarterly horizons — each builds on the previous quarter's foundation</p></div>
+  <div class="grid-2">
+    <div class="card" style="border-top:3px solid var(--orange);">
+      <div style="font-size:11px;font-weight:700;color:var(--orange);letter-spacing:1px;margin-bottom:8px;">Q1</div>
+      <div style="font-size:18px;font-weight:700;margin-bottom:8px;">Foundation</div>
+      <p style="font-size:13px;color:#555;line-height:1.6;margin-bottom:12px;">Deploy program across target team. Operating model active. Signal tracking producing data. Runbooks in use. First Level 1 cohort certified.</p>
+      <div style="font-size:12px;font-weight:700;color:var(--charcoal);margin-bottom:6px;">PRIMARY METRIC</div>
+      <span class="badge badge-orange">Program adherence rate across active engagements</span>
+      <ul class="check-list" style="margin-top:12px;"><li>Program live; runbooks published</li><li>Level 1 cohort certified</li><li>Signal tracking active</li></ul>
+    </div>
+    <div class="card" style="border-top:3px solid var(--blue);">
+      <div style="font-size:11px;font-weight:700;color:var(--blue);letter-spacing:1px;margin-bottom:8px;">Q2</div>
+      <div style="font-size:18px;font-weight:700;margin-bottom:8px;">Operationalization</div>
+      <p style="font-size:13px;color:#555;line-height:1.6;margin-bottom:12px;">Build team fluency. Surface first measurable client experience improvements. Identify Level 2 candidates. CEES Sessions draw on real Q1 cases.</p>
+      <div style="font-size:12px;font-weight:700;color:var(--charcoal);margin-bottom:6px;">PRIMARY METRIC</div>
+      <span class="badge badge-blue">Leading indicator improvement (friction, clarity, follow-through)</span>
+      <ul class="check-list" style="margin-top:12px;"><li>Real-case CEES Sessions running</li><li>Level 2 development paths initiated</li><li>Q1 signal data analyzed and acted upon</li></ul>
+    </div>
+    <div class="card" style="border-top:3px solid var(--green);">
+      <div style="font-size:11px;font-weight:700;color:var(--green);letter-spacing:1px;margin-bottom:8px;">Q3</div>
+      <div style="font-size:18px;font-weight:700;margin-bottom:8px;">Embedding</div>
+      <p style="font-size:13px;color:#555;line-height:1.6;margin-bottom:12px;">EEP is no longer a program — it is how the team operates. New team members experience EEP as "how we do things here." First Level 3 Trainers qualified.</p>
+      <div style="font-size:12px;font-weight:700;color:var(--charcoal);margin-bottom:6px;">PRIMARY METRIC</div>
+      <span class="badge badge-green">New team member time-to-EEP-fluency</span>
+      <ul class="check-list" style="margin-top:12px;"><li>First Level 3 certification complete</li><li>New members onboarding under EEP default</li><li>Adjacent team briefings conducted</li></ul>
+    </div>
+    <div class="card" style="border-top:3px solid var(--amber);">
+      <div style="font-size:11px;font-weight:700;color:var(--amber);letter-spacing:1px;margin-bottom:8px;">Q4</div>
+      <div style="font-size:18px;font-weight:700;margin-bottom:8px;">Scale</div>
+      <p style="font-size:13px;color:#555;line-height:1.6;margin-bottom:12px;">Program ready for expansion. Level 3 Trainers delivering CEES Sessions independently. Playbook v2 published. Program presented for broader adoption.</p>
+      <div style="font-size:12px;font-weight:700;color:var(--charcoal);margin-bottom:6px;">PRIMARY METRIC</div>
+      <span class="badge badge-amber">Renewal rate, reference conversion, CSAT trend</span>
+      <ul class="check-list" style="margin-top:12px;"><li>Playbook v2 published</li><li>Level 3 Trainers delivering independently</li><li>Expansion plan presented to senior leadership</li></ul>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title"><span class="icon">📅</span> Year 2 Horizon</div>
+    <div class="grid-3" style="margin-top:8px;">
+      <div style="padding:14px;background:var(--light-gray);border-radius:8px;"><div style="font-size:12px;font-weight:700;color:var(--orange);margin-bottom:6px;">OUTCOME 1</div><div style="font-size:13px;line-height:1.5;">Program adopted by at least one adjacent team without requiring the founding team to lead the implementation.</div></div>
+      <div style="padding:14px;background:var(--light-gray);border-radius:8px;"><div style="font-size:12px;font-weight:700;color:var(--orange);margin-bottom:6px;">OUTCOME 2</div><div style="font-size:13px;line-height:1.5;">Governance fully handed to certified Level 3 Trainers who can run the program without the original Program Lead's operational involvement.</div></div>
+      <div style="padding:14px;background:var(--light-gray);border-radius:8px;"><div style="font-size:12px;font-weight:700;color:var(--orange);margin-bottom:6px;">OUTCOME 3</div><div style="font-size:13px;line-height:1.5;">Playbook enters its second major version, incorporating a full year of real engagement signal data, scenario cases, and iterative improvement.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE: CERTIFICATION -->
+<div class="page" id="page-certification">
+  <div class="section-header"><h2>Certification Path</h2><p>Three levels — certification is earned through demonstrated behavior, not course completion</p></div>
+  <div class="callout callout-blue"><strong>Core Design Principle:</strong> "The program certifies what practitioners do in the field, not what they know in the room." Level 3 Trainers certify Level 1 Practitioners — the architecture is built for scale and longevity from the start.</div>
+  <div style="margin-top:16px;">
+    <div class="cert-level" style="border-color:#FF6200;">
+      <div class="cert-level-header" onclick="toggleCert('cert1')" style="background:#FFF3EC;">
+        <div class="cert-badge-big" style="background:var(--orange);">L1</div>
+        <div style="flex:1;"><div style="font-size:17px;font-weight:700;">Level 1 — EEP Practitioner</div><div style="font-size:12px;color:#555;margin-top:3px;">All client-facing team members · Target: 4–6 weeks from onboarding</div></div>
+        <span class="badge badge-orange">Entry Level</span>
+      </div>
+      <div class="cert-level-body" id="cert1">
+        <div class="req-item"><div class="req-num">1</div><div><strong>Attend EDEv4 Introduction Session</strong> (90 min, live) — Covers the Engagement Delivery Excellence framework foundation, signal stream definitions, and the role of the EEP in active delivery. Async recordings do not satisfy this requirement.</div></div>
+        <div class="req-item"><div class="req-num">2</div><div><strong>Attend CEEDS Onboarding Session</strong> (90 min) — CEEDS structure, cadence design, CEES Session format, and documentation protocols.</div></div>
+        <div class="req-item"><div class="req-num">3</div><div><strong>Attend CE Framework Deep-Dive</strong> (60 min) — Trust architecture: credibility–reliability–referenceability model, three layers, application to active engagements.</div></div>
+        <div class="req-item"><div class="req-num">4</div><div><strong>Pass Written Scenario Assessment</strong> — Two scenarios. Identify standard gaps and articulate correct EEP response. Minimum passing score: 80%. One retake permitted after 72-hour waiting period.</div></div>
+        <div class="req-item"><div class="req-num">5</div><div><strong>Supervised CEES Session Participation</strong> — Attend one full CEES Session cycle as participant. Must demonstrate: signal language (not status language), no-blame framing, at least one substantive lesson contribution.</div></div>
+        <div class="callout callout-green" style="margin-top:12px;"><strong>Recognition:</strong> EEP Practitioner badge · Invitation to contribute scenarios to CEES Sessions · Addition to program participant record</div>
+      </div>
+    </div>
+    <div class="cert-level" style="border-color:var(--blue);">
+      <div class="cert-level-header" onclick="toggleCert('cert2')" style="background:#E3F2FD;">
+        <div class="cert-badge-big" style="background:var(--blue);">L2</div>
+        <div style="flex:1;"><div style="font-size:17px;font-weight:700;">Level 2 — EEP Lead</div><div style="font-size:12px;color:#555;margin-top:3px;">Engagement Leads and senior practitioners · Target: 6–9 months from Level 1 · Requires 6+ months active delivery</div></div>
+        <span class="badge badge-blue">Leadership Track</span>
+      </div>
+      <div class="cert-level-body" id="cert2">
+        <div class="req-item"><div class="req-num">1</div><div><strong>Active Level 1 Certification</strong> — No outstanding coaching flags or unresolved assessment retake situations.</div></div>
+        <div class="req-item"><div class="req-num">2</div><div><strong>Six Months of Delivery Under the Standard</strong> — Verified via documented Outcome Owner assignments, signal log entries, and CEES Session participation. Self-reported delivery without corroborating documentation does not satisfy this requirement.</div></div>
+        <div class="req-item"><div class="req-num">3</div><div><strong>Three Playbook Lesson Contributions</strong> — Each lesson must include: scenario description, contrast analysis (below-standard vs. at/above-standard response), and a reusable transferable principle.</div></div>
+        <div class="req-item"><div class="req-num">4</div><div><strong>Facilitate One Complete CEES Session Cycle Independently</strong> — Four sessions across an eight-week cycle. A Level 3 Trainer observes at least two sessions and provides structured feedback.</div></div>
+        <div class="req-item"><div class="req-num">5</div><div><strong>Pass Level 2 Scenario Assessment</strong> — Three scenarios across three performance bands (above/at/below standard). Must correctly identify band, explain behavioral evidence, and reference specific EEP framework elements. Minimum: 80%.</div></div>
+        <div class="callout callout-blue" style="margin-top:12px;"><strong>Recognition:</strong> EEP Lead designation · Authority to onboard new practitioners · Co-facilitation role in new hire onboarding · Access to Level 2 scenario library</div>
+      </div>
+    </div>
+    <div class="cert-level" style="border-color:var(--green);">
+      <div class="cert-level-header" onclick="toggleCert('cert3')" style="background:#E8F5E9;">
+        <div class="cert-badge-big" style="background:var(--green);">L3</div>
+        <div style="flex:1;"><div style="font-size:17px;font-weight:700;">Level 3 — EEP Trainer</div><div style="font-size:12px;color:#555;margin-top:3px;">Nominated senior leads · Target: 3–6 months from Level 2 · Nomination-based, not universal</div></div>
+        <span class="badge badge-green">Program Steward</span>
+      </div>
+      <div class="cert-level-body" id="cert3">
+        <div class="req-item"><div class="req-num">1</div><div><strong>Active Level 2 Certification</strong> — Continued evidence of delivery under the standard during the Level 3 preparation period.</div></div>
+        <div class="req-item"><div class="req-num">2</div><div><strong>Complete the Trainer-of-Trainers Module</strong> — Covers: program philosophy, common facilitation failure modes, how to administer Level 1 assessments, how to observe and document participation behavior, and how to handle edge cases in certification decisions.</div></div>
+        <div class="req-item"><div class="req-num">3</div><div><strong>Deliver One Observed Full CEES Session</strong> — Scored against the facilitation rubric by the Program Lead or peer Level 3 Trainer. Minimum passing score: 80%. Covers session structure, signal vs. status language discipline, no-blame facilitation, lesson capture quality.</div></div>
+        <div class="req-item"><div class="req-num">4</div><div><strong>Submit One Complete Scenario Write-Up for Playbook Inclusion</strong> — Fully developed scenario meeting the playbook editorial standard: scenario narrative, detailed contrast analysis across all four proficiency bands, pillar/layer/test references annotated.</div></div>
+        <div class="req-item"><div class="req-num">5</div><div><strong>Pass Level 3 Panel Debrief</strong> — 15-minute structured conversation with Program Lead and peer Level 3 Trainer. Covers: program philosophy, edge cases (two novel scenarios under pressure), and stewardship (how they will sustain program integrity).</div></div>
+        <div class="callout callout-green" style="margin-top:12px;"><strong>Recognition:</strong> Full authority to certify Level 1 Practitioners independently · Contributing author status on EEP playbook · Standing invitation to quarterly program evolution discussions · Named in program attribution record</div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- PAGE: SKILLS RUBRIC -->
+<div class="page" id="page-rubric">
+  <div class="section-header"><h2>Skills Rubric</h2><p>Six dimensions · Four proficiency levels · Observable behavioral descriptors — not character traits</p></div>
+  <div class="callout callout-orange"><strong>Rating Integrity:</strong> Ratings must be supported by observable evidence. A rating of "At Standard" or "Above Standard" requires documentation a second reader can verify — an output, an observation, a dated log entry, or a specific client interaction record.</div>
+  <div style="margin-top:16px;">
+    <div class="rubric-dim"><div class="rubric-dim-header" onclick="toggleRubric('r1')"><h3>Dimension 1: Signal Intelligence</h3><span style="font-size:12px;color:#aaa;">Click to expand ▾</span></div>
+      <div class="rubric-dim-body" id="r1">
+        <div class="rubric-level" style="background:#FFEBEE;"><div><span class="badge badge-red">Below Standard</span></div><div>Relies entirely on the client to surface problems. No consistent signal monitoring. Status language used exclusively: "Things are going well."</div><div style="color:var(--mid-gray);">No signal log entries. No proactive escalations. Client-reported issues that practitioner did not surface first.</div></div>
+        <div class="rubric-level" style="background:#FFF8E1;"><div><span class="badge badge-amber">Developing</span></div><div>Monitors some signal streams some of the time. Surfaces findings within a week of observation, sometimes longer. Signal language used occasionally but inconsistently.</div><div style="color:var(--mid-gray);">Partial signal log entries. Mix of signal language and status language in review communications.</div></div>
+        <div class="rubric-level" style="background:#E8F5E9;"><div><span class="badge badge-green">At Standard</span></div><div>Monitors all three signal streams on a weekly cadence without prompting. Surfaces signals within 48 hours. Uses signal language consistently: "I'm seeing a pattern of..."</div><div style="color:var(--mid-gray);">Complete weekly signal log entries for all three streams. Zero instances of client-reported issues that practitioner had not already surfaced.</div></div>
+        <div class="rubric-level" style="background:#E3F2FD;"><div><span class="badge badge-blue">Above Standard</span></div><div>Identifies friction patterns before the client experiences them as problems. Proposes proactive interventions with rationale. Teaches signal language to peers in CEES Sessions.</div><div style="color:var(--mid-gray);">Documented pre-emptive interventions. Peer coaching observations logged. Playbook contribution referencing a specific signal pattern.</div></div>
+      </div>
+    </div>
+    <div class="rubric-dim"><div class="rubric-dim-header" onclick="toggleRubric('r2')"><h3>Dimension 2: Ownership Clarity</h3><span style="font-size:12px;color:#aaa;">Click to expand ▾</span></div>
+      <div class="rubric-dim-body" id="r2">
+        <div class="rubric-level" style="background:#FFEBEE;"><div><span class="badge badge-red">Below Standard</span></div><div>Ownership is ambiguous on active engagements. Silent handoffs occur. "Not my scope" used as a closing move to exit ownership responsibility.</div><div style="color:var(--mid-gray);">Missing Outcome Owner entries. Client feedback indicating confusion about who is responsible. Workstreams without handoff documentation.</div></div>
+        <div class="rubric-level" style="background:#FFF8E1;"><div><span class="badge badge-amber">Developing</span></div><div>Outcome Owner is named at kickoff but communication to the client is sometimes delayed or omitted. Handoffs occur but have documentation gaps.</div><div style="color:var(--mid-gray);">Kickoff documentation includes Outcome Owner but client confirmation email is missing or delayed. Some runbook steps skipped.</div></div>
+        <div class="rubric-level" style="background:#E8F5E9;"><div><span class="badge badge-green">At Standard</span></div><div>Outcome Owner named at kickoff and communicated to client in writing before delivery begins — no exceptions. Full EEP runbook followed. No orphaned workstreams.</div><div style="color:var(--mid-gray);">Complete kickoff documentation with Outcome Owner. Client communication on file. Runbook completion checklist attached to each handoff.</div></div>
+        <div class="rubric-level" style="background:#E3F2FD;"><div><span class="badge badge-blue">Above Standard</span></div><div>Proactively closes ownership gaps created by others on the team. Visibly models runbook behavior under pressure — when timelines compress, documentation still happens.</div><div style="color:var(--mid-gray);">Documented instances of closing others' ownership gaps. Peer or manager observations of runbook adherence under pressure.</div></div>
+      </div>
+    </div>
+    <div class="rubric-dim"><div class="rubric-dim-header" onclick="toggleRubric('r3')"><h3>Dimension 3: Communication Discipline</h3><span style="font-size:12px;color:#aaa;">Click to expand ▾</span></div>
+      <div class="rubric-dim-body" id="r3">
+        <div class="rubric-level" style="background:#FFEBEE;"><div><span class="badge badge-red">Below Standard</span></div><div>Client communications sent without systematic quality check. Messages regularly fail one or more of the three tests when reviewed post-send.</div><div style="color:var(--mid-gray);">Sent communications reviewed against tests show systematic failures. Client follow-up emails indicate confusion about next steps or stakes.</div></div>
+        <div class="rubric-level" style="background:#FFF8E1;"><div><span class="badge badge-amber">Developing</span></div><div>Applies the three tests to major, high-stakes communications. Minor updates and routine check-ins sometimes bypass the gate. Applies tests selectively.</div><div style="color:var(--mid-gray);">Major communications pass tests when reviewed. Routine communications show inconsistent application.</div></div>
+        <div class="rubric-level" style="background:#E8F5E9;"><div><span class="badge badge-green">At Standard</span></div><div>All three tests applied before every client-facing communication — major or minor. When any test fails, the message is rewritten before send. No exceptions documented.</div><div style="color:var(--mid-gray);">Pre-send review log on file. All reviewed communications pass the three tests. Zero documented instances of test-failing messages sent to clients.</div></div>
+        <div class="rubric-level" style="background:#E3F2FD;"><div><span class="badge badge-blue">Above Standard</span></div><div>Client communications referenced by peers as quality models. Volunteers to review peers' communications before send. Has contributed at least one communication example to the WGLL Library.</div><div style="color:var(--mid-gray);">Peer or manager nominations of specific communications as models. WGLL Library contribution on file. CEES Session records showing communication coaching activity.</div></div>
+      </div>
+    </div>
+    <div class="rubric-dim"><div class="rubric-dim-header" onclick="toggleRubric('r4')"><h3>Dimension 4: Outcome Validation</h3><span style="font-size:12px;color:#aaa;">Click to expand ▾</span></div>
+      <div class="rubric-dim-body" id="r4">
+        <div class="rubric-level" style="background:#FFEBEE;"><div><span class="badge badge-red">Below Standard</span></div><div>Engagements are closed when the defined tasks are completed, without further validation. The three validation questions are not asked. No client value narrative is confirmed.</div><div style="color:var(--mid-gray);">Engagement close records show no validation question documentation. No client-articulated value statements on file.</div></div>
+        <div class="rubric-level" style="background:#FFF8E1;"><div><span class="badge badge-amber">Developing</span></div><div>Validation questions are asked at some engagement closes but not consistently — typically in higher-stakes engagements or when prompted by a lead.</div><div style="color:var(--mid-gray);">Some engagement close records include validation documentation; others do not. No established close template or consistent process.</div></div>
+        <div class="rubric-level" style="background:#E8F5E9;"><div><span class="badge badge-green">At Standard</span></div><div>All three validation questions asked at every engagement close — no exceptions. Engagement not declared complete until client can articulate value in their own words. Client statement documented.</div><div style="color:var(--mid-gray);">Engagement close records for all active engagements include validation documentation. Zero engagements declared closed without validated close documentation.</div></div>
+        <div class="rubric-level" style="background:#E3F2FD;"><div><span class="badge badge-blue">Above Standard</span></div><div>The validated close leads to a tangible next outcome: the client becomes a reference, an expansion conversation is initiated, or a testimonial is captured.</div><div style="color:var(--mid-gray);">Documented reference, expansion, or testimonial outcomes traceable to a specific validated close. Scenario library contribution on file.</div></div>
+      </div>
+    </div>
+    <div class="rubric-dim"><div class="rubric-dim-header" onclick="toggleRubric('r5')"><h3>Dimension 5: Trust Architecture (CE Framework Application)</h3><span style="font-size:12px;color:#aaa;">Click to expand ▾</span></div>
+      <div class="rubric-dim-body" id="r5">
+        <div class="rubric-level" style="background:#FFEBEE;"><div><span class="badge badge-red">Below Standard</span></div><div>No structured approach to building client trust. Trust-building is implicit — relies on relationship quality and technical deliverables alone. Three trust layers not applied or referenced.</div><div style="color:var(--mid-gray);">No trust layer references in engagement documentation. Trust outcomes are reactive, not designed.</div></div>
+        <div class="rubric-level" style="background:#FFF8E1;"><div><span class="badge badge-amber">Developing</span></div><div>Aware of the credibility–reliability–referenceability model and can explain it when asked. Application to active engagements is inconsistent.</div><div style="color:var(--mid-gray);">CE Framework vocabulary appears in some engagement documentation. Application inconsistent across engagements and time periods.</div></div>
+        <div class="rubric-level" style="background:#E8F5E9;"><div><span class="badge badge-green">At Standard</span></div><div>Can identify which trust layer is active in a current engagement and apply the appropriate trust-building behaviors. Trust lifecycle vocabulary used consistently. Engagement plans reference trust layer objectives.</div><div style="color:var(--mid-gray);">Engagement plans include trust layer objectives. Consistent trust layer identification in engagement reviews.</div></div>
+        <div class="rubric-level" style="background:#E3F2FD;"><div><span class="badge badge-blue">Above Standard</span></div><div>Proactively designs trust-building moments into engagement plans from kickoff. Has documented a referenceability outcome traceable to intentional trust design. Teaches trust architecture to peers in CEES Sessions.</div><div style="color:var(--mid-gray);">Engagement plans with explicit trust-building design documented. Referenceability outcome on file traceable to trust design decisions.</div></div>
+      </div>
+    </div>
+    <div class="rubric-dim"><div class="rubric-dim-header" onclick="toggleRubric('r6')"><h3>Dimension 6: Program Stewardship (Level 2+ Practitioners)</h3><span style="font-size:12px;color:#aaa;">Click to expand ▾</span></div>
+      <div class="rubric-dim-body" id="r6">
+        <div class="rubric-level" style="background:#FFEBEE;"><div><span class="badge badge-red">Below Standard</span></div><div>Participates in CEES Sessions only when required. Does not contribute scenarios, playbook lessons, or anti-patterns. Program participation is purely consumptive.</div><div style="color:var(--mid-gray);">CEES Session attendance records show attendance only when required. Lesson log shows zero contributions. No playbook additions in 12-month period.</div></div>
+        <div class="rubric-level" style="background:#FFF8E1;"><div><span class="badge badge-amber">Developing</span></div><div>Contributes one scenario per quarter to CEES Sessions — occasionally, but not at a consistent cadence. Playbook updates are minimal: partial entries, scenarios without contrast analysis.</div><div style="color:var(--mid-gray);">Lesson log shows 1–2 contributions per year. Scenarios are submitted but may lack complete documentation.</div></div>
+        <div class="rubric-level" style="background:#E8F5E9;"><div><span class="badge badge-green">At Standard</span></div><div>Contributes one complete lesson to the playbook per six-month period — scenario, contrast analysis, and reusable insight all present. Surfaces anti-patterns early in CEES Sessions without waiting for the facilitator to prompt them.</div><div style="color:var(--mid-gray);">Lesson log shows two complete contributions per year. Anti-pattern surfacing documented in CEES Session records. Quarterly review participation with documented contributions.</div></div>
+        <div class="rubric-level" style="background:#E3F2FD;"><div><span class="badge badge-blue">Above Standard</span></div><div>Has contributed three or more complete lessons to the playbook. Has proposed at least one program evolution that was considered or adopted by the Program Lead. Proactively mentors newer practitioners.</div><div style="color:var(--mid-gray);">Lesson log shows 3+ complete contributions. Documented program evolution proposal in the program record. Mentoring activity records or peer nominations.</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- PAGE: PERSONAS -->
+<div class="page" id="page-personas">
+  <div class="section-header"><h2>Learner Personas</h2><p>Three composite personas — each with distinct motivations, barriers, and EEP entry points</p></div>
+  <div style="margin-top:8px;">
+    <div class="cert-level" style="border-color:var(--orange);">
+      <div class="cert-level-header" onclick="toggleCert('p1')" style="background:#FFF3EC;">
+        <div style="width:48px;height:48px;border-radius:50%;background:var(--orange);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;">👤</div>
+        <div style="flex:1;"><div style="font-size:17px;font-weight:700;">Jordan — The New Practitioner</div><div style="font-size:12px;color:#555;margin-top:3px;">Consultant / Senior Consultant · 0–3 years · Target: Level 1 within 12 weeks</div></div>
+        <span class="badge badge-orange">New Hire Track</span>
+      </div>
+      <div class="cert-level-body" id="p1">
+        <div class="grid-2" style="margin-top:8px;">
+          <div><div style="font-size:13px;font-weight:700;color:var(--orange);margin-bottom:8px;">MOTIVATIONS</div><ul class="bullet-list"><li>Wants to stand out on the team early</li><li>Looking for a framework that tells them "what good looks like" — they want the rubric</li><li>Motivated by recognition from peers and Engagement Leads</li><li>Wants tools they can actually use on Monday morning, not theory</li></ul></div>
+          <div><div style="font-size:13px;font-weight:700;color:var(--red);margin-bottom:8px;">BARRIERS</div><ul class="bullet-list"><li>May feel intimidated by senior practitioners in CEES Sessions</li><li>Communication discipline feels like extra work on top of an already full delivery schedule</li><li>Doesn't yet have enough client relationship history to see why signal-reading matters</li><li>Signal Reviews may feel like reporting to leadership rather than genuine learning</li></ul></div>
+        </div>
+        <div class="callout callout-green" style="margin-top:12px;"><strong>Highest-Value Entry Points:</strong> The three-test protocol is the highest-value early win — it's concrete, immediately applicable, and visibly improves communication quality. The scenario library is their fastest path to signal literacy — they learn from cases before they've accumulated their own.</div>
+        <div class="callout callout-blue"><strong>EEP Design Implications:</strong> Pair with a Level 2 or Level 3 certified practitioner for the first 60 days. Start with three-test application before introducing signal review facilitation. Scenario exercises should precede live Signal Reviews.</div>
+      </div>
+    </div>
+    <div class="cert-level" style="border-color:var(--blue);">
+      <div class="cert-level-header" onclick="toggleCert('p2')" style="background:#E3F2FD;">
+        <div style="width:48px;height:48px;border-radius:50%;background:var(--blue);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;">👤</div>
+        <div style="flex:1;"><div style="font-size:17px;font-weight:700;">Alex — The Experienced Practitioner</div><div style="font-size:12px;color:#555;margin-top:3px;">Senior Consultant / Manager · 3–7 years · Target: Level 2 fast-track</div></div>
+        <span class="badge badge-blue">Experienced Track</span>
+      </div>
+      <div class="cert-level-body" id="p2">
+        <div class="grid-2" style="margin-top:8px;">
+          <div><div style="font-size:13px;font-weight:700;color:var(--orange);margin-bottom:8px;">MOTIVATIONS</div><ul class="bullet-list"><li>Wants their existing capability recognized, not overridden</li><li>Interested in advancement — becoming an Engagement Lead, a trainer, or a recognized delivery expert</li><li>Motivated by challenges that are worthy of their experience level</li><li>Values peer respect and leadership visibility</li></ul></div>
+          <div><div style="font-size:13px;font-weight:700;color:var(--red);margin-bottom:8px;">BARRIERS</div><ul class="bullet-list"><li>Resistance framing: "I already do this" — needs to see the delta between their current practice and the program standard</li><li>May not want to attend CEES Sessions as a participant — wants to facilitate or contribute, not receive</li><li>Three-test protocol may feel mechanical until they see it surface a communication error they would have missed</li></ul></div>
+        </div>
+        <div class="callout callout-orange" style="margin-top:12px;"><strong>Key Insight:</strong> Use their resistance as signal data — if their "I already do this" claim is valid, document it and build on it. If it isn't, the gap is the development agenda. Challenge them early with the "above standard" rubric across all six dimensions.</div>
+      </div>
+    </div>
+    <div class="cert-level" style="border-color:var(--green);">
+      <div class="cert-level-header" onclick="toggleCert('p3')" style="background:#E8F5E9;">
+        <div style="width:48px;height:48px;border-radius:50%;background:var(--green);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;">👤</div>
+        <div style="flex:1;"><div style="font-size:17px;font-weight:700;">Morgan — The Delivery Leader</div><div style="font-size:12px;color:#555;margin-top:3px;">Manager / Senior Manager / Director · Engagement Lead · 4-week compressed track</div></div>
+        <span class="badge badge-green">Leadership Track</span>
+      </div>
+      <div class="cert-level-body" id="p3">
+        <div class="grid-2" style="margin-top:8px;">
+          <div><div style="font-size:13px;font-weight:700;color:var(--orange);margin-bottom:8px;">MOTIVATIONS</div><ul class="bullet-list"><li>Wants the program to produce better client outcomes, not more process overhead</li><li>Wants a common language with their teams that reduces the need for constant direct oversight</li><li>Interested in seeing their teams develop — recognizes that practitioner growth reduces their management load</li><li>Motivated by results that are visible to leadership and clients</li></ul></div>
+          <div><div style="font-size:13px;font-weight:700;color:var(--red);margin-bottom:8px;">BARRIERS</div><ul class="bullet-list"><li>Time — the four operating motions must fit into an already full delivery schedule</li><li>Credibility risk — adopting a program that fails visibly is worse than not adopting one</li><li>Historical pattern: has seen programs like this launch and disappear within six months</li></ul></div>
+        </div>
+        <div class="callout callout-green" style="margin-top:12px;"><strong>EEP Design Implications:</strong> Their certification path is compressed (4-week track) and heavily application-based. CEES Session facilitation is their primary development activity — they learn by running it. Connect them to the Quarterly Review process immediately — give them structural influence over program evolution. Their program success metric is team certification progression, not their own certification status.</div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- PAGE: SCENARIOS -->
+<div class="page" id="page-scenarios">
+  <div class="section-header"><h2>CEES Scenario Simulator</h2><p>Interactive scenario practice — select the EEP-standard response, then reveal the scoring rationale</p></div>
+  <div class="callout callout-blue"><strong>How to Use:</strong> Read each scenario carefully. Select the response that best reflects the EEP standard. Click "Reveal Answer" to see the rubric-based scoring and explanation.</div>
+
+  <div class="scenario-card">
+    <div class="scenario-header"><h3>Scenario 1: The Missed Commitment</h3><span class="badge badge-orange">Signal Intelligence · Ownership Clarity</span></div>
+    <div class="scenario-body">
+      <div class="scenario-situation">You are an Engagement Lead on a mid-size implementation. During your weekly Signal Review, you notice that a deliverable you committed to the client for Tuesday has not been completed — it's now Thursday. The client has not yet raised it. What do you do?</div>
+      <div class="scenario-options" id="sc1-opts">
+        <button class="scenario-option" onclick="selectOption(this,'sc1',false)">A. Wait to see if the client raises it — they may not have noticed, and raising it proactively might draw unnecessary attention to the miss.</button>
+        <button class="scenario-option" onclick="selectOption(this,'sc1',false)">B. Send a brief note to the client saying the deliverable is "almost ready" and will be with them "shortly" — no specific date.</button>
+        <button class="scenario-option" onclick="selectOption(this,'sc1',true)">C. Contact the client proactively, acknowledge the missed commitment, name the new committed date, and explain what caused the delay in one sentence.</button>
+        <button class="scenario-option" onclick="selectOption(this,'sc1',false)">D. Escalate internally first and wait for leadership guidance before communicating anything to the client.</button>
+      </div>
+      <div class="scenario-reveal" id="sc1-reveal">
+        <div class="callout callout-green"><strong>✓ Correct: Option C</strong><br>The EEP standard requires proactive communication before the client raises the issue. Waiting (A) is a signal failure — the client will eventually notice, and the trust damage from a silent miss is greater than from a transparent one. "Almost ready" (B) fails the Stakes Test and the Next-Step Test — no committed date, no clarity. Escalating internally first (D) delays client communication unnecessarily. Option C demonstrates Ownership Follow-Through at standard: acknowledge, commit to a new date, brief explanation. This is the behavior that builds reliability in the CE Framework trust model.</div>
+      </div>
+      <button onclick="revealScenario('sc1')" style="background:var(--charcoal);color:#fff;border:none;border-radius:6px;padding:8px 16px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;">Reveal Answer</button>
+    </div>
+  </div>
+
+  <div class="scenario-card">
+    <div class="scenario-header"><h3>Scenario 2: The Status Update Email</h3><span class="badge badge-orange">Communication Discipline</span></div>
+    <div class="scenario-body">
+      <div class="scenario-situation">You've drafted a weekly status update email to the client. It covers what was completed this week, what's planned for next week, and notes that "the project is on track." Before sending, you apply the Three Tests. The Repeat-Back Test passes. The Next-Step Test fails — there's no clear action requested from the client. What do you do?</div>
+      <div class="scenario-options" id="sc2-opts">
+        <button class="scenario-option" onclick="selectOption(this,'sc2',false)">A. Send the email anyway — it's just a status update, not a decision email, so the Next-Step Test doesn't really apply here.</button>
+        <button class="scenario-option" onclick="selectOption(this,'sc2',true)">B. Revise the email to include a specific client action — even if it's just "please confirm you've received this and flag any concerns by Friday."</button>
+        <button class="scenario-option" onclick="selectOption(this,'sc2',false)">C. Add a generic "please let us know if you have any questions" line and send — that covers the next-step requirement.</button>
+        <button class="scenario-option" onclick="selectOption(this,'sc2',false)">D. Skip the status update this week since there's nothing urgent to communicate.</button>
+      </div>
+      <div class="scenario-reveal" id="sc2-reveal">
+        <div class="callout callout-green"><strong>✓ Correct: Option B</strong><br>The Three Tests apply to every client-facing communication — major or minor. There are no exceptions for "just a status update." Option A is a direct violation of Non-Negotiable Commitment II. Option C fails the Next-Step Test — "please let us know if you have any questions" is not a specific next action; it's a passive invitation that produces no observable client behavior. Option D avoids the problem by eliminating the communication entirely, which is not the standard. Option B correctly applies the test: revise until the communication passes, then send. The revision doesn't need to be elaborate — a simple, specific ask is sufficient.</div>
+      </div>
+      <button onclick="revealScenario('sc2')" style="background:var(--charcoal);color:#fff;border:none;border-radius:6px;padding:8px 16px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;">Reveal Answer</button>
+    </div>
+  </div>
+
+  <div class="scenario-card">
+    <div class="scenario-header"><h3>Scenario 3: The Engagement Close</h3><span class="badge badge-orange">Outcome Validation</span></div>
+    <div class="scenario-body">
+      <div class="scenario-situation">Your engagement is wrapping up. All deliverables have been completed and accepted. The client has signed the milestone completion document. Your manager is asking you to close the engagement in the system so the team can move on. The client has not yet been asked the three validation questions. What do you do?</div>
+      <div class="scenario-options" id="sc3-opts">
+        <button class="scenario-option" onclick="selectOption(this,'sc3',false)">A. Close the engagement — the signed milestone document is sufficient evidence of client satisfaction.</button>
+        <button class="scenario-option" onclick="selectOption(this,'sc3',false)">B. Close the engagement but make a note to follow up with the client next quarter about their experience.</button>
+        <button class="scenario-option" onclick="selectOption(this,'sc3',true)">C. Do not close the engagement. Schedule a brief call or send a structured email to ask the three validation questions and document the client's response before closing.</button>
+        <button class="scenario-option" onclick="selectOption(this,'sc3',false)">D. Ask your manager to close it since they have the authority to make exceptions to the close process.</button>
+      </div>
+      <div class="scenario-reveal" id="sc3-reveal">
+        <div class="callout callout-green"><strong>✓ Correct: Option C</strong><br>Non-Negotiable Commitment III is explicit: no engagement is administratively closed without a validated client articulation of value received. A signed milestone document is not the same as a client who can articulate what they received and why it mattered. Option A confuses task completion with value validation — this is the exact gap the EEP is designed to close. Option B defers the validation indefinitely — "next quarter" means it will not happen. Option D attempts to route around the standard through seniority — the charter is explicit that seniority does not constitute an exemption. Option C is the only response that upholds the standard. The validation doesn't need to be a long conversation — three structured questions, documented responses, engagement closed.</div>
+      </div>
+      <button onclick="revealScenario('sc3')" style="background:var(--charcoal);color:#fff;border:none;border-radius:6px;padding:8px 16px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;">Reveal Answer</button>
+    </div>
+  </div>
+
+  <div class="scenario-card">
+    <div class="scenario-header"><h3>Scenario 4: The Signal Review</h3><span class="badge badge-orange">Signal Intelligence · Below vs. At Standard</span></div>
+    <div class="scenario-body">
+      <div class="scenario-situation">During your Weekly Signal Review, a team member says: "The client seems happy — no complaints this week, the calls have been going well, and they seemed positive in the last meeting." How do you respond as the Engagement Lead facilitating the review?</div>
+      <div class="scenario-options" id="sc4-opts">
+        <button class="scenario-option" onclick="selectOption(this,'sc4',false)">A. Accept the update and move on — positive sentiment is a good signal and the team member has direct client contact.</button>
+        <button class="scenario-option" onclick="selectOption(this,'sc4',true)">B. Redirect: "That's status language. What specific signals did you observe this week across the three streams — friction, clarity, and follow-through? What did the client do or say that you're reading as positive?"</button>
+        <button class="scenario-option" onclick="selectOption(this,'sc4',false)">C. Ask the team member to send a satisfaction survey to the client to get more objective data.</button>
+        <button class="scenario-option" onclick="selectOption(this,'sc4',false)">D. Note the positive sentiment in the engagement log and flag it as a green signal for all three streams.</button>
+      </div>
+      <div class="scenario-reveal" id="sc4-reveal">
+        <div class="callout callout-green"><strong>✓ Correct: Option B</strong><br>"The client seems happy" is status language — it is a subjective impression, not an observable signal. The EEP Signal Review is a diagnostic session, not a sentiment check. Option A accepts status language as sufficient — this is the exact pattern the Signal Review is designed to interrupt. Option C introduces a survey process that is not part of the EEP operating model and delays the diagnostic. Option D logs an impression as a signal — this is a calibration failure. Option B is the correct facilitation move: name the language pattern, redirect to the three-stream model, and ask for observable behavioral evidence. "What did the client do or say?" is the right question. The answer to that question is a signal. The impression is not.</div>
+      </div>
+      <button onclick="revealScenario('sc4')" style="background:var(--charcoal);color:#fff;border:none;border-radius:6px;padding:8px 16px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;">Reveal Answer</button>
+    </div>
+  </div>
+</div>
+<!-- PAGE: MEASUREMENT -->
+<div class="page" id="page-measurement">
+  <div class="section-header"><h2>Measurement Model</h2><p>Measure the mechanism, not just the outcome — leading indicators predict future outcomes; lagging indicators confirm them</p></div>
+  <div class="callout callout-orange"><strong>Core Principle:</strong> CSAT scores are classified as lagging indicators — not because they are unimportant, but because they are the last signal in the chain. By the time a CSAT score reflects a problem, the problem has already fully manifested. The EEP's leading indicators are designed to surface the same problem weeks or months earlier.</div>
+  <div class="card" style="margin-top:16px;">
+    <div class="card-title"><span class="icon">📈</span> Leading Indicators — Program Execution Quality</div>
+    <table style="margin-top:8px;">
+      <thead><tr><th>Metric</th><th>Measurement Method</th><th>Frequency</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Outcome Owner coverage rate</strong> — % of active engagements with named, client-confirmed Outcome Owner</td><td>Program Lead audit of engagement records</td><td><span class="badge badge-orange">Weekly</span></td></tr>
+        <tr><td><strong>Three Tests compliance rate</strong> — % of client communications reviewed against Three Tests before sending</td><td>Engagement Lead self-report; spot-check audit by Program Lead</td><td><span class="badge badge-orange">Weekly</span></td></tr>
+        <tr><td><strong>Customer Friction signal count</strong> — number of amber/red friction indicators across portfolio</td><td>Weekly Signal Review aggregation</td><td><span class="badge badge-orange">Weekly</span></td></tr>
+        <tr><td><strong>Open issue age</strong> — average days open for issues with named Outcome Owner vs. without</td><td>Issue tracker / engagement log review</td><td><span class="badge badge-orange">Weekly</span></td></tr>
+        <tr><td><strong>CEES Session attendance and completion rate</strong></td><td>Program Lead attendance log</td><td><span class="badge badge-blue">Bi-weekly</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="card">
+    <div class="card-title"><span class="icon">📊</span> Lagging Indicators — Client Experience Outcomes</div>
+    <table style="margin-top:8px;">
+      <thead><tr><th>Metric</th><th>Measurement Method</th><th>Frequency</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Client satisfaction score (CSAT)</strong> by engagement</td><td>Post-engagement survey (structured, consistent instrument)</td><td><span class="badge badge-gray">Per engagement close</span></td></tr>
+        <tr><td><strong>Engagement renewal rate</strong> — % of eligible engagements that renew within 90 days of close</td><td>Account / opportunity tracking system</td><td><span class="badge badge-gray">Quarterly</span></td></tr>
+        <tr><td><strong>Reference conversion rate</strong> — % of closed engagements where client agrees to serve as reference</td><td>Account Lead confirmation; reference tracking log</td><td><span class="badge badge-gray">Per close; quarterly aggregate</span></td></tr>
+        <tr><td><strong>Client-validated value articulation rate</strong> — % of engagements closed with documented client value statement</td><td>Outcome Validation form completion; Program Lead review</td><td><span class="badge badge-gray">Per engagement close</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="card">
+    <div class="card-title"><span class="icon">🏥</span> Program Health Indicators — Operational Sustainability</div>
+    <table style="margin-top:8px;">
+      <thead><tr><th>Metric</th><th>Measurement Method</th><th>Frequency</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Level 1/2 certification completion rate</strong> — % of eligible team members certified on schedule</td><td>Certification registry; Program Lead tracking</td><td><span class="badge badge-green">Quarterly</span></td></tr>
+        <tr><td><strong>Playbook currency</strong> — days since last update; number of open improvement items</td><td>Playbook version log; improvement backlog review</td><td><span class="badge badge-green">Quarterly</span></td></tr>
+        <tr><td><strong>Signal Review cadence adherence</strong> — % of scheduled Signal Reviews held on schedule</td><td>Meeting cadence log</td><td><span class="badge badge-green">Monthly</span></td></tr>
+        <tr><td><strong>Team EEP fluency self-assessment score</strong> — team member self-rating across program competencies</td><td>Quarterly anonymous survey; Program Lead debrief</td><td><span class="badge badge-green">Quarterly</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- PAGE: SECURITY OVERVIEW -->
+<div class="page" id="page-sec-overview">
+  <div class="section-header"><h2>Security Modernization Framework</h2><p>Identity-First · Zero Trust · Enterprise-Grade · Developed by Mike Garcia</p></div>
+  <div class="callout callout-red"><strong>The Premise:</strong> Identity is the new perimeter. Over 80% of breaches involve compromised credentials — making identity the single highest-leverage investment in any security modernization effort. Security programs that begin anywhere else are building on an unstable foundation.</div>
+  <div class="grid-3" style="margin-top:16px;">
+    <div class="card" style="border-top:3px solid var(--orange);"><div style="font-size:11px;font-weight:700;color:var(--orange);letter-spacing:1px;margin-bottom:8px;">PILLAR 1</div><div style="font-size:16px;font-weight:700;margin-bottom:10px;">Identity &amp; Access</div><ul class="bullet-list"><li>Entra ID governance &amp; lifecycle</li><li>Conditional Access architecture</li><li>Phishing-resistant MFA (FIDO2/TAP)</li><li>Privileged Identity Management (PIM)</li><li>Entitlement Management</li><li>Zero Trust access architecture</li></ul></div>
+    <div class="card" style="border-top:3px solid var(--blue);"><div style="font-size:11px;font-weight:700;color:var(--blue);letter-spacing:1px;margin-bottom:8px;">PILLAR 2</div><div style="font-size:16px;font-weight:700;margin-bottom:10px;">Data Protection</div><ul class="bullet-list"><li>Sensitivity labeling taxonomy</li><li>DLP across all M365 workloads</li><li>Insider Risk Management</li><li>eDiscovery readiness</li><li>Records Management</li><li>Adaptive Protection</li></ul></div>
+    <div class="card" style="border-top:3px solid var(--green);"><div style="font-size:11px;font-weight:700;color:var(--green);letter-spacing:1px;margin-bottom:8px;">PILLAR 3</div><div style="font-size:16px;font-weight:700;margin-bottom:10px;">Governance &amp; Resilience</div><ul class="bullet-list"><li>Compliance Manager alignment</li><li>NIST / CIS control mapping</li><li>Access Reviews (automated)</li><li>Incident response playbooks</li><li>SOC integration &amp; Defender XDR</li><li>AI governance framework</li></ul></div>
+  </div>
+  <div class="card">
+    <div class="card-title"><span class="icon">📅</span> The 90-Day Roadmap</div>
+    <div class="grid-3" style="margin-top:8px;">
+      <div style="background:var(--light-gray);border-radius:8px;padding:16px;border-top:3px solid var(--orange);"><div style="font-size:12px;font-weight:700;color:var(--orange);margin-bottom:8px;">30 DAYS — STABILIZE</div><ul class="check-list"><li>Emergency access accounts verified</li><li>MFA enforced for all administrators</li><li>Legacy auth blocked for admin tier</li><li>Conditional Access in report-only mode</li><li>Sensitivity label taxonomy published</li><li>PIM active for Global Admin role</li></ul></div>
+      <div style="background:var(--light-gray);border-radius:8px;padding:16px;border-top:3px solid var(--blue);"><div style="font-size:12px;font-weight:700;color:var(--blue);margin-bottom:8px;">60 DAYS — ENFORCE</div><ul class="check-list"><li>Full MFA rollout complete</li><li>CA policies enforced org-wide</li><li>DLP enforced on Exchange &amp; SharePoint</li><li>Access Reviews activated</li><li>Defender XDR baseline deployed</li><li>Insider Risk policies configured</li></ul></div>
+      <div style="background:var(--light-gray);border-radius:8px;padding:16px;border-top:3px solid var(--green);"><div style="font-size:12px;font-weight:700;color:var(--green);margin-bottom:8px;">90 DAYS — MATURE</div><ul class="check-list"><li>Phishing-resistant auth for all admins</li><li>Endpoint DLP deployed</li><li>Insider Risk Management active</li><li>Full PIM coverage across privileged roles</li><li>Copilot readiness assessment complete</li><li>Operational model handed off</li></ul></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title"><span class="icon">💼</span> The Business Case</div>
+    <div class="grid-3" style="margin-top:8px;">
+      <div style="background:var(--light-gray);border-radius:8px;padding:16px;text-align:center;"><div style="font-size:11px;font-weight:700;color:var(--orange);margin-bottom:6px;">01</div><div style="font-size:14px;font-weight:700;margin-bottom:6px;">Reduced Credential Compromise Exposure</div><div style="font-size:12px;color:#555;line-height:1.5;">Industry average breach cost: $4.88M (IBM, 2024). Identity-first controls target the root cause of 80%+ of incidents.</div></div>
+      <div style="background:var(--light-gray);border-radius:8px;padding:16px;text-align:center;"><div style="font-size:11px;font-weight:700;color:var(--orange);margin-bottom:6px;">02</div><div style="font-size:14px;font-weight:700;margin-bottom:6px;">Regulatory Alignment Delivered</div><div style="font-size:12px;color:#555;line-height:1.5;">Control mapping delivered for HIPAA, GDPR, CMMC, SOC 2, and PCI-DSS — audit-ready documentation included.</div></div>
+      <div style="background:var(--light-gray);border-radius:8px;padding:16px;text-align:center;"><div style="font-size:11px;font-weight:700;color:var(--orange);margin-bottom:6px;">03</div><div style="font-size:14px;font-weight:700;margin-bottom:6px;">Secure AI Adoption Enabled</div><div style="font-size:12px;color:#555;line-height:1.5;">Copilot-ready environment with sensitivity labeling, DLP, and governance in place before AI deployment begins.</div></div>
+    </div>
+  </div>
+</div>
+<!-- PAGE: SECURITY FIELD GUIDE -->
+<div class="page" id="page-sec-fieldguide">
+  <div class="section-header"><h2>Security Field Guide</h2><p>The Practitioner's Take-It-Into-The-Room Companion — organized by delivery phase, not by feature</p></div>
+  <div class="callout callout-blue"><strong>How to Use:</strong> Start at the section that matches where your engagement currently is. Read the full guide once before your first client meeting. After that, navigate by section.</div>
+  <div class="tab-bar">
+    <button class="tab-btn active" onclick="switchTab(this,'fg-tabs','fg-launch')">Launch Checklist</button>
+    <button class="tab-btn" onclick="switchTab(this,'fg-tabs','fg-assess')">Assessment Guide</button>
+    <button class="tab-btn" onclick="switchTab(this,'fg-tabs','fg-ca')">Conditional Access</button>
+    <button class="tab-btn" onclick="switchTab(this,'fg-tabs','fg-mfa')">MFA Rollout</button>
+    <button class="tab-btn" onclick="switchTab(this,'fg-tabs','fg-purview')">Purview / DLP</button>
+    <button class="tab-btn" onclick="switchTab(this,'fg-tabs','fg-handoff')">Operational Handoff</button>
+  </div>
+  <div id="fg-tabs">
+    <div class="tab-content active" id="fg-launch">
+      <div class="callout callout-red"><strong>⚠ Do Not Proceed Without These Two:</strong> Emergency access account status confirmed. Licensing tier confirmed. Everything else can be gathered during assessment week. These two cannot wait.</div>
+      <div class="grid-2" style="margin-top:12px;">
+        <div class="card"><div class="card-title"><span class="icon">🔑</span> Identity</div><ul class="check-list"><li>Confirm Entra ID tenant Global Admin access for assessment</li><li>Confirm AD Connect / Cloud Sync version and sync health</li><li>Request legacy authentication sign-in log (90-day export)</li><li>Confirm emergency access account status</li><li>Confirm licensing tier (Entra ID P1/P2, M365 E3/E5)</li></ul></div>
+        <div class="card"><div class="card-title"><span class="icon">🛡️</span> Conditional Access</div><ul class="check-list"><li>Export current CA policy set (named, status, assignments)</li><li>Identify existing Named Locations</li><li>Confirm emergency access account exclusions from all CA policies</li><li>Request sign-in log for legacy auth protocol breakdown (30-day)</li></ul></div>
+        <div class="card"><div class="card-title"><span class="icon">📁</span> Data Protection</div><ul class="check-list"><li>Confirm Purview compliance portal access</li><li>Identify existing sensitivity labels (published vs. draft)</li><li>Request DLP policy export (all workloads)</li><li>Confirm eDiscovery admin access for assessment</li></ul></div>
+        <div class="card"><div class="card-title"><span class="icon">⚖️</span> Governance &amp; Resilience</div><ul class="check-list"><li>Confirm PIM activation for Global Admin (or note if absent)</li><li>Identify Access Review configuration (if any)</li><li>Confirm Sentinel / Defender XDR access for assessment</li><li>Request incident history for identity events (90-day)</li><li>Confirm SOC contact and escalation path</li></ul></div>
+      </div>
+    </div>
+    <div class="tab-content" id="fg-assess">
+      <div class="card">
+        <div class="card-title"><span class="icon">📅</span> The Five-Day Assessment Sprint</div>
+        <table style="margin-top:8px;">
+          <thead><tr><th>Day</th><th>Focus</th><th>Key Activities</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Day 1</strong></td><td>Tenant Orientation &amp; Stakeholder Interviews</td><td>Tenant orientation, emergency access verification, licensing review. Stakeholder interviews: CISO, Identity lead, Compliance lead.</td></tr>
+            <tr><td><strong>Day 2</strong></td><td>Entra ID Deep-Dive</td><td>PIM status, Access Reviews, Entitlement Management, guest governance, identity lifecycle management. Service principal audit.</td></tr>
+            <tr><td><strong>Day 3</strong></td><td>Conditional Access Analysis</td><td>Policy export, sign-in log review, legacy auth breakdown, Named Location review, gap identification vs. baseline.</td></tr>
+            <tr><td><strong>Day 4</strong></td><td>Purview Posture</td><td>Label taxonomy review, DLP coverage (all workloads), Insider Risk configuration, Compliance Manager score, eDiscovery readiness.</td></tr>
+            <tr><td><strong>Day 5</strong></td><td>Defender / Sentinel &amp; Synthesis</td><td>Defender XDR / Sentinel review, operational model assessment, data synthesis across all domains, maturity scoring, findings readout prep.</td></tr>
+          </tbody>
+        </table>
+        <div class="callout callout-amber" style="margin-top:12px;"><strong>Sprint Discipline:</strong> The five-day structure is a discipline, not a suggestion. If Day 2 runs long, you will not have time to synthesize on Day 5. Protect your synthesis day. Schedule the findings readout for Day 6 or 7 — never same-day as synthesis.</div>
+      </div>
+      <div class="card">
+        <div class="card-title"><span class="icon">🚨</span> Red Flags — Escalate to CISO Same Day</div>
+        <div class="callout callout-red">
+          <ul class="bullet-list">
+            <li>Permanent Global Admin assignments: More than 2 is a risk. More than 5 is a crisis.</li>
+            <li>No emergency access accounts, or emergency accounts not tested in 90+ days.</li>
+            <li>Legacy authentication protocols actively in use: SMTP Auth, IMAP, POP3, Basic Auth.</li>
+            <li>CA policy set with no legacy auth block — the single most common gap in the field.</li>
+            <li>MFA registration below 60% for any user population (below 80% for admins is unacceptable).</li>
+            <li>Sensitivity labels published but entirely optional — no enforcement means no protection.</li>
+            <li>No DLP policies in enforcement mode — simulation-only is not a data loss prevention posture.</li>
+            <li>No incident response playbook for credential compromise.</li>
+            <li>Guest accounts with no expiration policy — permanent, unmonitored access grants.</li>
+            <li>Service principals with Owner = None — orphaned service principals are an unmonitored attack surface.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title"><span class="icon">📊</span> Maturity Scoring Quick Reference</div>
+        <table style="margin-top:8px;">
+          <thead><tr><th>Score</th><th>Level</th><th>What It Looks Like</th></tr></thead>
+          <tbody>
+            <tr><td><span class="badge badge-red">1 — Initial</span></td><td>Ad hoc</td><td>No formal process. Controls are absent or unknown. Remediation is reactive only. High likelihood of active exploitation risk.</td></tr>
+            <tr><td><span class="badge badge-amber">2 — Developing</span></td><td>Inconsistent</td><td>Some controls exist but are not enforced consistently. Significant gaps are present. Policy exists on paper but not in practice.</td></tr>
+            <tr><td><span class="badge badge-orange">3 — Defined</span></td><td>Consistent</td><td>Core controls are in place and enforced. Documentation exists. Gaps are known and tracked. No active exploitation risk from baseline gaps.</td></tr>
+            <tr><td><span class="badge badge-blue">4 — Managed</span></td><td>Measured</td><td>Controls are monitored and measured. Exceptions are tracked and time-limited. Process is repeatable and owned. Metrics are available.</td></tr>
+            <tr><td><span class="badge badge-green">5 — Optimized</span></td><td>Continuous improvement</td><td>Controls are automated and self-healing where possible. Continuous review cadence. Metrics drive improvement. Threat-informed posture.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="tab-content" id="fg-ca">
+      <div class="callout callout-red"><strong>⚠ Never Skip Step 1 or Step 3:</strong> No emergency access exclusion = no recovery path. No report-only phase = production lockout risk. These are the two most common causes of CA deployment emergencies.</div>
+      <div class="card">
+        <div class="card-title"><span class="icon">🔢</span> Policy Deployment Sequence — Non-Negotiable Order</div>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px;">
+          <div style="display:flex;gap:12px;align-items:flex-start;padding:12px;background:var(--light-gray);border-radius:6px;font-size:13px;"><span style="background:var(--orange);color:#fff;border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0;font-size:11px;">1</span><div><strong>Verify emergency access account exclusions from ALL existing and new policies before touching anything.</strong> Do this first. Do not continue until confirmed.</div></div>
+          <div style="display:flex;gap:12px;align-items:flex-start;padding:12px;background:var(--light-gray);border-radius:6px;font-size:13px;"><span style="background:var(--orange);color:#fff;border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0;font-size:11px;">2</span><div>Document the current policy set — export all policies via PowerShell or the Entra portal. This is your rollback baseline.</div></div>
+          <div style="display:flex;gap:12px;align-items:flex-start;padding:12px;background:var(--light-gray);border-radius:6px;font-size:13px;"><span style="background:var(--orange);color:#fff;border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0;font-size:11px;">3</span><div><strong>Deploy all new policies in report-only mode. No exceptions.</strong> No "just this one" enforcement deployments. Every policy starts in report-only.</div></div>
+          <div style="display:flex;gap:12px;align-items:flex-start;padding:12px;background:var(--light-gray);border-radius:6px;font-size:13px;"><span style="background:var(--orange);color:#fff;border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0;font-size:11px;">4</span><div>Run sign-in log analysis for at least 14 days. Do not shorten this window for timeline pressure — 14 days catches weekly patterns a 3-day sample misses.</div></div>
+          <div style="display:flex;gap:12px;align-items:flex-start;padding:12px;background:var(--light-gray);border-radius:6px;font-size:13px;"><span style="background:var(--orange);color:#fff;border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0;font-size:11px;">5</span><div>Address high-impact exceptions before enforcement. Document each exception: who approved it, what the business justification is, when it will be reviewed.</div></div>
+          <div style="display:flex;gap:12px;align-items:flex-start;padding:12px;background:var(--light-gray);border-radius:6px;font-size:13px;"><span style="background:var(--orange);color:#fff;border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0;font-size:11px;">6</span><div>Enable enforcement for admin group first. Verify for 48 hours. Zero issues before proceeding.</div></div>
+          <div style="display:flex;gap:12px;align-items:flex-start;padding:12px;background:var(--light-gray);border-radius:6px;font-size:13px;"><span style="background:var(--orange);color:#fff;border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0;font-size:11px;">7</span><div>Expand by department or role wave. Communicate to users before each wave. Verify for 48 hours before the next wave.</div></div>
+          <div style="display:flex;gap:12px;align-items:flex-start;padding:12px;background:var(--light-gray);border-radius:6px;font-size:13px;"><span style="background:var(--orange);color:#fff;border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0;font-size:11px;">8</span><div>Document the final policy set — every policy named, assigned, enforcement status, exclusions, and rationale. This documentation is the client's operational artifact.</div></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title"><span class="icon">📝</span> Policy Naming Convention</div>
+        <div class="callout callout-blue"><strong>Format:</strong> [ENFORCEMENT]-[SCOPE]-[CONDITION]-[CONTROL]<br><br>Examples:<br>• ENFORCE-AllUsers-LegacyAuth-Block<br>• ENFORCE-Admins-AllApps-RequireMFA<br>• ENFORCE-AllUsers-AzureManagement-RequireMFA<br>• REPORTONLY-AllUsers-HighRisk-BlockOrMFAChange<br>• ENFORCE-Guests-AllApps-RequireMFA</div>
+      </div>
+    </div>
+    <div class="tab-content" id="fg-mfa">
+      <div class="card">
+        <div class="card-title"><span class="icon">📱</span> MFA Rollout Wave Schedule</div>
+        <table style="margin-top:8px;">
+          <thead><tr><th>Wave</th><th>Timing</th><th>Population</th><th>Key Actions</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Wave 0</strong></td><td>Week 1</td><td>IT &amp; Security</td><td>Internal pilot. Identify edge cases, test helpdesk procedure, validate communication templates.</td></tr>
+            <tr><td><strong>Wave 1</strong></td><td>Weeks 2–3</td><td>Executives &amp; Admins</td><td>High visibility. Ensure executive sponsor is visibly compliant before the broader rollout.</td></tr>
+            <tr><td><strong>Wave 2</strong></td><td>Weeks 4–8</td><td>Department by Department</td><td>Communicate to each department before their wave begins. Helpdesk must be pre-briefed before each wave.</td></tr>
+            <tr><td><strong>Wave 3</strong></td><td>Weeks 9–12</td><td>Remaining Users</td><td>Enforce registration deadline. Disable SMS MFA simultaneously — do not leave SMS as a fallback after full deployment.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card">
+        <div class="card-title"><span class="icon">⚠️</span> MFA Fatigue Attack — Immediate Response</div>
+        <div class="callout callout-red"><strong>Signs of MFA Fatigue Attack in Progress:</strong><br>• User reporting unexpected MFA prompts — multiple per hour, with no action on their part<br>• MFA challenge spike visible in sign-in logs for a specific user account<br>• MFA prompt for an unfamiliar application or an unexpected geographic location</div>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-top:12px;">
+          <div style="display:flex;gap:12px;font-size:13px;padding:10px;background:var(--light-gray);border-radius:6px;"><span style="background:var(--red);color:#fff;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;">1</span><div>Check Identity Protection risk events for the affected user — look for high-risk sign-in flags.</div></div>
+          <div style="display:flex;gap:12px;font-size:13px;padding:10px;background:var(--light-gray);border-radius:6px;"><span style="background:var(--red);color:#fff;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;">2</span><div>Review the user's recent sign-in history — check for impossible travel or unfamiliar IP addresses.</div></div>
+          <div style="display:flex;gap:12px;font-size:13px;padding:10px;background:var(--light-gray);border-radius:6px;"><span style="background:var(--red);color:#fff;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;">3</span><div>If confirmed or suspected: disable the user's active sessions immediately and require a password reset before re-enabling access.</div></div>
+          <div style="display:flex;gap:12px;font-size:13px;padding:10px;background:var(--light-gray);border-radius:6px;"><span style="background:var(--red);color:#fff;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;">4</span><div>Enable number matching on Microsoft Authenticator push notifications immediately if not already active — this is the single most effective control against MFA fatigue attacks.</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="tab-content" id="fg-purview">
+      <div class="card">
+        <div class="card-title"><span class="icon">🏷️</span> DLP Deployment Sequence</div>
+        <div class="callout callout-orange"><strong>Sequence is everything with DLP.</strong> Endpoint DLP is the most disruptive workload — it goes last.</div>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-top:12px;">
+          <div style="display:flex;gap:12px;font-size:13px;padding:12px;background:var(--light-gray);border-radius:6px;"><span style="background:var(--orange);color:#fff;border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;">1</span><div><strong>Simulation mode for all workloads first.</strong> Review match accuracy for a minimum of two weeks. Target a false positive rate below 15% before moving any policy to enforcement.</div></div>
+          <div style="display:flex;gap:12px;font-size:13px;padding:12px;background:var(--light-gray);border-radius:6px;"><span style="background:var(--orange);color:#fff;border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;">2</span><div><strong>Exchange first</strong> — email is your highest-risk exfiltration vector and has the least end-user disruption when a policy blocks a send action.</div></div>
+          <div style="display:flex;gap:12px;font-size:13px;padding:12px;background:var(--light-gray);border-radius:6px;"><span style="background:var(--orange);color:#fff;border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;">3</span><div><strong>SharePoint / OneDrive second</strong> — review access activity and sharing patterns during simulation. Oversharing findings are common and worth a separate conversation with the client.</div></div>
+          <div style="display:flex;gap:12px;font-size:13px;padding:12px;background:var(--light-gray);border-radius:6px;"><span style="background:var(--orange);color:#fff;border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;">4</span><div><strong>Teams third</strong> — validate that Teams DLP does not block legitimate business communications. Pay attention to external guest sharing in Teams channels.</div></div>
+          <div style="display:flex;gap:12px;font-size:13px;padding:12px;background:var(--light-gray);border-radius:6px;"><span style="background:var(--orange);color:#fff;border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;">5</span><div><strong>Endpoint last.</strong> Endpoint DLP is the most disruptive. If you get endpoint DLP wrong, you block users from doing their jobs. Deploy only after the other workloads are stable.</div></div>
+        </div>
+      </div>
+      <div class="callout callout-red" style="margin-top:8px;"><strong>⚠ Critical Dependency: HR Connector</strong><br>Insider Risk Management requires the HR Connector for the leaver policy to trigger correctly on employee termination. Without the HR Connector, the leaver policy cannot detect a termination event. Confirm HR Connector configuration before deploying the departing employee (leaver) policy.</div>
+    </div>
+    <div class="tab-content" id="fg-handoff">
+      <div class="callout callout-red"><strong>Engagement Is Not Closed Until This Checklist Is Complete.</strong> Technology deployment is not delivery. Delivery is when the client can operate, monitor, and respond — without calling you.</div>
+      <div class="grid-2" style="margin-top:12px;">
+        <div class="card"><div class="card-title"><span class="icon">📄</span> Documentation</div><ul class="check-list"><li>All CA policies documented: name, assignment, condition, control, exclusions, and rationale</li><li>Sensitivity label taxonomy approved and published with documented business sign-off</li><li>Emergency access account documentation stored in secure location (not in Microsoft 365)</li><li>Client holds all admin credentials, recovery codes, and emergency access account details in secure storage</li></ul></div>
+        <div class="card"><div class="card-title"><span class="icon">📖</span> Runbooks Written and Tested</div><ul class="check-list"><li>Identity incident response (credential compromise)</li><li>CA policy change request process</li><li>DLP policy incident response and user communication</li><li>PIM activation for Global Admin</li><li>Guest lifecycle (invite, review, terminate)</li></ul></div>
+        <div class="card"><div class="card-title"><span class="icon">🔔</span> Monitoring and Alerting</div><ul class="check-list"><li>Emergency access account sign-in alert configured and tested</li><li>Identity Protection risk alerts configured and routing to correct SOC queue</li><li>DLP policy alert configured and routing to correct compliance queue</li><li>PIM activation alert configured (alert on Global Admin activation)</li><li>Sentinel alert tuning completed — no default-config alerts left unreviewed</li></ul></div>
+        <div class="card"><div class="card-title"><span class="icon">📅</span> Governance Cadence Scheduled</div><ul class="check-list"><li>First post-deployment access review: date set, reviewers assigned</li><li>Guest governance review: quarterly cadence on calendar</li><li>Compliance Manager action plan: reviewed with client, owner assigned</li><li>Helpdesk trained: MFA support procedure documented and tested</li></ul></div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- PAGE: DOMAIN MATURITY TRACKER -->
+<div class="page" id="page-sec-domains">
+  <div class="section-header"><h2>Domain Maturity Tracker</h2><p>Score each domain 1–5. Present scores as a baseline, never as a grade. The question is: "Where are we starting from?"</p></div>
+  <div class="callout callout-blue"><strong>Field Reminder:</strong> Present scores as a baseline. Never use the word "grade." The question is: "Where are we starting from?" not "How did you do?"</div>
+  <div style="margin-top:16px;" id="domain-tracker">
+
+    <div class="domain-card" id="dom-identity">
+      <div class="domain-header" onclick="toggleDomain('dom-identity')" style="background:#FFF3EC;">
+        <div class="domain-title">🔑 Identity &amp; Access Management</div>
+        <div style="display:flex;align-items:center;gap:12px;">
+          <div class="maturity-score" id="score-identity">
+            <div class="maturity-dot" onclick="setScore(event,'identity',1)" title="1-Initial"></div>
+            <div class="maturity-dot" onclick="setScore(event,'identity',2)" title="2-Developing"></div>
+            <div class="maturity-dot" onclick="setScore(event,'identity',3)" title="3-Defined"></div>
+            <div class="maturity-dot" onclick="setScore(event,'identity',4)" title="4-Managed"></div>
+            <div class="maturity-dot" onclick="setScore(event,'identity',5)" title="5-Optimized"></div>
+          </div>
+          <span id="score-identity-label" class="badge badge-gray">Not scored</span>
+        </div>
+      </div>
+      <div class="domain-body" id="dom-identity-body">
+        <table style="margin-top:8px;"><thead><tr><th>Score 1 Signal</th><th>Score 3 Signal</th><th>Score 5 Signal</th></tr></thead>
+        <tbody><tr><td>Permanent GA, no PIM, no lifecycle process</td><td>PIM active, Access Reviews scheduled, JML process documented</td><td>Fully automated lifecycle, IGA platform, continuous access evaluation</td></tr></tbody></table>
+      </div>
+    </div>
+
+    <div class="domain-card" id="dom-ca">
+      <div class="domain-header" onclick="toggleDomain('dom-ca')" style="background:#E3F2FD;">
+        <div class="domain-title">🛡️ Conditional Access</div>
+        <div style="display:flex;align-items:center;gap:12px;">
+          <div class="maturity-score" id="score-ca">
+            <div class="maturity-dot" onclick="setScore(event,'ca',1)" title="1-Initial"></div>
+            <div class="maturity-dot" onclick="setScore(event,'ca',2)" title="2-Developing"></div>
+            <div class="maturity-dot" onclick="setScore(event,'ca',3)" title="3-Defined"></div>
+            <div class="maturity-dot" onclick="setScore(event,'ca',4)" title="4-Managed"></div>
+            <div class="maturity-dot" onclick="setScore(event,'ca',5)" title="5-Optimized"></div>
+          </div>
+          <span id="score-ca-label" class="badge badge-gray">Not scored</span>
+        </div>
+      </div>
+      <div class="domain-body" id="dom-ca-body">
+        <table style="margin-top:8px;"><thead><tr><th>Score 1 Signal</th><th>Score 3 Signal</th><th>Score 5 Signal</th></tr></thead>
+        <tbody><tr><td>No MFA requirement, legacy auth open, no policy set</td><td>MFA enforced, legacy auth blocked, policies named and documented</td><td>Risk-based CA, continuous access evaluation, full named policy set</td></tr></tbody></table>
+      </div>
+    </div>
+
+    <div class="domain-card" id="dom-mfa">
+      <div class="domain-header" onclick="toggleDomain('dom-mfa')" style="background:#E8F5E9;">
+        <div class="domain-title">📱 MFA &amp; Authentication</div>
+        <div style="display:flex;align-items:center;gap:12px;">
+          <div class="maturity-score" id="score-mfa">
+            <div class="maturity-dot" onclick="setScore(event,'mfa',1)" title="1-Initial"></div>
+            <div class="maturity-dot" onclick="setScore(event,'mfa',2)" title="2-Developing"></div>
+            <div class="maturity-dot" onclick="setScore(event,'mfa',3)" title="3-Defined"></div>
+            <div class="maturity-dot" onclick="setScore(event,'mfa',4)" title="4-Managed"></div>
+            <div class="maturity-dot" onclick="setScore(event,'mfa',5)" title="5-Optimized"></div>
+          </div>
+          <span id="score-mfa-label" class="badge badge-gray">Not scored</span>
+        </div>
+      </div>
+      <div class="domain-body" id="dom-mfa-body">
+        <table style="margin-top:8px;"><thead><tr><th>Score 1 Signal</th><th>Score 3 Signal</th><th>Score 5 Signal</th></tr></thead>
+        <tbody><tr><td>MFA optional or absent</td><td>MFA enforced, authenticator app required for admins</td><td>Phishing-resistant MFA (FIDO2/WHfB), number matching enforced</td></tr></tbody></table>
+      </div>
+    </div>
+
+    <div class="domain-card" id="dom-data">
+      <div class="domain-header" onclick="toggleDomain('dom-data')" style="background:#FFF8E1;">
+        <div class="domain-title">📁 Data Protection (Purview)</div>
+        <div style="display:flex;align-items:center;gap:12px;">
+          <div class="maturity-score" id="score-data">
+            <div class="maturity-dot" onclick="setScore(event,'data',1)" title="1-Initial"></div>
+            <div class="maturity-dot" onclick="setScore(event,'data',2)" title="2-Developing"></div>
+            <div class="maturity-dot" onclick="setScore(event,'data',3)" title="3-Defined"></div>
+            <div class="maturity-dot" onclick="setScore(event,'data',4)" title="4-Managed"></div>
+            <div class="maturity-dot" onclick="setScore(event,'data',5)" title="5-Optimized"></div>
+          </div>
+          <span id="score-data-label" class="badge badge-gray">Not scored</span>
+        </div>
+      </div>
+      <div class="domain-body" id="dom-data-body">
+        <table style="margin-top:8px;"><thead><tr><th>Score 1 Signal</th><th>Score 3 Signal</th><th>Score 5 Signal</th></tr></thead>
+        <tbody><tr><td>No labels, no DLP, no visibility</td><td>Labels published, DLP in enforcement for Exchange</td><td>Auto-labeling, endpoint DLP enforced, Insider Risk active</td></tr></tbody></table>
+      </div>
+    </div>
+
+    <div class="domain-card" id="dom-gov">
+      <div class="domain-header" onclick="toggleDomain('dom-gov')" style="background:#F3E5F5;">
+        <div class="domain-title">⚖️ Governance &amp; Compliance</div>
+        <div style="display:flex;align-items:center;gap:12px;">
+          <div class="maturity-score" id="score-gov">
+            <div class="maturity-dot" onclick="setScore(event,'gov',1)" title="1-Initial"></div>
+            <div class="maturity-dot" onclick="setScore(event,'gov',2)" title="2-Developing"></div>
+            <div class="maturity-dot" onclick="setScore(event,'gov',3)" title="3-Defined"></div>
+            <div class="maturity-dot" onclick="setScore(event,'gov',4)" title="4-Managed"></div>
+            <div class="maturity-dot" onclick="setScore(event,'gov',5)" title="5-Optimized"></div>
+          </div>
+          <span id="score-gov-label" class="badge badge-gray">Not scored</span>
+        </div>
+      </div>
+      <div class="domain-body" id="dom-gov-body">
+        <table style="margin-top:8px;"><thead><tr><th>Score 1 Signal</th><th>Score 3 Signal</th><th>Score 5 Signal</th></tr></thead>
+        <tbody><tr><td>No reviews, no guest policy, no process</td><td>Access Reviews for privileged roles, guest expiration policy active</td><td>Fully automated RBAC, continuous review, CIEM integration</td></tr></tbody></table>
+      </div>
+    </div>
+
+    <div class="domain-card" id="dom-resilience">
+      <div class="domain-header" onclick="toggleDomain('dom-resilience')" style="background:#FFEBEE;">
+        <div class="domain-title">🚨 Resilience &amp; SOC</div>
+        <div style="display:flex;align-items:center;gap:12px;">
+          <div class="maturity-score" id="score-resilience">
+            <div class="maturity-dot" onclick="setScore(event,'resilience',1)" title="1-Initial"></div>
+            <div class="maturity-dot" onclick="setScore(event,'resilience',2)" title="2-Developing"></div>
+            <div class="maturity-dot" onclick="setScore(event,'resilience',3)" title="3-Defined"></div>
+            <div class="maturity-dot" onclick="setScore(event,'resilience',4)" title="4-Managed"></div>
+            <div class="maturity-dot" onclick="setScore(event,'resilience',5)" title="5-Optimized"></div>
+          </div>
+          <span id="score-resilience-label" class="badge badge-gray">Not scored</span>
+        </div>
+      </div>
+      <div class="domain-body" id="dom-resilience-body">
+        <table style="margin-top:8px;"><thead><tr><th>Score 1 Signal</th><th>Score 3 Signal</th><th>Score 5 Signal</th></tr></thead>
+        <tbody><tr><td>No SIEM, no SOC, no playbooks</td><td>Sentinel active, identity alerts configured, IR playbook exists</td><td>SOAR integration, threat hunting active, playbooks tested quarterly</td></tr></tbody></table>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:20px;" id="maturity-summary">
+    <div class="card-title"><span class="icon">📊</span> Maturity Summary</div>
+    <div id="maturity-summary-content" style="font-size:13px;color:var(--mid-gray);margin-top:8px;">Score domains above to see your maturity summary.</div>
+  </div>
+</div>
+<!-- PAGE: VIBE PROMPT -->
+<div class="page" id="page-vibe">
+  <div class="section-header"><h2>Vibe Prompt</h2><p>Use this prompt to regenerate, extend, or customize this app with any AI coding assistant</p></div>
+  <div class="card">
+    <div class="card-title"><span class="icon">✨</span> Full Regeneration Prompt</div>
+    <div class="card-sub">Copy and paste into any AI assistant (Claude, ChatGPT, Copilot, Cursor, etc.) to recreate or extend this app</div>
+    <div class="vibe-box">
+      <h3>🚀 VIBE PROMPT — EEP & Security Modernization Command Center</h3>
+      <pre id="vibe-text">Build a fully deployable single-file HTML web application called the "EEP & Security Modernization Command Center" for Avanade's internal use. The app is based on two frameworks developed by Mike Garcia: the Engagement Excellence Program (EEP) and the Security Modernization Implementation Framework.
+
+DESIGN SYSTEM:
+- Primary color: #FF6200 (Avanade Orange)
+- Background: #1C1C1C (Charcoal) for sidebar, #F5F5F5 (Light Gray) for main content
+- Font: Calibri / Segoe UI
+- Fixed left sidebar (260px) with navigation sections
+- Sticky topbar with page title and "Director Mode" button
+- Responsive grid layouts (2-col, 3-col, 4-col)
+
+NAVIGATION SECTIONS & PAGES:
+1. Overview: Home Dashboard, Director Narrative
+2. EEP Program: Program Architecture, Program Charter, Operating Model, Signal Intelligence, 30/60/90 Deployment, Capability Roadmap
+3. Certification: Certification Path (L1/L2/L3), Skills Rubric (6 dimensions), Learner Personas
+4. Practice: CEES Scenario Simulator, Measurement Model
+5. Security Modernization: Framework Overview, Field Guide, Domain Maturity Tracker
+6. Resources: Vibe Prompt
+
+KEY INTERACTIVE FEATURES:
+- Tab navigation within pages (switchTab function)
+- Collapsible accordion sections (toggleCert, toggleRubric, toggleDomain, togglePhase, toggleStream)
+- 30/60/90 Deployment Planner with clickable milestone checkboxes and live progress bar
+- Signal Intelligence Tracker with Green/Amber/Red flag buttons per stream
+- CEES Scenario Simulator: 4 scenarios with multiple-choice options, correct/incorrect highlighting, reveal-on-click answers
+- Domain Maturity Tracker: 5-dot scoring per security domain with live badge labels (Initial/Developing/Defined/Managed/Optimized) and summary card
+- Director Mode: full-screen overlay with dark slides for executive presentations
+- Copy-to-clipboard for vibe prompt
+
+EEP CONTENT TO INCLUDE:
+- 4 components: EDEv4 (4 layers), CEEDS (4 pillars, 5 motions), CE Framework (3 trust layers: Credibility/Reliability/Referenceability), Governance Assessment App
+- 5 Non-Negotiable Commitments from the Program Charter
+- 3 Certification Levels: L1 Practitioner (5 requirements, 4-6 weeks), L2 Lead (5 requirements, 6-9 months), L3 Trainer (5 requirements, 3-6 months)
+- 6 Skills Rubric Dimensions: Signal Intelligence, Ownership Clarity, Communication Discipline, Outcome Validation, Trust Architecture, Program Stewardship — each with 4 proficiency levels (Below/Developing/At/Above Standard) with behavioral descriptors and evidence indicators
+- 3 Learner Personas: Jordan (New Practitioner), Alex (Experienced Practitioner), Morgan (Delivery Leader)
+- 3 Signal Streams: Customer Friction, Communication Clarity, Ownership Follow-Through — each with leading indicators, amber flag, red flag conditions
+- 3 Communication Tests: Repeat-Back, Stakes, Next-Step
+- 30/60/90 Deployment: 3 phases, 4 milestones each (12 total checkboxes)
+- 12-month Capability Roadmap: Q1 Foundation, Q2 Operationalization, Q3 Embedding, Q4 Scale
+- Measurement Model: Leading indicators (weekly), Lagging indicators (per close/quarterly), Program Health indicators (monthly/quarterly)
+- 4 CEES Scenarios with 4 options each, correct answer highlighted, rubric-based explanation revealed on click
+
+SECURITY MODERNIZATION CONTENT:
+- 3 Pillars: Identity & Access, Data Protection, Governance & Resilience
+- 90-Day Roadmap: 30-day Stabilize, 60-day Enforce, 90-day Mature (6 milestones each)
+- Business Case: 3 data points ($4.88M breach cost, 80%+ credential breaches, regulatory alignment)
+- Field Guide tabs: Launch Checklist, Assessment Guide (5-day sprint, red flags, maturity scoring 1-5), Conditional Access (8-step deployment sequence, naming convention), MFA Rollout (4 waves, fatigue response), Purview/DLP (5-step sequence, HR Connector warning), Operational Handoff (4 checklists)
+- Domain Maturity Tracker: 6 domains (Identity, CA, MFA, Data Protection, Governance, Resilience) each with 5 clickable dots, live score label, expandable detail table
+
+DIRECTOR MODE:
+Full-screen dark overlay with 4 slides: Executive Summary, Business Case (with stats), Trust Architecture (3 layers + 3 dimensions), The Director Ask (3 asks). Close button fixed top-right.
+
+ATTRIBUTION:
+Every page footer: "Built on original frameworks developed by Mike Garcia — EDEv4, CEEDS, CE Framework."
+
+Make the entire app self-contained in one HTML file with all CSS and JavaScript inline. No external dependencies except system fonts. Ensure all interactive features work without a server.</pre>
+      <button class="copy-btn" onclick="copyVibe()">📋 Copy Prompt</button>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title"><span class="icon">💡</span> Recommended Improvements &amp; Extensions</div>
+    <div class="grid-2" style="margin-top:8px;">
+      <div style="padding:14px;background:var(--light-gray);border-radius:8px;border-left:3px solid var(--orange);"><div style="font-size:12px;font-weight:700;color:var(--orange);margin-bottom:6px;">UPGRADE 1</div><div style="font-size:13px;font-weight:700;margin-bottom:4px;">Engagement Health Dashboard</div><div style="font-size:12px;color:#555;line-height:1.5;">Add a live engagement portfolio tracker where users can log multiple active engagements, assign Outcome Owners, and see portfolio-level signal health at a glance with amber/red flag aggregation.</div></div>
+      <div style="padding:14px;background:var(--light-gray);border-radius:8px;border-left:3px solid var(--blue);"><div style="font-size:12px;font-weight:700;color:var(--blue);margin-bottom:6px;">UPGRADE 2</div><div style="font-size:13px;font-weight:700;margin-bottom:4px;">Self-Assessment Tool</div><div style="font-size:12px;color:#555;line-height:1.5;">Build the monthly self-assessment form from the Skills Rubric into an interactive tool that saves ratings, generates a radar chart across 6 dimensions, and tracks progress over time using localStorage.</div></div>
+      <div style="padding:14px;background:var(--light-gray);border-radius:8px;border-left:3px solid var(--green);"><div style="font-size:12px;font-weight:700;color:var(--green);margin-bottom:6px;">UPGRADE 3</div><div style="font-size:13px;font-weight:700;margin-bottom:4px;">Certification Registry</div><div style="font-size:12px;color:#555;line-height:1.5;">Add a practitioner registry where Program Leads can log certification completions, track evidence requirements, and generate a team certification status report with completion percentages.</div></div>
+      <div style="padding:14px;background:var(--light-gray);border-radius:8px;border-left:3px solid var(--amber);"><div style="font-size:12px;font-weight:700;color:var(--amber);margin-bottom:6px;">UPGRADE 4</div><div style="font-size:13px;font-weight:700;margin-bottom:4px;">Security Assessment Report Generator</div><div style="font-size:12px;color:#555;line-height:1.5;">Extend the Domain Maturity Tracker to generate a formatted client-ready assessment report with domain scores, key findings, and prioritized recommendations based on the maturity scoring.</div></div>
+      <div style="padding:14px;background:var(--light-gray);border-radius:8px;border-left:3px solid #9C27B0;"><div style="font-size:12px;font-weight:700;color:#9C27B0;margin-bottom:6px;">UPGRADE 5</div><div style="font-size:13px;font-weight:700;margin-bottom:4px;">CEES Session Facilitator Mode</div><div style="font-size:12px;color:#555;line-height:1.5;">Add a full-screen facilitator view for CEES Sessions with timer, scenario display, participant response tracking, and a structured debrief template that captures lessons for the playbook.</div></div>
+      <div style="padding:14px;background:var(--light-gray);border-radius:8px;border-left:3px solid var(--charcoal);"><div style="font-size:12px;font-weight:700;color:var(--charcoal);margin-bottom:6px;">UPGRADE 6</div><div style="font-size:13px;font-weight:700;margin-bottom:4px;">Communication Test Checker</div><div style="font-size:12px;color:#555;line-height:1.5;">Build an interactive Three Tests checker where practitioners paste a draft client communication and answer guided questions for each test, receiving a pass/fail result with specific revision guidance.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- DIRECTOR MODE OVERLAY -->
+<div id="director-overlay">
+  <button class="director-close" onclick="closeDirectorMode()">✕ Close Director Mode</button>
+  <div class="director-slide">
+    <div style="font-size:11px;font-weight:700;color:var(--orange);letter-spacing:2px;margin-bottom:12px;">SLIDE 1 OF 4 · AVANADE INTERNAL</div>
+    <h2>Engagement Excellence Program</h2>
+    <div class="slide-sub">Engineering Client Trust at Scale · Author: Mike Garcia · June 2026</div>
+    <p>The Engagement Excellence Program (EEP) is a unified, enterprise-grade delivery operating model designed to make client trust a consistent, engineered output of every engagement. It is built on four interdependent components and eight years of real delivery experience across regulated industries.</p>
+    <p style="color:var(--orange);font-size:18px;font-weight:700;font-style:italic;margin:20px 0;">"Trustworthy by design, not by default."</p>
+    <ul>
+      <li>EDEv4 — The Delivery Engine: Signal Intelligence, Ownership Clarity, Communication Discipline, Outcome Validation</li>
+      <li>CEEDS — The Team Operating Standard: 4 pillars, 5 operating motions, bi-weekly CEES Sessions</li>
+      <li>CE Framework — The Client Trust Architecture: Credibility → Reliability → Referenceability</li>
+      <li>Governance Assessment App — The Intelligence Layer: Pre-engagement maturity baseline</li>
+    </ul>
+  </div>
+  <div class="director-slide">
+    <div style="font-size:11px;font-weight:700;color:var(--orange);letter-spacing:2px;margin-bottom:12px;">SLIDE 2 OF 4 · BUSINESS CASE</div>
+    <h2>The Business Case for Structured Delivery</h2>
+    <div class="slide-sub">Why client trust must be engineered, not assumed</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;margin:24px 0;">
+      <div style="background:#333;border-radius:8px;padding:20px;text-align:center;border-top:3px solid var(--orange);"><div style="font-size:32px;font-weight:700;color:var(--orange);">5%</div><div style="font-size:13px;color:#ccc;margin-top:6px;">Client retention increase → 25–95% profitability improvement (Bain & Company)</div></div>
+      <div style="background:#333;border-radius:8px;padding:20px;text-align:center;border-top:3px solid var(--orange);"><div style="font-size:32px;font-weight:700;color:var(--orange);">$4.88M</div><div style="font-size:13px;color:#ccc;margin-top:6px;">Average enterprise breach cost (IBM, 2024) — structural discipline is risk management</div></div>
+      <div style="background:#333;border-radius:8px;padding:20px;text-align:center;border-top:3px solid var(--orange);"><div style="font-size:32px;font-weight:700;color:var(--orange);">80%+</div><div style="font-size:13px;color:#ccc;margin-top:6px;">Of breaches involve compromised credentials — identity is the highest-leverage investment</div></div>
+    </div>
+    <p>The cost of inconsistent client experience outcomes is not primarily measured in CSAT scores. It is measured in the decisions clients make quietly: the renewal that does not come, the reference that is not given, the expansion conversation that never starts.</p>
+  </div>
+  <div class="director-slide">
+    <div style="font-size:11px;font-weight:700;color:var(--orange);letter-spacing:2px;margin-bottom:12px;">SLIDE 3 OF 4 · TRUST ARCHITECTURE</div>
+    <h2>The CE Framework — Trust Architecture</h2>
+    <div class="slide-sub">Three layers, three dimensions — all must be active simultaneously</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin:24px 0;">
+      <div style="background:#333;border-radius:8px;padding:20px;text-align:center;"><div style="font-size:28px;margin-bottom:8px;">🥇</div><div style="font-size:16px;font-weight:700;color:var(--orange);margin-bottom:8px;">Credibility</div><div style="font-size:13px;color:#ccc;">The client believes we know what we are doing. Established early — in pre-engagement, kickoff, and first deliverable.</div></div>
+      <div style="background:#333;border-radius:8px;padding:20px;text-align:center;"><div style="font-size:28px;margin-bottom:8px;">🔄</div><div style="font-size:16px;font-weight:700;color:var(--orange);margin-bottom:8px;">Reliability</div><div style="font-size:13px;color:#ccc;">The client can predict how we will behave. Built through consistent follow-through and behavioral consistency under pressure.</div></div>
+      <div style="background:#333;border-radius:8px;padding:20px;text-align:center;"><div style="font-size:28px;margin-bottom:8px;">⭐</div><div style="font-size:16px;font-weight:700;color:var(--orange);margin-bottom:8px;">Referenceability</div><div style="font-size:13px;color:#ccc;">The client actively advocates for working with us. The ultimate output — the client stakes their professional reputation on recommending the team.</div></div>
+    </div>
+    <ul>
+      <li><strong style="color:var(--orange);">KNOW</strong> — The client believes we understand their environment, constraints, and definition of success</li>
+      <li><strong style="color:var(--orange);">DO</strong> — The client observes us executing in alignment with what we said we would do</li>
+      <li><strong style="color:var(--orange);">TELL</strong> — The client experiences us communicating proactively, honestly, and with appropriate context</li>
+    </ul>
+  </div>
+  <div class="director-slide">
+    <div style="font-size:11px;font-weight:700;color:var(--orange);letter-spacing:2px;margin-bottom:12px;">SLIDE 4 OF 4 · THE ASK</div>
+    <h2>The Director Ask</h2>
+    <div class="slide-sub">Three specific accountabilities — not aspirational, operational</div>
+    <div style="display:flex;flex-direction:column;gap:16px;margin-top:24px;">
+      <div style="background:#333;border-radius:8px;padding:20px;border-left:4px solid var(--orange);"><div style="font-size:11px;font-weight:700;color:var(--orange);margin-bottom:8px;">ASK 1 — AIR COVER</div><p>When the program's standards create friction — when a client escalates, when an internal stakeholder pushes back — senior leadership is visible in backing the standard. Not just acknowledging the program exists, but actively defending it on hard cases.</p></div>
+      <div style="background:#333;border-radius:8px;padding:20px;border-left:4px solid var(--orange);"><div style="font-size:11px;font-weight:700;color:var(--orange);margin-bottom:8px;">ASK 2 — SPONSORSHIP</div><p>Treat the EEP as an operational requirement, not an optional excellence initiative. Reference it in performance conversations, include it in team-level objectives, and visibly prioritize it alongside revenue targets.</p></div>
+      <div style="background:#333;border-radius:8px;padding:20px;border-left:4px solid var(--orange);"><div style="font-size:11px;font-weight:700;color:var(--orange);margin-bottom:8px;">ASK 3 — VISIBILITY OF WINS</div><p>Actively surface and amplify program wins — client trust outcomes, renewals, expansions, and references attributable to EEP practices — to generate organizational demand for the standard beyond the founding team.</p></div>
+    </div>
+    <div style="margin-top:24px;padding:16px;background:#333;border-radius:8px;text-align:center;"><div style="font-size:13px;color:var(--mid-gray);">Built on original frameworks developed by Mike Garcia — EDEv4, CEEDS, CE Framework</div></div>
+  </div>
+</div>
+<script>
+// ── PAGE NAVIGATION ──
+const pageMap = {
+  'home':'Home Dashboard','director':'Director Narrative','architecture':'Program Architecture',
+  'charter':'Program Charter','operating':'Operating Model','signals':'Signal Intelligence',
+  'deployment':'30/60/90 Deployment Planner','roadmap':'Capability Roadmap',
+  'certification':'Certification Path','rubric':'Skills Rubric','personas':'Learner Personas',
+  'scenarios':'CEES Scenario Simulator','measurement':'Measurement Model',
+  'sec-overview':'Security Modernization Framework','sec-fieldguide':'Security Field Guide',
+  'sec-domains':'Domain Maturity Tracker','vibe':'Vibe Prompt'
+};
+
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const pg = document.getElementById('page-' + id);
+  if (pg) pg.classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n => {
+    if (n.getAttribute('onclick') && n.getAttribute('onclick').includes("'" + id + "'")) n.classList.add('active');
+  });
+  document.getElementById('topbar-title').textContent = pageMap[id] || id;
+  window.scrollTo(0,0);
+}
+
+// ── TABS ──
+function switchTab(btn, groupId, tabId) {
+  const group = document.getElementById(groupId);
+  if (!group) return;
+  group.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  const tab = document.getElementById(tabId);
+  if (tab) tab.classList.add('active');
+  const bar = btn.closest('.tab-bar');
+  if (bar) bar.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+// ── ACCORDIONS ──
+function toggleCert(id) {
+  const el = document.getElementById(id);
+  if (el) el.classList.toggle('open');
+}
+function toggleRubric(id) {
+  const el = document.getElementById(id);
+  if (el) el.classList.toggle('open');
+}
+function togglePhase(id) {
+  const body = document.getElementById(id + '-body');
+  if (body) body.classList.toggle('open');
+}
+function toggleStream(id) {
+  const body = document.getElementById(id + '-body');
+  if (body) body.classList.toggle('open');
+}
+function toggleDomain(id) {
+  const body = document.getElementById(id + '-body');
+  if (body) body.classList.toggle('open');
+}
+
+// ── SIGNAL FLAGS ──
+function setFlag(e, streamId, color) {
+  e.stopPropagation();
+  const stream = document.getElementById(streamId);
+  if (!stream) return;
+  const header = stream.querySelector('.signal-stream-header');
+  const colors = { green:'#E8F5E9', amber:'#FFF8E1', red:'#FFEBEE' };
+  if (header) header.style.background = colors[color] || '#fff';
+  stream.querySelectorAll('.signal-flag').forEach(b => b.style.outline = 'none');
+  e.target.style.outline = '2px solid #333';
+}
+
+// ── DEPLOYMENT MILESTONES ──
+function toggleMilestone(el, phaseId) {
+  el.classList.toggle('checked');
+  el.textContent = el.classList.contains('checked') ? '✓' : '';
+  updateProgress();
+}
+
+function updateProgress() {
+  const phases = ['phase1','phase2','phase3'];
+  let total = 0, done = 0;
+  phases.forEach(ph => {
+    const body = document.getElementById(ph + '-body');
+    if (!body) return;
+    const checks = body.querySelectorAll('.milestone-check');
+    const checked = body.querySelectorAll('.milestone-check.checked');
+    total += checks.length;
+    done += checked.length;
+    const countEl = document.getElementById(ph + '-count');
+    if (countEl) countEl.textContent = checked.length + '/' + checks.length + ' complete';
+  });
+  const pct = total > 0 ? Math.round((done / total) * 100) : 0;
+  const fill = document.getElementById('progress-fill');
+  const pctEl = document.getElementById('progress-pct');
+  if (fill) fill.style.width = pct + '%';
+  if (pctEl) pctEl.textContent = pct + '%';
+}
+
+// ── SCENARIOS ──
+function selectOption(btn, scId, isCorrect) {
+  const opts = document.getElementById(scId + '-opts');
+  if (!opts) return;
+  opts.querySelectorAll('.scenario-option').forEach(b => {
+    b.classList.remove('correct','incorrect');
+    b.disabled = true;
+  });
+  btn.classList.add(isCorrect ? 'correct' : 'incorrect');
+  if (!isCorrect) {
+    opts.querySelectorAll('.scenario-option').forEach(b => {
+      if (b.getAttribute('onclick') && b.getAttribute('onclick').includes('true')) b.classList.add('correct');
+    });
+  }
+}
+
+function revealScenario(scId) {
+  const reveal = document.getElementById(scId + '-reveal');
+  if (reveal) reveal.classList.add('show');
+}
+
+// ── DOMAIN MATURITY SCORING ──
+const scoreLabels = ['','Initial','Developing','Defined','Managed','Optimized'];
+const scoreBadges = ['','badge-red','badge-amber','badge-orange','badge-blue','badge-green'];
+
+function setScore(e, domainId, score) {
+  e.stopPropagation();
+  const scoreEl = document.getElementById('score-' + domainId);
+  if (!scoreEl) return;
+  const dots = scoreEl.querySelectorAll('.maturity-dot');
+  dots.forEach((d, i) => {
+    d.classList.toggle('filled', i < score);
+  });
+  const label = document.getElementById('score-' + domainId + '-label');
+  if (label) {
+    label.textContent = score + ' — ' + scoreLabels[score];
+    label.className = 'badge ' + scoreBadges[score];
+  }
+  updateMaturitySummary();
+}
+
+function updateMaturitySummary() {
+  const domains = ['identity','ca','mfa','data','gov','resilience'];
+  const domainNames = {'identity':'Identity & Access','ca':'Conditional Access','mfa':'MFA & Authentication','data':'Data Protection','gov':'Governance & Compliance','resilience':'Resilience & SOC'};
+  let scores = {};
+  let allScored = true;
+  domains.forEach(d => {
+    const scoreEl = document.getElementById('score-' + d);
+    if (!scoreEl) return;
+    const filled = scoreEl.querySelectorAll('.maturity-dot.filled').length;
+    scores[d] = filled;
+    if (filled === 0) allScored = false;
+  });
+  const summaryEl = document.getElementById('maturity-summary-content');
+  if (!summaryEl) return;
+  const scored = domains.filter(d => scores[d] > 0);
+  if (scored.length === 0) { summaryEl.innerHTML = '<span style="color:var(--mid-gray);">Score domains above to see your maturity summary.</span>'; return; }
+  const avg = scored.reduce((a,d) => a + scores[d], 0) / scored.length;
+  const lowest = scored.sort((a,b) => scores[a]-scores[b])[0];
+  const highest = scored.sort((a,b) => scores[b]-scores[a])[0];
+  summaryEl.innerHTML = '<div class="grid-3" style="margin-top:8px;">' +
+    '<div style="padding:14px;background:var(--light-gray);border-radius:8px;text-align:center;"><div style="font-size:24px;font-weight:700;color:var(--orange);">' + avg.toFixed(1) + '</div><div style="font-size:12px;color:#555;margin-top:4px;">Average Maturity Score</div></div>' +
+    '<div style="padding:14px;background:#FFEBEE;border-radius:8px;text-align:center;"><div style="font-size:14px;font-weight:700;color:var(--red);">' + domainNames[lowest] + '</div><div style="font-size:12px;color:#555;margin-top:4px;">Lowest Score — Priority Focus</div></div>' +
+    '<div style="padding:14px;background:#E8F5E9;border-radius:8px;text-align:center;"><div style="font-size:14px;font-weight:700;color:var(--green);">' + domainNames[highest] + '</div><div style="font-size:12px;color:#555;margin-top:4px;">Highest Score — Strongest Domain</div></div>' +
+    '</div>';
+}
+
+// ── DIRECTOR MODE ──
+function openDirectorMode() {
+  document.getElementById('director-overlay').classList.add('show');
+  document.body.style.overflow = 'hidden';
+}
+function closeDirectorMode() {
+  document.getElementById('director-overlay').classList.remove('show');
+  document.body.style.overflow = '';
+}
+
+// ── COPY VIBE PROMPT ──
+function copyVibe() {
+  const text = document.getElementById('vibe-text').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.querySelector('.copy-btn');
+    if (btn) { btn.textContent = '✓ Copied!'; setTimeout(() => btn.textContent = '📋 Copy Prompt', 2000); }
+  }).catch(() => {
+    const ta = document.createElement('textarea');
+    ta.value = text; document.body.appendChild(ta); ta.select();
+    document.execCommand('copy'); document.body.removeChild(ta);
+    const btn = document.querySelector('.copy-btn');
+    if (btn) { btn.textContent = '✓ Copied!'; setTimeout(() => btn.textContent = '📋 Copy Prompt', 2000); }
+  });
+}
+
+// ── KEYBOARD SHORTCUTS ──
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeDirectorMode();
+});
+</script>
+</main>
+
+<!-- CONFIDENTIALITY NOTICE BANNER -->
+<style>
+.conf-banner {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #0a0a0a;
+  border-top: 2px solid #FF6200;
+  padding: 8px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 99999;
+  font-family: Calibri, Segoe UI, Arial, sans-serif;
+}
+.conf-banner .conf-text {
+  font-size: 11px;
+  color: #999;
+  letter-spacing: 0.5px;
+}
+.conf-banner .conf-text strong {
+  color: #FF6200;
+}
+.conf-banner .conf-link {
+  font-size: 11px;
+  color: #FF6200;
+  text-decoration: none;
+  border: 1px solid #FF6200;
+  padding: 3px 10px;
+  border-radius: 2px;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.conf-modal-overlay {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.85);
+  z-index: 999999;
+  align-items: center;
+  justify-content: center;
+}
+.conf-modal-overlay.active { display: flex; }
+.conf-modal {
+  background: #141414;
+  border: 1px solid #2a2a2a;
+  border-top: 3px solid #FF6200;
+  max-width: 680px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+  padding: 40px;
+  border-radius: 4px;
+  font-family: Calibri, Segoe UI, Arial, sans-serif;
+}
+.conf-modal h2 { color: #FF6200; font-size: 13px; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 16px; }
+.conf-modal h1 { color: #fff; font-size: 22px; margin-bottom: 8px; }
+.conf-modal p { color: #ccc; font-size: 14px; line-height: 1.8; margin-bottom: 12px; }
+.conf-modal ul { list-style: none; margin: 8px 0 16px 0; }
+.conf-modal ul li { color: #ccc; font-size: 14px; line-height: 1.8; padding: 4px 0 4px 20px; position: relative; border-bottom: 1px solid #1e1e1e; }
+.conf-modal ul li::before { content: "✕"; position: absolute; left: 0; color: #FF6200; font-size: 11px; font-weight: 700; }
+.conf-modal .conf-close { background: #FF6200; color: #fff; border: none; padding: 10px 28px; font-size: 13px; font-weight: 700; cursor: pointer; border-radius: 2px; margin-top: 16px; letter-spacing: 1px; }
+.conf-modal .conf-section-title { color: #FF6200; font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; margin: 20px 0 8px 0; }
+</style>
+<div class="conf-banner">
+  <span class="conf-text"><strong>CONFIDENTIAL &amp; PROPRIETARY</strong> — Mike Garcia. View-only access. Unauthorized use prohibited.</span>
+  <a class="conf-link" onclick="document.getElementById('confModal').classList.add('active')">READ TERMS</a>
+</div>
+<div class="conf-modal-overlay" id="confModal">
+  <div class="conf-modal">
+    <h2>⚠ Restricted Access</h2>
+    <h1>Confidentiality Terms</h1>
+    <p>By accessing this content, you acknowledge and agree to the following terms. If you do not agree, do not access or view the content.</p>
+    <div class="conf-section-title">Confidentiality</div>
+    <p>All materials are confidential and proprietary to <strong style="color:#fff">Mike Garcia</strong>, including frameworks, methodologies, templates, dashboards, and architecture models.</p>
+    <div class="conf-section-title">Permitted Use</div>
+    <p>You are granted <strong style="color:#fff">view-only access</strong> for the sole purpose of review. No other rights are granted or implied.</p>
+    <div class="conf-section-title">Prohibited Actions</div>
+    <p>Without explicit written permission, you may not:</p>
+    <ul>
+      <li>Copy, download, print, or export any content</li>
+      <li>Screenshot, record, or otherwise capture the content</li>
+      <li>Share, forward, or redistribute the link or materials</li>
+      <li>Use the content to create derivative works</li>
+      <li>Incorporate the content into internal or commercial deliverables</li>
+      <li>Use the content for competitive analysis or product development</li>
+    </ul>
+    <div class="conf-section-title">Intellectual Property</div>
+    <p>All content remains the exclusive intellectual property of Mike Garcia. No license or ownership rights are transferred through access.</p>
+    <div class="conf-section-title">Access Revocation</div>
+    <p>Access may be revoked at any time without notice. Continued access constitutes acceptance of these terms.</p>
+    <button class="conf-close" onclick="document.getElementById('confModal').classList.remove('active')">I ACKNOWLEDGE — CLOSE</button>
+  </div>
+</div>
+<!-- END CONFIDENTIALITY NOTICE -->
+
+</body>
+</html>

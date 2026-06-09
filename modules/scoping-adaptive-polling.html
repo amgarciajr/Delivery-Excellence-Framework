@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Scoping &amp; Adaptive Polling — EDE Frameworks</title>
+<link href="../css/styles.css" rel="stylesheet"/>
+<style>
+    .mod-hero { position:relative; padding:48px 0 36px; text-align:center; overflow:hidden; }
+    .mod-hero-glow { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:600px; height:300px; background:url('../assets/glows/hero-glow.png?expires=1783578057&signature=e2091e24ce4315cda696130c1f4595e96e90c966cf45d1233275852417c0fc1f') center/contain no-repeat; opacity:0.4; pointer-events:none; }
+    .mod-eyebrow { font-size:11px; font-weight:700; letter-spacing:3px; text-transform:uppercase; color:#0078ff; margin-bottom:12px; }
+    .mod-title { font-size:2.2rem; font-weight:800; color:#fff; margin-bottom:12px; text-shadow:0 0 30px rgba(0,120,255,0.3); }
+    .mod-subtitle { font-size:1rem; color:#8892a4; max-width:600px; margin:0 auto; line-height:1.7; }
+    .stat-row { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:28px; }
+    .stat-card { background:linear-gradient(160deg,rgba(17,24,39,0.97) 0%,rgba(10,14,36,0.97) 100%); border:1px solid rgba(0,120,255,0.18); border-radius:14px; padding:20px 18px; position:relative; overflow:hidden; text-align:center; }
+    .stat-card::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background:linear-gradient(90deg,#0078ff,#00c8ff); }
+    .stat-num { font-size:2rem; font-weight:800; color:#0078ff; line-height:1; margin-bottom:6px; }
+    .stat-label { font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:#8892a4; }
+    .stat-desc { font-size:0.78rem; color:#b0bac8; margin-top:4px; }
+    .panel { background:linear-gradient(160deg,rgba(17,24,39,0.97) 0%,rgba(10,14,36,0.97) 100%); border:1px solid rgba(0,120,255,0.15); border-radius:14px; padding:24px 28px; position:relative; overflow:hidden; margin-bottom:20px; }
+    .panel::before { content:''; position:absolute; top:0; left:0; right:0; height:1px; background:linear-gradient(90deg,transparent,rgba(0,120,255,0.4),transparent); }
+    .panel-title { font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:#0078ff; margin-bottom:16px; }
+    .concept-list { list-style:none; padding:0; }
+    .concept-item { display:flex; align-items:flex-start; gap:16px; padding:14px 0; border-bottom:1px solid rgba(255,255,255,0.05); }
+    .concept-item:last-child { border-bottom:none; }
+    .concept-icon { width:36px; height:36px; border-radius:10px; background:rgba(0,120,255,0.12); border:1px solid rgba(0,120,255,0.25); display:flex; align-items:center; justify-content:center; font-size:1.1rem; flex-shrink:0; }
+    .concept-title { font-size:0.92rem; font-weight:700; color:#fff; margin-bottom:4px; }
+    .concept-body { font-size:0.82rem; color:#8892a4; line-height:1.6; }
+    .step-row { display:flex; align-items:flex-start; gap:16px; padding:14px 0; border-bottom:1px solid rgba(255,255,255,0.05); }
+    .step-row:last-child { border-bottom:none; }
+    .step-num { width:36px; height:36px; border-radius:50%; background:rgba(0,120,255,0.15); border:1px solid rgba(0,120,255,0.35); display:flex; align-items:center; justify-content:center; font-size:0.85rem; font-weight:800; color:#00c8ff; flex-shrink:0; }
+    .step-title { font-size:0.92rem; font-weight:700; color:#fff; margin-bottom:4px; }
+    .step-body { font-size:0.82rem; color:#8892a4; line-height:1.6; }
+    .step-tag { display:inline-block; font-size:9px; font-weight:700; letter-spacing:1px; text-transform:uppercase; padding:2px 8px; border-radius:10px; background:rgba(0,120,255,0.12); border:1px solid rgba(0,120,255,0.25); color:#60a5fa; margin-top:6px; margin-right:4px; }
+    .two-col { display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom:20px; }
+    .three-col { display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; margin-bottom:20px; }
+    .mini-card { background:rgba(0,0,0,0.25); border:1px solid rgba(255,255,255,0.07); border-radius:10px; padding:16px; margin-bottom:12px; }
+    .mini-card:last-child { margin-bottom:0; }
+    .mini-card-title { font-size:0.85rem; font-weight:700; color:#fff; margin-bottom:6px; }
+    .mini-card-body { font-size:0.78rem; color:#8892a4; line-height:1.6; }
+    .callout { border-radius:10px; padding:16px 20px; margin:16px 0; border:1px solid rgba(0,120,255,0.3); background:rgba(0,120,255,0.07); }
+    .callout-text { font-size:0.88rem; color:#e8eaf6; line-height:1.7; font-style:italic; }
+    .callout-attr { font-size:0.75rem; color:#0078ff; font-weight:700; margin-top:8px; letter-spacing:0.05em; }
+    .compare-table { width:100%; border-collapse:collapse; }
+    .compare-table th { font-size:9px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:#8892a4; padding:0 12px 12px 0; text-align:left; border-bottom:1px solid rgba(255,255,255,0.06); }
+    .compare-table td { font-size:0.82rem; color:#e8eaf6; padding:11px 12px 11px 0; border-bottom:1px solid rgba(255,255,255,0.04); vertical-align:top; line-height:1.6; }
+    .compare-table tr:last-child td { border-bottom:none; }
+    .badge { display:inline-block; font-size:9px; font-weight:700; letter-spacing:1px; text-transform:uppercase; padding:3px 10px; border-radius:20px; }
+    .badge-green { background:rgba(5,150,105,0.15); color:#34d399; border:1px solid rgba(52,211,153,0.3); }
+    .badge-red   { background:rgba(220,38,38,0.15);  color:#f87171; border:1px solid rgba(248,113,113,0.3); }
+    .badge-blue  { background:rgba(0,120,255,0.15);  color:#60a5fa; border:1px solid rgba(96,165,250,0.3); }
+    @media(max-width:900px){ .two-col,.three-col,.stat-row{ grid-template-columns:1fr 1fr; } }
+    @media(max-width:600px){ .two-col,.three-col,.stat-row{ grid-template-columns:1fr; } .mod-title{ font-size:1.6rem; } }
+  </style>
+</head>
+<body>
+<canvas id="particle-canvas"></canvas>
+<div class="page-wrap">
+<header>
+<div class="header-title"><span>EDE</span> / CEES / EEP  Frameworks</div>
+<button class="pdf-btn" onclick="exportPDF()">⬇ Export PDF</button>
+</header>
+<div class="container">
+<div style="margin-bottom:16px;"><a class="back-btn" href="../index.html">← Back to Framework Library</a></div>
+<div class="mod-hero">
+<div class="mod-hero-glow"></div>
+<div class="mod-eyebrow">EDEv4 · Pre-Engagement — Six Steps Before Day One</div>
+<h1 class="mod-title">Scoping &amp; Adaptive Polling</h1>
+<p class="mod-subtitle">The six steps before Day One determine most CPE outcomes. Scoping, recap, pre-poll, and adaptive polling ensure clarity, alignment, and real-time course correction.</p>
+</div>
+<!-- Stats -->
+<div class="stat-row">
+<div class="stat-card"><div class="stat-num">6</div><div class="stat-label">Pre-Delivery Steps</div><div class="stat-desc">Determine majority of CPE outcomes</div></div>
+<div class="stat-card"><div class="stat-num">80%+</div><div class="stat-label">CPE Outcomes</div><div class="stat-desc">Set before Day One delivery</div></div>
+<div class="stat-card"><div class="stat-num">3</div><div class="stat-label">Polling Types</div><div class="stat-desc">Pre-poll, live poll, follow-up</div></div>
+<div class="stat-card"><div class="stat-num">2</div><div class="stat-label">Exceptions Only</div><div class="stat-desc">SCOP and Lab Assist only</div></div>
+</div>
+<!-- Overview -->
+<div class="panel">
+<div class="panel-title">Why Pre-Engagement Determines Everything</div>
+<p style="color:#e8eaf6;line-height:1.8;font-size:0.97rem;margin-bottom:14px;">The six steps before Day One are not administrative overhead — they are the primary determinant of CPE outcomes. Engineers who complete all six steps consistently outperform those who skip or abbreviate them, regardless of technical skill level. The scoping call discovers the real business problem. The recap email creates written alignment. The pre-poll captures expectations before delivery shapes them. The live poll enables real-time course correction. Together, they transform delivery from a guess into a calibrated response.</p>
+<div class="callout">
+<div class="callout-text">"The six steps before Day One determine most CPE outcomes. An engineer who arrives prepared, aligned, and polling in real time is not doing more work — they are doing the right work."</div>
+<div class="callout-attr">— EDEv4 Pre-Engagement Standard</div>
+</div>
+</div>
+<!-- Six Steps -->
+<div class="panel">
+<div class="panel-title">The Six Pre-Delivery Steps — In Sequence</div>
+<div class="step-row">
+<div class="step-num">1</div>
+<div>
+<div class="step-title">Scoping Call — Discover the Real Business Problem</div>
+<div class="step-body">The scoping call must happen 2–4 weeks before delivery. Its purpose is not to confirm logistics — it is to discover the real business problem behind the engagement request. What does the client actually need? What does success look like to them? What constraints exist that the dispatch description doesn't capture? Never book travel before CSAM and manager confirm.</div>
+<span class="step-tag">TPL-SCOP</span><span class="step-tag">2–4 weeks pre-delivery</span><span class="step-tag">CSAM present</span>
+</div>
+</div>
+<div class="step-row">
+<div class="step-num">2</div>
+<div>
+<div class="step-title">Recap Email — Written Alignment Before Delivery</div>
+<div class="step-body">The recap email converts the scoping call into a written record of alignment. It confirms scope, confirms the Outcome Owner, and gives the client an opportunity to correct misunderstandings before delivery begins. Apply all Three Tests before sending. Tag with #Scoping. Use TPL-SCOP template.</div>
+<span class="step-tag">TPL-SCOP</span><span class="step-tag">Three Tests applied</span><span class="step-tag">#Scoping tag</span>
+</div>
+</div>
+<div class="step-row">
+<div class="step-num">3</div>
+<div>
+<div class="step-title">Pre-Poll — Expectations, Expertise, Objectives</div>
+<div class="step-body">The pre-poll is sent before Day One to capture the audience's expectations, expertise level, and specific objectives. It is not a survey — it is intelligence gathering that directly shapes delivery design. Send with #AdaptivePolling tag. Apply Three Tests. Use TPL-POLL template. Results must be reviewed before delivery begins.</div>
+<span class="step-tag">TPL-POLL</span><span class="step-tag">#AdaptivePolling</span><span class="step-tag">Review before Day One</span>
+</div>
+</div>
+<div class="step-row">
+<div class="step-num">4</div>
+<div>
+<div class="step-title">Workshop Materials Upload — Early, Not Late</div>
+<div class="step-body">Materials must be uploaded on time. Late uploads are flagged amber even if eventually completed — the on-time flag matters independently. Confirm the bill of materials. Verify lab environment via aka.ms/LOD. Late uploads signal poor operational hygiene regardless of content quality.</div>
+<span class="step-tag">On-time required</span><span class="step-tag">aka.ms/LOD verified</span><span class="step-tag">Bill of materials confirmed</span>
+</div>
+</div>
+<div class="step-row">
+<div class="step-num">5</div>
+<div>
+<div class="step-title">Technical Contact Confirmed</div>
+<div class="step-body">The correct technical contact — the customer contact you will interact with most — must be entered on the dispatch and documented in the engagement record. This is not the project sponsor or the CSAM. It is the person who will be in the room, asking questions, and whose experience determines the CPE score.</div>
+<span class="step-tag">Documented in ESXP</span><span class="step-tag">Not the sponsor</span>
+</div>
+</div>
+<div class="step-row">
+<div class="step-num">6</div>
+<div>
+<div class="step-title">Live Poll — Adapt in Real Time</div>
+<div class="step-body">The live poll is run during delivery to capture real-time feedback and enable course correction. It is not a formality — it is the mechanism that converts pre-engagement intelligence into in-delivery adaptation. Results are captured and inform the post-engagement learning loop. No exceptions for short engagements.</div>
+<span class="step-tag">Run during delivery</span><span class="step-tag">Results captured</span><span class="step-tag">No short-engagement exceptions</span>
+</div>
+</div>
+</div>
+<!-- Polling Types + Exceptions -->
+<div class="two-col">
+<div class="panel">
+<div class="panel-title">Adaptive Polling — Three Types</div>
+<div class="mini-card">
+<div class="mini-card-title">📋 Pre-Poll (Before Day One)</div>
+<div class="mini-card-body">Sent 1–2 weeks before delivery. Captures expectations, expertise level, and specific objectives. Shapes delivery design before the first session begins. Required for all engagements — no exceptions.</div>
+</div>
+<div class="mini-card">
+<div class="mini-card-title">📡 Live Poll (During Delivery)</div>
+<div class="mini-card-body">Run during delivery sessions to capture real-time feedback. Enables course correction mid-engagement. Results documented and fed into the post-engagement learning loop. The mechanism that makes delivery adaptive rather than scripted.</div>
+</div>
+<div class="mini-card">
+<div class="mini-card-title">📞 Follow-Up Poll (Two Weeks Post)</div>
+<div class="mini-card-body">The two-week follow-up contact using the three validation questions. Closes the CPE loop. Captures client articulation of value received. Required for clean engagement closure under EEP standard.</div>
+</div>
+</div>
+<div class="panel">
+<div class="panel-title">Exceptions — Only Two Apply</div>
+<div class="callout" style="margin-top:0;">
+<div class="callout-text">"Dispatch type changes entry, not the standard. Short engagements still require polling. The only exceptions are SCOP and Lab Assist."</div>
+</div>
+<div class="mini-card" style="margin-top:16px;">
+<div class="mini-card-title">✅ SCOP — Scoping-Only Engagement</div>
+<div class="mini-card-body">A scoping-only engagement is itself the pre-engagement step. The scoping call IS the delivery. Pre-poll and live poll requirements are modified — but the recap email and written alignment are still required.</div>
+</div>
+<div class="mini-card">
+<div class="mini-card-title">✅ Lab Assist</div>
+<div class="mini-card-body">Lab Assist engagements have a modified polling requirement due to the nature of the delivery format. However, the Outcome Owner assignment, CSAM contact, and recap email requirements remain in full effect.</div>
+</div>
+<div class="mini-card">
+<div class="mini-card-title" style="color:#f87171;">❌ "It's a short engagement"</div>
+<div class="mini-card-body">Not an exception. A one-day engagement has the same polling standard as a five-day engagement. The standard scales in application, not in applicability. Short engagements that skip polling consistently produce lower CPE scores.</div>
+</div>
+</div>
+</div>
+<!-- Three Tests on Recap Email -->
+<div class="panel">
+<div class="panel-title">Applying the Three Tests — Recap Email Example</div>
+<table class="compare-table">
+<thead>
+<tr><th>Test</th><th>Question</th><th>Pass Criteria for Recap Email</th></tr>
+</thead>
+<tbody>
+<tr>
+<td><strong style="color:#00c8ff;">Repeat-Back Test</strong></td>
+<td style="color:#8892a4;">Could the client accurately restate the key content after one reading?</td>
+<td>Scope is stated in plain language. Outcome Owner is named. Delivery dates are explicit. No jargon that requires interpretation.</td>
+</tr>
+<tr>
+<td><strong style="color:#00c8ff;">Stakes Test</strong></td>
+<td style="color:#8892a4;">Does the client understand what happens if they don't respond or correct?</td>
+<td>Email states that delivery will proceed based on this scope unless the client responds with corrections by [date]. Consequence of non-response is explicit.</td>
+</tr>
+<tr>
+<td><strong style="color:#00c8ff;">Next-Step Test</strong></td>
+<td style="color:#8892a4;">Is the immediate next action crystal clear — who, when, how confirmed?</td>
+<td>"Please reply to confirm this scope is accurate by [date]. If no response is received, we will proceed as described." One action. One owner. One deadline.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<footer>EDE / CEES / EEP Frameworks  ·  Confidential  ·  Authorized Personnel Only</footer>
+</div>
+<script src="../js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Dispatch Activity &amp; Queue Monitor — EDE Dashboards</title>
+<link href="../css/styles.css" rel="stylesheet"/>
+<style>
+    .dash-wrap { position:relative; z-index:1; padding:40px 24px 80px; }
+    .dash-back { max-width:1200px; margin:0 auto 24px; }
+    .dash-page-header { max-width:1200px; margin:0 auto 36px; }
+    .dash-page-header .eyebrow { font-size:11px; font-weight:700; letter-spacing:3px; text-transform:uppercase; color:#FF6200; margin-bottom:10px; }
+    .dash-page-header h1 { font-size:2rem; font-weight:800; color:#fff; margin-bottom:8px; }
+    .dash-page-header p { font-size:0.95rem; color:#8892a4; max-width:680px; line-height:1.7; }
+
+    .kpi-row { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; max-width:1200px; margin:0 auto 28px; }
+    .kpi-card { background:linear-gradient(160deg,rgba(17,24,39,0.97) 0%,rgba(10,14,36,0.97) 100%); border:1px solid rgba(255,98,0,0.18); border-radius:14px; padding:22px 24px; position:relative; overflow:hidden; }
+    .kpi-card::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; }
+    .kpi-card.c1::before { background:linear-gradient(90deg,#FF6200,#ffaa50); }
+    .kpi-card.c2::before { background:linear-gradient(90deg,#0078ff,#00c8ff); }
+    .kpi-card.c3::before { background:linear-gradient(90deg,#059669,#34d399); }
+    .kpi-card.c4::before { background:linear-gradient(90deg,#d97706,#fbbf24); }
+    .kpi-label { font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:#8892a4; margin-bottom:10px; }
+    .kpi-value { font-size:2.4rem; font-weight:800; line-height:1; margin-bottom:6px; }
+    .kpi-card.c1 .kpi-value { color:#FF6200; }
+    .kpi-card.c2 .kpi-value { color:#00c8ff; }
+    .kpi-card.c3 .kpi-value { color:#34d399; }
+    .kpi-card.c4 .kpi-value { color:#fbbf24; }
+    .kpi-sub { font-size:0.78rem; color:#8892a4; }
+
+    .main-grid { display:grid; grid-template-columns:1fr 1fr; gap:20px; max-width:1200px; margin:0 auto 20px; }
+    .full-width { max-width:1200px; margin:0 auto 20px; }
+    .panel { background:linear-gradient(160deg,rgba(17,24,39,0.97) 0%,rgba(10,14,36,0.97) 100%); border:1px solid rgba(255,98,0,0.12); border-radius:14px; padding:24px 28px; position:relative; overflow:hidden; }
+    .panel::before { content:''; position:absolute; top:0; left:0; right:0; height:1px; background:linear-gradient(90deg,transparent,rgba(255,98,0,0.3),transparent); }
+    .panel-title { font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:#FF6200; margin-bottom:18px; }
+
+    /* Dispatch taxonomy bars */
+    .dispatch-row { margin-bottom:18px; }
+    .dispatch-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; }
+    .dispatch-name { font-size:0.88rem; font-weight:700; color:#fff; }
+    .dispatch-count { font-size:0.82rem; color:#8892a4; }
+    .dispatch-bar-bg { height:8px; background:rgba(255,255,255,0.07); border-radius:4px; overflow:hidden; }
+    .dispatch-bar-fill { height:100%; border-radius:4px; }
+    .dispatch-desc { font-size:0.75rem; color:#8892a4; margin-top:5px; }
+
+    /* Queue table */
+    .queue-table { width:100%; border-collapse:collapse; }
+    .queue-table th { font-size:9px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:#8892a4; padding:0 10px 12px 0; text-align:left; border-bottom:1px solid rgba(255,255,255,0.06); }
+    .queue-table td { font-size:0.83rem; color:#e8eaf6; padding:11px 10px 11px 0; border-bottom:1px solid rgba(255,255,255,0.04); vertical-align:middle; }
+    .queue-table tr:last-child td { border-bottom:none; }
+    .eng-name { font-weight:700; color:#fff; }
+    .eng-sub { font-size:0.75rem; color:#8892a4; margin-top:2px; }
+
+    .badge { display:inline-block; font-size:9px; font-weight:700; letter-spacing:1px; text-transform:uppercase; padding:3px 10px; border-radius:20px; }
+    .badge-green  { background:rgba(5,150,105,0.15);  color:#34d399; border:1px solid rgba(52,211,153,0.3); }
+    .badge-amber  { background:rgba(217,119,6,0.15);  color:#fbbf24; border:1px solid rgba(251,191,36,0.3); }
+    .badge-red    { background:rgba(220,38,38,0.15);  color:#f87171; border:1px solid rgba(248,113,113,0.3); }
+    .badge-orange { background:rgba(255,98,0,0.15);   color:#FF6200; border:1px solid rgba(255,98,0,0.3); }
+    .badge-blue   { background:rgba(0,120,255,0.15);  color:#60a5fa; border:1px solid rgba(96,165,250,0.3); }
+    .badge-gray   { background:rgba(255,255,255,0.06); color:#8892a4; border:1px solid rgba(255,255,255,0.1); }
+
+    /* 48hr checklist */
+    .checklist { list-style:none; padding:0; }
+    .checklist li { display:flex; align-items:flex-start; gap:12px; padding:10px 0; border-bottom:1px solid rgba(255,255,255,0.05); font-size:0.85rem; color:#e8eaf6; line-height:1.5; }
+    .checklist li:last-child { border-bottom:none; }
+    .check-icon { font-size:1rem; flex-shrink:0; margin-top:1px; }
+    .check-label { font-weight:700; color:#fff; }
+    .check-sub { font-size:0.75rem; color:#8892a4; margin-top:2px; }
+
+    /* RMOT section */
+    .rmot-row { display:flex; align-items:center; justify-content:space-between; padding:12px 0; border-bottom:1px solid rgba(255,255,255,0.05); }
+    .rmot-row:last-child { border-bottom:none; }
+    .rmot-name { font-size:0.88rem; font-weight:700; color:#fff; }
+    .rmot-sub { font-size:0.75rem; color:#8892a4; margin-top:2px; }
+    .rmot-owner { font-size:0.82rem; color:#FF6200; font-weight:700; }
+
+    /* Alert */
+    .alert-row { display:flex; align-items:flex-start; gap:14px; padding:14px 16px; background:rgba(255,98,0,0.07); border:1px solid rgba(255,98,0,0.2); border-radius:10px; margin-bottom:10px; }
+    .alert-title { font-size:0.88rem; font-weight:700; color:#FF6200; margin-bottom:4px; }
+    .alert-body  { font-size:0.78rem; color:#8892a4; line-height:1.6; }
+
+    @media(max-width:900px){ .main-grid{grid-template-columns:1fr;} .kpi-row{grid-template-columns:repeat(2,1fr);} }
+    @media(max-width:500px){ .kpi-row{grid-template-columns:1fr;} }
+  </style>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+<canvas id="particle-canvas"></canvas>
+<div class="page-wrap">
+<header>
+<div class="header-title"><span>EDE</span> / CEES / EEP  Frameworks</div>
+<div class="header-badge">Restricted Access</div>
+</header>
+<div class="dash-wrap">
+<div class="dash-back"><a class="back-btn" href="../dashboards.html">← Back to Dashboards</a></div>
+<div class="dash-page-header">
+<div class="eyebrow">Dashboard 02 — Live</div>
+<h1>Dispatch Activity &amp; Queue Monitor</h1>
+<p>Full visibility into dispatch taxonomy across proactive, Quick Match, RMOT, and self-dispatch channels. Track acceptance rates, first-48-hour actions, and queue discipline metrics week over week.</p>
+</div>
+<!-- KPI Row -->
+<div class="kpi-row">
+<div class="kpi-card c1">
+<div class="kpi-label">Total Queue</div>
+<div class="kpi-value">18</div>
+<div class="kpi-sub">Active dispatches this week</div>
+</div>
+<div class="kpi-card c2">
+<div class="kpi-label">Acceptance Rate</div>
+<div class="kpi-value">94%</div>
+<div class="kpi-sub">↑ 2% from last week</div>
+</div>
+<div class="kpi-card c3">
+<div class="kpi-label">48hr Actions Complete</div>
+<div class="kpi-value">11/13</div>
+<div class="kpi-sub">CSAM contact + scoping done</div>
+</div>
+<div class="kpi-card c4">
+<div class="kpi-label">Queue Discipline</div>
+<div class="kpi-value">Amber</div>
+<div class="kpi-sub">2 items past 48hr window</div>
+</div>
+</div>
+<!-- Main Grid -->
+<div class="main-grid">
+<!-- Dispatch Taxonomy -->
+<div class="panel">
+<div class="panel-title">Dispatch Taxonomy — This Week</div>
+<div class="dispatch-row">
+<div class="dispatch-header"><span class="dispatch-name">Proactive</span><span class="dispatch-count">7 dispatches</span></div>
+<div class="dispatch-bar-bg"><div class="dispatch-bar-fill" style="width:39%;background:linear-gradient(90deg,#0078ff,#00c8ff);"></div></div>
+<div class="dispatch-desc">Standard pre-engagement scoping. All 7 have named Outcome Owner assigned.</div>
+</div>
+<div class="dispatch-row">
+<div class="dispatch-header"><span class="dispatch-name">Quick Match</span><span class="dispatch-count">5 dispatches</span></div>
+<div class="dispatch-bar-bg"><div class="dispatch-bar-fill" style="width:28%;background:linear-gradient(90deg,#FF6200,#ffaa50);"></div></div>
+<div class="dispatch-desc">Dispatch type changes entry, not the standard. Polling still required.</div>
+</div>
+<div class="dispatch-row">
+<div class="dispatch-header"><span class="dispatch-name">RMOT</span><span class="dispatch-count">4 dispatches</span></div>
+<div class="dispatch-bar-bg"><div class="dispatch-bar-fill" style="width:22%;background:linear-gradient(90deg,#7c3aed,#a78bfa);"></div></div>
+<div class="dispatch-desc">Shared pool. Single Outcome Owner assigned per engagement.</div>
+</div>
+<div class="dispatch-row">
+<div class="dispatch-header"><span class="dispatch-name">Self-Dispatch</span><span class="dispatch-count">2 dispatches</span></div>
+<div class="dispatch-bar-bg"><div class="dispatch-bar-fill" style="width:11%;background:linear-gradient(90deg,#059669,#34d399);"></div></div>
+<div class="dispatch-desc">Engineer-initiated. Same standard applies — no exceptions.</div>
+</div>
+</div>
+<!-- 48hr Checklist -->
+<div class="panel">
+<div class="panel-title">First 48 Hours — Required Actions</div>
+<ul class="checklist">
+<li>
+<span class="check-icon">✅</span>
+<div><div class="check-label">CSAM Contact</div><div class="check-sub">Notify CSAM within 48hrs of dispatch acceptance. 11/13 complete.</div></div>
+</li>
+<li>
+<span class="check-icon">✅</span>
+<div><div class="check-label">Scoping Call Scheduled</div><div class="check-sub">Discover the real business problem. 10/13 scheduled.</div></div>
+</li>
+<li>
+<span class="check-icon">✅</span>
+<div><div class="check-label">Recap Email Sent</div><div class="check-sub">Written alignment before delivery. 9/13 sent.</div></div>
+</li>
+<li>
+<span class="check-icon">⚠️</span>
+<div><div class="check-label">Pre-Poll Deployed</div><div class="check-sub">Expectations, expertise, objectives. 7/13 — 2 overdue.</div></div>
+</li>
+<li>
+<span class="check-icon">⏳</span>
+<div><div class="check-label">Outcome Owner Documented</div><div class="check-sub">Named in writing to client. 11/13 complete.</div></div>
+</li>
+</ul>
+</div>
+</div>
+<!-- Queue Table -->
+<div class="full-width">
+<div class="panel">
+<div class="panel-title">Active Queue Register</div>
+<table class="queue-table">
+<thead>
+<tr>
+<th>Engagement</th>
+<th>Type</th>
+<th>Accepted</th>
+<th>CSAM Contact</th>
+<th>Pre-Poll</th>
+<th>Outcome Owner</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><div class="eng-name">Contoso Identity Mod.</div><div class="eng-sub">Enterprise</div></td>
+<td><span class="badge badge-blue">Proactive</span></td>
+<td>Jun 2</td>
+<td><span class="badge badge-green">Done</span></td>
+<td><span class="badge badge-green">Sent</span></td>
+<td><span class="badge badge-green">Assigned</span></td>
+<td><span class="badge badge-green">On Track</span></td>
+</tr>
+<tr>
+<td><div class="eng-name">Fabrikam Zero Trust</div><div class="eng-sub">Enterprise</div></td>
+<td><span class="badge badge-orange">Quick Match</span></td>
+<td>Jun 4</td>
+<td><span class="badge badge-green">Done</span></td>
+<td><span class="badge badge-green">Sent</span></td>
+<td><span class="badge badge-green">Assigned</span></td>
+<td><span class="badge badge-green">On Track</span></td>
+</tr>
+<tr>
+<td><div class="eng-name">Northwind DLP</div><div class="eng-sub">Mid-Market</div></td>
+<td><span class="badge badge-blue">Proactive</span></td>
+<td>Jun 1</td>
+<td><span class="badge badge-green">Done</span></td>
+<td><span class="badge badge-amber">Pending</span></td>
+<td><span class="badge badge-green">Assigned</span></td>
+<td><span class="badge badge-amber">Watch</span></td>
+</tr>
+<tr>
+<td><div class="eng-name">Tailspin PIM Gov.</div><div class="eng-sub">Mid-Market</div></td>
+<td><span class="badge badge-orange">Quick Match</span></td>
+<td>May 30</td>
+<td><span class="badge badge-green">Done</span></td>
+<td><span class="badge badge-red">Overdue</span></td>
+<td><span class="badge badge-green">Assigned</span></td>
+<td><span class="badge badge-red">At Risk</span></td>
+</tr>
+<tr>
+<td><div class="eng-name">Alpine RMOT Shared</div><div class="eng-sub">Enterprise</div></td>
+<td><span class="badge badge-blue" style="background:rgba(124,58,237,0.15);color:#a78bfa;border-color:rgba(167,139,250,0.3);">RMOT</span></td>
+<td>Jun 5</td>
+<td><span class="badge badge-amber">Pending</span></td>
+<td><span class="badge badge-gray">Not Yet</span></td>
+<td><span class="badge badge-amber">Pending</span></td>
+<td><span class="badge badge-amber">Watch</span></td>
+</tr>
+<tr>
+<td><div class="eng-name">Woodgrove CA Rollout</div><div class="eng-sub">Enterprise</div></td>
+<td><span class="badge badge-green">Self-Dispatch</span></td>
+<td>Jun 3</td>
+<td><span class="badge badge-green">Done</span></td>
+<td><span class="badge badge-green">Sent</span></td>
+<td><span class="badge badge-green">Assigned</span></td>
+<td><span class="badge badge-green">On Track</span></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- RMOT Pool + Alerts -->
+<div class="main-grid">
+<div class="panel">
+<div class="panel-title">RMOT Pool — Single Outcome Owner Rule</div>
+<div class="rmot-row">
+<div><div class="rmot-name">Alpine RMOT Shared Engagement</div><div class="rmot-sub">3 engineers in pool · Week 1</div></div>
+<div class="rmot-owner">J. Torres (OO)</div>
+</div>
+<div class="rmot-row">
+<div><div class="rmot-name">Bellows RMOT Advisory</div><div class="rmot-sub">2 engineers in pool · Week 3</div></div>
+<div class="rmot-owner">S. Patel (OO)</div>
+</div>
+<div class="rmot-row">
+<div><div class="rmot-name">Cascade RMOT Migration</div><div class="rmot-sub">4 engineers in pool · Week 2</div></div>
+<div class="rmot-owner">R. Chen (OO)</div>
+</div>
+<div style="margin-top:16px;padding:12px 14px;background:rgba(0,0,0,0.2);border-radius:8px;font-size:0.78rem;color:#8892a4;line-height:1.6;">
+<strong style="color:#FF6200;">EEP Rule:</strong> Every RMOT engagement has exactly one named Outcome Owner regardless of pool size. Shared ownership = no ownership.
+        </div>
+</div>
+<div class="panel">
+<div class="panel-title">Queue Discipline Alerts</div>
+<div class="alert-row">
+<div style="font-size:1.2rem;flex-shrink:0;">⚠️</div>
+<div>
+<div class="alert-title">Tailspin PIM — Pre-Poll Overdue (9 days)</div>
+<div class="alert-body">Pre-poll was due within 48hrs of acceptance (May 30). Now 9 days overdue. Short engagements still require polling — no exceptions. Assign immediately.</div>
+</div>
+</div>
+<div class="alert-row">
+<div style="font-size:1.2rem;flex-shrink:0;">⚠️</div>
+<div>
+<div class="alert-title">Alpine RMOT — CSAM Contact Pending (4 days)</div>
+<div class="alert-body">Accepted Jun 5. CSAM contact not yet confirmed. 48hr window has passed. Outcome Owner not yet assigned. Escalate to Engagement Lead.</div>
+</div>
+</div>
+<div style="margin-top:14px;padding:12px 14px;background:rgba(0,120,255,0.07);border:1px solid rgba(0,120,255,0.2);border-radius:8px;font-size:0.78rem;color:#8892a4;line-height:1.6;">
+<strong style="color:#00c8ff;">Weekly Quick Match Check:</strong> All 5 Quick Match dispatches reviewed. 4/5 on track. Tailspin flagged for immediate action.
+        </div>
+</div>
+</div>
+</div>
+<footer>EDE / CEES / EEP Frameworks  ·  Confidential  ·  Authorized Personnel Only</footer>
+</div>
+<script src="../js/main.js"></script>
+
+<script>
+Chart.defaults.color = '#8892a4';
+Chart.defaults.borderColor = 'rgba(255,255,255,0.06)';
+Chart.defaults.font.family = '"Segoe UI", Roboto, sans-serif';
+
+// ── Dispatch Taxonomy Doughnut
+(function(){
+  const ctx = document.getElementById('dispatchDoughnut');
+  if(!ctx) return;
+  new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels: ['Proactive','Quick Match','RMOT','Self-Dispatch'],
+      datasets:[{
+        data: [7, 5, 4, 2],
+        backgroundColor: ['rgba(0,120,255,0.75)','rgba(255,98,0,0.75)','rgba(124,58,237,0.75)','rgba(52,211,153,0.75)'],
+        borderColor:     ['#0078ff','#FF6200','#7c3aed','#34d399'],
+        borderWidth: 2, hoverOffset: 8
+      }]
+    },
+    options: {
+      responsive:true, maintainAspectRatio:true, cutout:'65%',
+      plugins:{
+        legend:{ position:'bottom', labels:{ boxWidth:12, padding:14, color:'#8892a4' } },
+        tooltip:{ backgroundColor:'rgba(10,14,36,0.95)', borderColor:'rgba(255,98,0,0.3)', borderWidth:1,
+          callbacks:{ label: ctx => ` ${ctx.label}: ${ctx.parsed} dispatches` } }
+      }
+    }
+  });
+})();
+
+// ── 48hr Actions Bar Chart
+(function(){
+  const ctx = document.getElementById('actionsBar');
+  if(!ctx) return;
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: ['CSAM Contact','Scoping Call','Recap Email','Pre-Poll','OO Assigned'],
+      datasets:[
+        { label:'Complete', data:[11,10,9,7,11], backgroundColor:'rgba(255,98,0,0.75)', borderColor:'#FF6200', borderWidth:1, borderRadius:5 },
+        { label:'Pending/Overdue', data:[2,3,4,6,2], backgroundColor:'rgba(255,255,255,0.08)', borderColor:'rgba(255,255,255,0.2)', borderWidth:1, borderRadius:5 }
+      ]
+    },
+    options: {
+      responsive:true, maintainAspectRatio:true, indexAxis:'y',
+      plugins:{ legend:{ position:'bottom', labels:{ boxWidth:10, padding:12, color:'#8892a4' } },
+        tooltip:{ backgroundColor:'rgba(10,14,36,0.95)', borderColor:'rgba(255,98,0,0.3)', borderWidth:1 } },
+      scales:{
+        x:{ stacked:true, max:13, grid:{ color:'rgba(255,255,255,0.05)' }, ticks:{ color:'#8892a4' } },
+        y:{ stacked:true, grid:{ display:false }, ticks:{ color:'#8892a4' } }
+      }
+    }
+  });
+})();
+</script>
+</body>
+</html>

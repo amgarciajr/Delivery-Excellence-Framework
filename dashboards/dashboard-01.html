@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Engagement Health &amp; CPE Score Tracker — EDE Dashboards</title>
+<link href="../css/styles.css" rel="stylesheet"/>
+<style>
+    .dash-wrap { position:relative; z-index:1; padding:40px 24px 80px; }
+    .dash-back { max-width:1200px; margin:0 auto 24px; }
+    .dash-page-header { max-width:1200px; margin:0 auto 36px; }
+    .dash-page-header .eyebrow { font-size:11px; font-weight:700; letter-spacing:3px; text-transform:uppercase; color:#0078ff; margin-bottom:10px; }
+    .dash-page-header h1 { font-size:2rem; font-weight:800; color:#fff; margin-bottom:8px; }
+    .dash-page-header p { font-size:0.95rem; color:#8892a4; max-width:680px; line-height:1.7; }
+
+    /* ── KPI Row ── */
+    .kpi-row { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; max-width:1200px; margin:0 auto 28px; }
+    .kpi-card { background:linear-gradient(160deg,rgba(17,24,39,0.97) 0%,rgba(10,14,36,0.97) 100%); border:1px solid rgba(0,120,255,0.18); border-radius:14px; padding:22px 24px; position:relative; overflow:hidden; }
+    .kpi-card::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; }
+    .kpi-card.blue::before  { background:linear-gradient(90deg,#0078ff,#00c8ff); }
+    .kpi-card.green::before { background:linear-gradient(90deg,#059669,#34d399); }
+    .kpi-card.amber::before { background:linear-gradient(90deg,#d97706,#fbbf24); }
+    .kpi-card.red::before   { background:linear-gradient(90deg,#dc2626,#f87171); }
+    .kpi-label { font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:#8892a4; margin-bottom:10px; }
+    .kpi-value { font-size:2.4rem; font-weight:800; color:#fff; line-height:1; margin-bottom:6px; }
+    .kpi-card.blue  .kpi-value { color:#00c8ff; }
+    .kpi-card.green .kpi-value { color:#34d399; }
+    .kpi-card.amber .kpi-value { color:#fbbf24; }
+    .kpi-card.red   .kpi-value { color:#f87171; }
+    .kpi-sub { font-size:0.78rem; color:#8892a4; }
+
+    /* ── Main Grid ── */
+    .main-grid { display:grid; grid-template-columns:2fr 1fr; gap:20px; max-width:1200px; margin:0 auto 20px; }
+    .full-width { max-width:1200px; margin:0 auto 20px; }
+
+    /* ── Panel ── */
+    .panel { background:linear-gradient(160deg,rgba(17,24,39,0.97) 0%,rgba(10,14,36,0.97) 100%); border:1px solid rgba(0,120,255,0.15); border-radius:14px; padding:24px 28px; position:relative; overflow:hidden; }
+    .panel::before { content:''; position:absolute; top:0; left:0; right:0; height:1px; background:linear-gradient(90deg,transparent,rgba(0,120,255,0.4),transparent); }
+    .panel-title { font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:#00c8ff; margin-bottom:18px; }
+
+    /* ── Engagement Table ── */
+    .eng-table { width:100%; border-collapse:collapse; }
+    .eng-table th { font-size:9px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:#8892a4; padding:0 12px 12px 0; text-align:left; border-bottom:1px solid rgba(255,255,255,0.06); }
+    .eng-table td { font-size:0.85rem; color:#e8eaf6; padding:12px 12px 12px 0; border-bottom:1px solid rgba(255,255,255,0.04); vertical-align:middle; }
+    .eng-table tr:last-child td { border-bottom:none; }
+    .eng-name { font-weight:700; color:#fff; }
+    .eng-owner { font-size:0.78rem; color:#8892a4; margin-top:2px; }
+
+    /* Status badges */
+    .badge { display:inline-block; font-size:9px; font-weight:700; letter-spacing:1px; text-transform:uppercase; padding:3px 10px; border-radius:20px; }
+    .badge-green  { background:rgba(5,150,105,0.15);  color:#34d399; border:1px solid rgba(52,211,153,0.3); }
+    .badge-amber  { background:rgba(217,119,6,0.15);  color:#fbbf24; border:1px solid rgba(251,191,36,0.3); }
+    .badge-red    { background:rgba(220,38,38,0.15);  color:#f87171; border:1px solid rgba(248,113,113,0.3); }
+    .badge-blue   { background:rgba(0,120,255,0.15);  color:#60a5fa; border:1px solid rgba(96,165,250,0.3); }
+    .badge-gray   { background:rgba(255,255,255,0.06); color:#8892a4; border:1px solid rgba(255,255,255,0.1); }
+
+    /* Score bar */
+    .score-bar-wrap { display:flex; align-items:center; gap:10px; }
+    .score-bar-bg { flex:1; height:6px; background:rgba(255,255,255,0.07); border-radius:3px; overflow:hidden; }
+    .score-bar-fill { height:100%; border-radius:3px; transition:width 0.6s ease; }
+    .score-val { font-size:0.82rem; font-weight:700; min-width:32px; text-align:right; }
+
+    /* ── Survey Window List ── */
+    .survey-list { list-style:none; padding:0; }
+    .survey-item { display:flex; align-items:center; justify-content:space-between; padding:10px 0; border-bottom:1px solid rgba(255,255,255,0.05); }
+    .survey-item:last-child { border-bottom:none; }
+    .survey-name { font-size:0.85rem; color:#e8eaf6; font-weight:600; }
+    .survey-days { font-size:0.78rem; color:#8892a4; margin-top:2px; }
+    .survey-progress { width:80px; }
+
+    /* ── Signal Streams ── */
+    .signal-grid { display:grid; grid-template-columns:1fr; gap:12px; }
+    .signal-row { display:flex; align-items:center; gap:14px; padding:14px 16px; background:rgba(0,0,0,0.2); border-radius:10px; border:1px solid rgba(255,255,255,0.05); }
+    .signal-dot { width:12px; height:12px; border-radius:50%; flex-shrink:0; }
+    .signal-dot.green { background:#34d399; box-shadow:0 0 8px rgba(52,211,153,0.6); }
+    .signal-dot.amber { background:#fbbf24; box-shadow:0 0 8px rgba(251,191,36,0.6); }
+    .signal-dot.red   { background:#f87171; box-shadow:0 0 8px rgba(248,113,113,0.6); }
+    .signal-name { font-size:0.88rem; font-weight:700; color:#fff; flex:1; }
+    .signal-desc { font-size:0.78rem; color:#8892a4; }
+    .signal-status { font-size:0.78rem; font-weight:700; }
+    .signal-status.green { color:#34d399; }
+    .signal-status.amber { color:#fbbf24; }
+    .signal-status.red   { color:#f87171; }
+
+    /* ── Three Tests Compliance ── */
+    .test-row { display:flex; align-items:center; justify-content:space-between; padding:12px 0; border-bottom:1px solid rgba(255,255,255,0.05); }
+    .test-row:last-child { border-bottom:none; }
+    .test-name { font-size:0.88rem; font-weight:700; color:#fff; }
+    .test-desc { font-size:0.75rem; color:#8892a4; margin-top:2px; }
+    .test-pct  { font-size:1.3rem; font-weight:800; color:#34d399; }
+
+    /* ── Validation Questions ── */
+    .vq-list { list-style:none; padding:0; counter-reset:vq; }
+    .vq-item { counter-increment:vq; padding:14px 0 14px 44px; border-bottom:1px solid rgba(255,255,255,0.05); position:relative; }
+    .vq-item:last-child { border-bottom:none; }
+    .vq-item::before { content:counter(vq); position:absolute; left:0; top:14px; width:28px; height:28px; background:rgba(0,120,255,0.15); border:1px solid rgba(0,120,255,0.3); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.75rem; font-weight:700; color:#60a5fa; text-align:center; line-height:28px; }
+    .vq-text { font-size:0.88rem; color:#e8eaf6; line-height:1.6; font-style:italic; }
+
+    /* ── At-Risk Alert ── */
+    .alert-row { display:flex; align-items:flex-start; gap:14px; padding:14px 16px; background:rgba(220,38,38,0.07); border:1px solid rgba(248,113,113,0.2); border-radius:10px; margin-bottom:10px; }
+    .alert-icon { font-size:1.2rem; flex-shrink:0; margin-top:2px; }
+    .alert-title { font-size:0.88rem; font-weight:700; color:#f87171; margin-bottom:4px; }
+    .alert-body  { font-size:0.78rem; color:#8892a4; line-height:1.6; }
+
+    @media(max-width:900px){ .main-grid{grid-template-columns:1fr;} .kpi-row{grid-template-columns:repeat(2,1fr);} }
+    @media(max-width:500px){ .kpi-row{grid-template-columns:1fr;} }
+  </style>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+<canvas id="particle-canvas"></canvas>
+<div class="page-wrap">
+<header>
+<div class="header-title"><span>EDE</span> / CEES / EEP  Frameworks</div>
+<div class="header-badge">Restricted Access</div>
+</header>
+<div class="dash-wrap">
+<div class="dash-back"><a class="back-btn" href="../dashboards.html">← Back to Dashboards</a></div>
+<div class="dash-page-header">
+<div class="eyebrow">Dashboard 01 — Live</div>
+<h1>Engagement Health &amp; CPE Score Tracker</h1>
+<p>Monitor CPE scores, survey completion windows, follow-up status, and learning loop closures across all active engagements. Identify at-risk engagements before scores are finalized.</p>
+</div>
+<!-- KPI Row -->
+<div class="kpi-row">
+<div class="kpi-card blue">
+<div class="kpi-label">Active Engagements</div>
+<div class="kpi-value">12</div>
+<div class="kpi-sub">All with named Outcome Owner</div>
+</div>
+<div class="kpi-card green">
+<div class="kpi-label">Avg CPE Score</div>
+<div class="kpi-value">4.6</div>
+<div class="kpi-sub">↑ 0.3 from last cycle</div>
+</div>
+<div class="kpi-card amber">
+<div class="kpi-label">Survey Windows Open</div>
+<div class="kpi-value">3</div>
+<div class="kpi-sub">Closing within 7 days</div>
+</div>
+<div class="kpi-card red">
+<div class="kpi-label">At-Risk Engagements</div>
+<div class="kpi-value">2</div>
+<div class="kpi-sub">Friction signals detected</div>
+</div>
+</div>
+<!-- Main Grid -->
+<div class="main-grid">
+<!-- Engagement Table -->
+<div class="panel">
+<div class="panel-title">Active Engagement Register</div>
+<table class="eng-table">
+<thead>
+<tr>
+<th>Engagement</th>
+<th>Outcome Owner</th>
+<th>CPE Score</th>
+<th>Survey</th>
+<th>Signal</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><div class="eng-name">Contoso Identity Modernization</div><div class="eng-owner">Enterprise · Week 6</div></td>
+<td><span class="badge badge-blue">M. Garcia</span></td>
+<td>
+<div class="score-bar-wrap">
+<div class="score-bar-bg"><div class="score-bar-fill" style="width:92%;background:linear-gradient(90deg,#059669,#34d399);"></div></div>
+<span class="score-val" style="color:#34d399;">4.6</span>
+</div>
+</td>
+<td><span class="badge badge-green">Closed</span></td>
+<td><span class="badge badge-green">Green</span></td>
+</tr>
+<tr>
+<td><div class="eng-name">Fabrikam Zero Trust Rollout</div><div class="eng-owner">Enterprise · Week 3</div></td>
+<td><span class="badge badge-blue">S. Patel</span></td>
+<td>
+<div class="score-bar-wrap">
+<div class="score-bar-bg"><div class="score-bar-fill" style="width:84%;background:linear-gradient(90deg,#059669,#34d399);"></div></div>
+<span class="score-val" style="color:#34d399;">4.2</span>
+</div>
+</td>
+<td><span class="badge badge-amber">Open · 4d</span></td>
+<td><span class="badge badge-green">Green</span></td>
+</tr>
+<tr>
+<td><div class="eng-name">Northwind DLP Implementation</div><div class="eng-owner">Mid-Market · Week 8</div></td>
+<td><span class="badge badge-blue">R. Chen</span></td>
+<td>
+<div class="score-bar-wrap">
+<div class="score-bar-bg"><div class="score-bar-fill" style="width:66%;background:linear-gradient(90deg,#d97706,#fbbf24);"></div></div>
+<span class="score-val" style="color:#fbbf24;">3.3</span>
+</div>
+</td>
+<td><span class="badge badge-amber">Open · 2d</span></td>
+<td><span class="badge badge-amber">Amber</span></td>
+</tr>
+<tr>
+<td><div class="eng-name">AdventureWorks Copilot Readiness</div><div class="eng-owner">Enterprise · Week 1</div></td>
+<td><span class="badge badge-blue">M. Garcia</span></td>
+<td>
+<div class="score-bar-wrap">
+<div class="score-bar-bg"><div class="score-bar-fill" style="width:0%;background:#555;"></div></div>
+<span class="score-val" style="color:#8892a4;">—</span>
+</div>
+</td>
+<td><span class="badge badge-gray">Not Open</span></td>
+<td><span class="badge badge-green">Green</span></td>
+</tr>
+<tr>
+<td><div class="eng-name">Tailspin PIM Governance</div><div class="eng-owner">Mid-Market · Week 5</div></td>
+<td><span class="badge badge-blue">J. Torres</span></td>
+<td>
+<div class="score-bar-wrap">
+<div class="score-bar-bg"><div class="score-bar-fill" style="width:40%;background:linear-gradient(90deg,#dc2626,#f87171);"></div></div>
+<span class="score-val" style="color:#f87171;">2.0</span>
+</div>
+</td>
+<td><span class="badge badge-red">Overdue</span></td>
+<td><span class="badge badge-red">Red</span></td>
+</tr>
+<tr>
+<td><div class="eng-name">Woodgrove Conditional Access</div><div class="eng-owner">Enterprise · Week 4</div></td>
+<td><span class="badge badge-blue">S. Patel</span></td>
+<td>
+<div class="score-bar-wrap">
+<div class="score-bar-bg"><div class="score-bar-fill" style="width:90%;background:linear-gradient(90deg,#059669,#34d399);"></div></div>
+<span class="score-val" style="color:#34d399;">4.5</span>
+</div>
+</td>
+<td><span class="badge badge-green">Closed</span></td>
+<td><span class="badge badge-green">Green</span></td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Right Column -->
+<div style="display:flex;flex-direction:column;gap:20px;">
+<!-- Signal Streams -->
+<div class="panel">
+<div class="panel-title">Signal Stream Status</div>
+<div class="signal-grid">
+<div class="signal-row">
+<div class="signal-dot green"></div>
+<div>
+<div class="signal-name">Customer Friction</div>
+<div class="signal-desc">No repeat questions observed this week</div>
+</div>
+<div class="signal-status green">Green</div>
+</div>
+<div class="signal-row">
+<div class="signal-dot amber"></div>
+<div>
+<div class="signal-name">Communication Clarity</div>
+<div class="signal-desc">2 clarification requests — Northwind</div>
+</div>
+<div class="signal-status amber">Amber</div>
+</div>
+<div class="signal-row">
+<div class="signal-dot red"></div>
+<div>
+<div class="signal-name">Ownership Follow-Through</div>
+<div class="signal-desc">1 missed commitment — Tailspin</div>
+</div>
+<div class="signal-status red">Red</div>
+</div>
+</div>
+</div>
+<!-- Three Tests Compliance -->
+<div class="panel">
+<div class="panel-title">Three Tests Compliance Rate</div>
+<div class="test-row">
+<div><div class="test-name">Repeat-Back Test</div><div class="test-desc">Client can restate key content</div></div>
+<div class="test-pct">91%</div>
+</div>
+<div class="test-row">
+<div><div class="test-name">Stakes Test</div><div class="test-desc">Client understands consequences</div></div>
+<div class="test-pct">87%</div>
+</div>
+<div class="test-row">
+<div><div class="test-name">Next-Step Test</div><div class="test-desc">Next action is crystal clear</div></div>
+<div class="test-pct">94%</div>
+</div>
+</div>
+</div>
+</div>
+<!-- At-Risk Alerts -->
+<div class="full-width">
+<div class="panel">
+<div class="panel-title">At-Risk Alerts — Action Required</div>
+<div class="alert-row">
+<div class="alert-icon">🔴</div>
+<div>
+<div class="alert-title">Tailspin PIM Governance — CPE Score 2.0 / Survey Overdue</div>
+<div class="alert-body">Ownership Follow-Through is Red. One missed commitment with no proactive client notification. Survey window has passed without completion. Outcome Owner: J. Torres — immediate client contact required. Apply Escalation Runbook.</div>
+</div>
+</div>
+<div class="alert-row">
+<div class="alert-icon">🟡</div>
+<div>
+<div class="alert-title">Northwind DLP Implementation — Communication Clarity Amber</div>
+<div class="alert-body">Two clarification requests received this week on DLP policy scope. Client action delayed on one item traceable to communication ambiguity. Apply Three Tests to all outbound communications before sending. Survey window closes in 2 days.</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Outcome Validation Questions -->
+<div class="full-width">
+<div class="panel">
+<div class="panel-title">Outcome Validation — Three Required Questions at Close</div>
+<ol class="vq-list">
+<li class="vq-item"><div class="vq-text">"What did we deliver that you didn't have before?"</div></li>
+<li class="vq-item"><div class="vq-text">"How has that changed what you can do?"</div></li>
+<li class="vq-item"><div class="vq-text">"What would you tell a peer about working with this team?"</div></li>
+</ol>
+<div style="margin-top:16px;padding:14px 16px;background:rgba(0,120,255,0.07);border:1px solid rgba(0,120,255,0.2);border-radius:10px;">
+<div style="font-size:0.82rem;color:#8892a4;line-height:1.7;">
+<strong style="color:#00c8ff;">EEP Standard:</strong> An engagement that closes with a signed milestone document but no client articulation of value has not closed cleanly. Value validation rate this cycle: <strong style="color:#34d399;">83%</strong> (10/12 engagements).
+          </div>
+</div>
+</div>
+</div>
+</div><!-- /dash-wrap -->
+<footer>EDE / CEES / EEP Frameworks  ·  Confidential  ·  Authorized Personnel Only</footer>
+</div>
+<script src="../js/main.js"></script>
+
+<script>
+// ── Shared dark theme defaults
+Chart.defaults.color = '#8892a4';
+Chart.defaults.borderColor = 'rgba(255,255,255,0.06)';
+Chart.defaults.font.family = '"Segoe UI", Roboto, sans-serif';
+
+// ── CPE Score Trend Line Chart
+(function(){
+  const ctx = document.getElementById('cpeTrendChart');
+  if(!ctx) return;
+  new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: ['Week 1','Week 2','Week 3','Week 4','Week 5','Week 6'],
+      datasets: [
+        { label:'Contoso', data:[4.1,4.2,4.3,4.4,4.5,4.6], borderColor:'#00c8ff', backgroundColor:'rgba(0,200,255,0.08)', tension:0.4, pointRadius:4, pointHoverRadius:6, fill:true },
+        { label:'Fabrikam', data:[3.8,3.9,4.0,4.1,4.1,4.2], borderColor:'#34d399', backgroundColor:'rgba(52,211,153,0.06)', tension:0.4, pointRadius:4, pointHoverRadius:6, fill:true },
+        { label:'Northwind', data:[3.8,3.6,3.5,3.4,3.3,3.3], borderColor:'#fbbf24', backgroundColor:'rgba(251,191,36,0.06)', tension:0.4, pointRadius:4, pointHoverRadius:6, fill:true },
+        { label:'Tailspin', data:[3.2,2.9,2.6,2.3,2.1,2.0], borderColor:'#f87171', backgroundColor:'rgba(248,113,113,0.06)', tension:0.4, pointRadius:4, pointHoverRadius:6, fill:true },
+        { label:'Woodgrove', data:[4.0,4.1,4.2,4.3,4.4,4.5], borderColor:'#a78bfa', backgroundColor:'rgba(167,139,250,0.06)', tension:0.4, pointRadius:4, pointHoverRadius:6, fill:true },
+      ]
+    },
+    options: {
+      responsive:true, maintainAspectRatio:true,
+      plugins:{ legend:{ position:'bottom', labels:{ boxWidth:10, padding:14, color:'#8892a4' } }, tooltip:{ backgroundColor:'rgba(10,14,36,0.95)', borderColor:'rgba(0,120,255,0.3)', borderWidth:1 } },
+      scales:{
+        x:{ grid:{ color:'rgba(255,255,255,0.05)' }, ticks:{ color:'#8892a4' } },
+        y:{ min:1, max:5, grid:{ color:'rgba(255,255,255,0.05)' }, ticks:{ color:'#8892a4', stepSize:1 } }
+      }
+    }
+  });
+})();
+
+// ── Three Tests Compliance Bar Chart
+(function(){
+  const ctx = document.getElementById('threeTestsChart');
+  if(!ctx) return;
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: ['Repeat-Back Test','Stakes Test','Next-Step Test'],
+      datasets: [{
+        label: 'Compliance %',
+        data: [91, 87, 94],
+        backgroundColor: ['rgba(0,200,255,0.7)','rgba(0,120,255,0.7)','rgba(52,211,153,0.7)'],
+        borderColor:     ['#00c8ff','#0078ff','#34d399'],
+        borderWidth: 1, borderRadius: 6
+      }]
+    },
+    options: {
+      responsive:true, maintainAspectRatio:true,
+      plugins:{ legend:{ display:false }, tooltip:{ backgroundColor:'rgba(10,14,36,0.95)', borderColor:'rgba(0,120,255,0.3)', borderWidth:1, callbacks:{ label: ctx => ctx.parsed.y + '%' } } },
+      scales:{
+        x:{ grid:{ display:false }, ticks:{ color:'#8892a4' } },
+        y:{ min:0, max:100, grid:{ color:'rgba(255,255,255,0.05)' }, ticks:{ color:'#8892a4', callback: v => v+'%' } }
+      }
+    }
+  });
+})();
+</script>
+</body>
+</html>

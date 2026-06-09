@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Signal Quality &amp; Status Cadence — EDE Dashboards</title>
+<link href="../css/styles.css" rel="stylesheet"/>
+<style>
+    .dash-wrap { position:relative; z-index:1; padding:40px 24px 80px; }
+    .dash-back { max-width:1200px; margin:0 auto 24px; }
+    .dash-page-header { max-width:1200px; margin:0 auto 36px; }
+    .dash-page-header .eyebrow { font-size:11px; font-weight:700; letter-spacing:3px; text-transform:uppercase; color:#7c3aed; margin-bottom:10px; }
+    .dash-page-header h1 { font-size:2rem; font-weight:800; color:#fff; margin-bottom:8px; }
+    .dash-page-header p { font-size:0.95rem; color:#8892a4; max-width:680px; line-height:1.7; }
+
+    .kpi-row { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; max-width:1200px; margin:0 auto 28px; }
+    .kpi-card { background:linear-gradient(160deg,rgba(17,24,39,0.97) 0%,rgba(10,14,36,0.97) 100%); border:1px solid rgba(124,58,237,0.18); border-radius:14px; padding:22px 24px; position:relative; overflow:hidden; }
+    .kpi-card::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; }
+    .kpi-card.c1::before { background:linear-gradient(90deg,#7c3aed,#a78bfa); }
+    .kpi-card.c2::before { background:linear-gradient(90deg,#059669,#34d399); }
+    .kpi-card.c3::before { background:linear-gradient(90deg,#d97706,#fbbf24); }
+    .kpi-card.c4::before { background:linear-gradient(90deg,#dc2626,#f87171); }
+    .kpi-label { font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:#8892a4; margin-bottom:10px; }
+    .kpi-value { font-size:2.4rem; font-weight:800; line-height:1; margin-bottom:6px; }
+    .kpi-card.c1 .kpi-value { color:#a78bfa; }
+    .kpi-card.c2 .kpi-value { color:#34d399; }
+    .kpi-card.c3 .kpi-value { color:#fbbf24; }
+    .kpi-card.c4 .kpi-value { color:#f87171; }
+    .kpi-sub { font-size:0.78rem; color:#8892a4; }
+
+    .main-grid { display:grid; grid-template-columns:1fr 1fr; gap:20px; max-width:1200px; margin:0 auto 20px; }
+    .three-col { display:grid; grid-template-columns:1fr 1fr 1fr; gap:20px; max-width:1200px; margin:0 auto 20px; }
+    .full-width { max-width:1200px; margin:0 auto 20px; }
+    .panel { background:linear-gradient(160deg,rgba(17,24,39,0.97) 0%,rgba(10,14,36,0.97) 100%); border:1px solid rgba(124,58,237,0.12); border-radius:14px; padding:24px 28px; position:relative; overflow:hidden; }
+    .panel::before { content:''; position:absolute; top:0; left:0; right:0; height:1px; background:linear-gradient(90deg,transparent,rgba(124,58,237,0.4),transparent); }
+    .panel-title { font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:#a78bfa; margin-bottom:18px; }
+
+    /* Signal stream cards */
+    .stream-card { border-radius:12px; padding:20px; margin-bottom:14px; border:1px solid; }
+    .stream-card.green { background:rgba(5,150,105,0.08); border-color:rgba(52,211,153,0.25); }
+    .stream-card.amber { background:rgba(217,119,6,0.08); border-color:rgba(251,191,36,0.25); }
+    .stream-card.red   { background:rgba(220,38,38,0.08); border-color:rgba(248,113,113,0.25); }
+    .stream-header { display:flex; align-items:center; gap:12px; margin-bottom:12px; }
+    .stream-dot { width:14px; height:14px; border-radius:50%; flex-shrink:0; }
+    .stream-dot.green { background:#34d399; box-shadow:0 0 10px rgba(52,211,153,0.6); }
+    .stream-dot.amber { background:#fbbf24; box-shadow:0 0 10px rgba(251,191,36,0.6); }
+    .stream-dot.red   { background:#f87171; box-shadow:0 0 10px rgba(248,113,113,0.6); }
+    .stream-name { font-size:1rem; font-weight:800; color:#fff; flex:1; }
+    .stream-flag { font-size:0.75rem; font-weight:700; letter-spacing:1px; text-transform:uppercase; padding:3px 10px; border-radius:20px; }
+    .flag-green { background:rgba(5,150,105,0.15); color:#34d399; border:1px solid rgba(52,211,153,0.3); }
+    .flag-amber { background:rgba(217,119,6,0.15); color:#fbbf24; border:1px solid rgba(251,191,36,0.3); }
+    .flag-red   { background:rgba(220,38,38,0.15); color:#f87171; border:1px solid rgba(248,113,113,0.3); }
+    .stream-indicators { list-style:none; padding:0; }
+    .stream-indicators li { font-size:0.82rem; color:#b0bac8; padding:5px 0 5px 18px; position:relative; line-height:1.5; }
+    .stream-indicators li::before { content:'▸'; position:absolute; left:0; color:#a78bfa; font-size:0.7rem; top:7px; }
+    .stream-threshold { margin-top:10px; padding:8px 12px; background:rgba(0,0,0,0.2); border-radius:8px; font-size:0.75rem; color:#8892a4; line-height:1.6; }
+    .stream-threshold strong { color:#fff; }
+
+    /* Signal vs Status table */
+    .compare-table { width:100%; border-collapse:collapse; }
+    .compare-table th { font-size:9px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; padding:0 0 12px; text-align:left; border-bottom:1px solid rgba(255,255,255,0.06); }
+    .compare-table th:first-child { color:#f87171; }
+    .compare-table th:last-child  { color:#34d399; }
+    .compare-table td { font-size:0.82rem; padding:11px 12px 11px 0; border-bottom:1px solid rgba(255,255,255,0.04); vertical-align:top; line-height:1.6; }
+    .compare-table tr:last-child td { border-bottom:none; }
+    .compare-table td:first-child { color:#f87171; font-style:italic; }
+    .compare-table td:last-child  { color:#34d399; }
+    .compare-table td.divider { width:40px; text-align:center; color:#8892a4; font-size:1rem; }
+
+    /* Cadence tracker */
+    .cadence-row { display:flex; align-items:center; justify-content:space-between; padding:12px 0; border-bottom:1px solid rgba(255,255,255,0.05); }
+    .cadence-row:last-child { border-bottom:none; }
+    .cadence-name { font-size:0.88rem; font-weight:700; color:#fff; }
+    .cadence-freq { font-size:0.75rem; color:#8892a4; margin-top:2px; }
+    .cadence-streak { font-size:0.82rem; font-weight:700; }
+    .streak-good { color:#34d399; }
+    .streak-warn { color:#fbbf24; }
+    .streak-bad  { color:#f87171; }
+
+    /* Drift watch */
+    .drift-item { display:flex; align-items:flex-start; gap:14px; padding:14px 16px; background:rgba(124,58,237,0.07); border:1px solid rgba(167,139,250,0.2); border-radius:10px; margin-bottom:10px; }
+    .drift-item:last-child { margin-bottom:0; }
+    .drift-title { font-size:0.88rem; font-weight:700; color:#a78bfa; margin-bottom:4px; }
+    .drift-body  { font-size:0.78rem; color:#8892a4; line-height:1.6; }
+
+    .badge { display:inline-block; font-size:9px; font-weight:700; letter-spacing:1px; text-transform:uppercase; padding:3px 10px; border-radius:20px; }
+    .badge-green { background:rgba(5,150,105,0.15); color:#34d399; border:1px solid rgba(52,211,153,0.3); }
+    .badge-amber { background:rgba(217,119,6,0.15); color:#fbbf24; border:1px solid rgba(251,191,36,0.3); }
+    .badge-red   { background:rgba(220,38,38,0.15); color:#f87171; border:1px solid rgba(248,113,113,0.3); }
+
+    @media(max-width:900px){ .main-grid,.three-col{grid-template-columns:1fr;} .kpi-row{grid-template-columns:repeat(2,1fr);} }
+    @media(max-width:500px){ .kpi-row{grid-template-columns:1fr;} }
+  </style>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+<canvas id="particle-canvas"></canvas>
+<div class="page-wrap">
+<header>
+<div class="header-title"><span>EDE</span> / CEES / EEP  Frameworks</div>
+<div class="header-badge">Restricted Access</div>
+</header>
+<div class="dash-wrap">
+<div class="dash-back"><a class="back-btn" href="../dashboards.html">← Back to Dashboards</a></div>
+<div class="dash-page-header">
+<div class="eyebrow">Dashboard 03 — Live</div>
+<h1>Signal Quality &amp; Status Cadence View</h1>
+<p>Measure the quality and frequency of status updates. Distinguish signal from noise — track updates that change decisions vs. updates that only report activity. Identify cadence drift early.</p>
+</div>
+<!-- KPI Row -->
+<div class="kpi-row">
+<div class="kpi-card c1">
+<div class="kpi-label">Signal Rate</div>
+<div class="kpi-value">68%</div>
+<div class="kpi-sub">Of updates qualify as signal</div>
+</div>
+<div class="kpi-card c2">
+<div class="kpi-label">Streams Green</div>
+<div class="kpi-value">1 / 3</div>
+<div class="kpi-sub">Customer Friction only</div>
+</div>
+<div class="kpi-card c3">
+<div class="kpi-label">Cadence Score</div>
+<div class="kpi-value">Amber</div>
+<div class="kpi-sub">1 review missed this month</div>
+</div>
+<div class="kpi-card c4">
+<div class="kpi-label">Drift Alerts</div>
+<div class="kpi-value">2</div>
+<div class="kpi-sub">Quiet regressions detected</div>
+</div>
+</div>
+<!-- Three Signal Stream Cards -->
+<div class="three-col">
+<div class="panel">
+<div class="panel-title">Stream 1 — Customer Friction</div>
+<div class="stream-card green">
+<div class="stream-header">
+<div class="stream-dot green"></div>
+<div class="stream-name">Customer Friction</div>
+<span class="stream-flag flag-green">Green</span>
+</div>
+<ul class="stream-indicators">
+<li>No repeat questions observed this week</li>
+<li>No unexpected escalations from clients</li>
+<li>Client engagement in status calls: normal</li>
+</ul>
+<div class="stream-threshold"><strong>Amber threshold:</strong> One friction indicator in two consecutive weeks. <strong>Red threshold:</strong> Two+ indicators simultaneously.</div>
+</div>
+</div>
+<div class="panel">
+<div class="panel-title">Stream 2 — Communication Clarity</div>
+<div class="stream-card amber">
+<div class="stream-header">
+<div class="stream-dot amber"></div>
+<div class="stream-name">Communication Clarity</div>
+<span class="stream-flag flag-amber">Amber</span>
+</div>
+<ul class="stream-indicators">
+<li>2 clarification requests this week (Northwind)</li>
+<li>1 delayed client action — traceable to ambiguous ask</li>
+<li>Three Tests compliance: 87% (below 95% target)</li>
+</ul>
+<div class="stream-threshold"><strong>Amber threshold:</strong> Two clarification requests in one week. <strong>Red threshold:</strong> Client expresses confusion about program status.</div>
+</div>
+</div>
+<div class="panel">
+<div class="panel-title">Stream 3 — Ownership Follow-Through</div>
+<div class="stream-card red">
+<div class="stream-header">
+<div class="stream-dot red"></div>
+<div class="stream-name">Ownership Follow-Through</div>
+<span class="stream-flag flag-red">Red</span>
+</div>
+<ul class="stream-indicators">
+<li>1 missed commitment — no proactive client notification</li>
+<li>Client asked "what happened with X?" (Tailspin)</li>
+<li>Open issue count growing week-over-week</li>
+</ul>
+<div class="stream-threshold"><strong>Amber threshold:</strong> One missed commitment, no proactive notification. <strong>Red threshold:</strong> Client raises missed commitment formally.</div>
+</div>
+</div>
+</div>
+<!-- Signal vs Status + Cadence -->
+<div class="main-grid">
+<div class="panel">
+<div class="panel-title">Signal Language vs. Status Language</div>
+<table class="compare-table">
+<thead>
+<tr>
+<th>❌ Status Language</th>
+<th class="divider"></th>
+<th>✅ Signal Language</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>"Things are going well"</td>
+<td class="divider">→</td>
+<td>"I'm seeing a pattern of the client re-asking questions we've already answered — that's a friction signal"</td>
+</tr>
+<tr>
+<td>"No issues to report"</td>
+<td class="divider">→</td>
+<td>"Ownership Follow-Through is amber — we have two open items past their committed date"</td>
+</tr>
+<tr>
+<td>"The client seems happy"</td>
+<td class="divider">→</td>
+<td>"Communication Clarity is green — no clarification requests in the past two weeks"</td>
+</tr>
+<tr>
+<td>"We're on track"</td>
+<td class="divider">→</td>
+<td>"Customer Friction is green. Ownership Follow-Through is red — one open item aged 9 days past committed date"</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="panel">
+<div class="panel-title">Operating Cadence Tracker</div>
+<div class="cadence-row">
+<div><div class="cadence-name">Weekly Customer Signal Review</div><div class="cadence-freq">Every Monday · Program Lead</div></div>
+<div class="cadence-streak streak-good">5 consecutive ✓</div>
+</div>
+<div class="cadence-row">
+<div><div class="cadence-name">Ownership Kickoff</div><div class="cadence-freq">Per engagement start</div></div>
+<div class="cadence-streak streak-good">11/12 complete ✓</div>
+</div>
+<div class="cadence-row">
+<div><div class="cadence-name">CEES Simulation Session</div><div class="cadence-freq">Bi-weekly · Program Lead</div></div>
+<div class="cadence-streak streak-warn">1 missed this month ⚠</div>
+</div>
+<div class="cadence-row">
+<div><div class="cadence-name">Signal Framework Review</div><div class="cadence-freq">Quarterly</div></div>
+<div class="cadence-streak streak-good">Q2 scheduled ✓</div>
+</div>
+<div style="margin-top:16px;padding:12px 14px;background:rgba(0,0,0,0.2);border-radius:8px;font-size:0.78rem;color:#8892a4;line-height:1.6;">
+<strong style="color:#a78bfa;">EEP Rule:</strong> The four operating cadences are non-negotiable standing commitments. They are not to be cancelled, deferred, or abbreviated due to schedule pressure.
+        </div>
+</div>
+</div>
+<!-- Drift Watch -->
+<div class="full-width">
+<div class="panel">
+<div class="panel-title">Drift Watch — Quiet Regressions Detected</div>
+<div class="drift-item">
+<div style="font-size:1.2rem;flex-shrink:0;">🔍</div>
+<div>
+<div class="drift-title">CEES Session Cadence Slipping — 1 Missed This Month</div>
+<div class="drift-body">The bi-weekly CEES Session cadence has slipped once this month. Teams that sustain the CEES Session cadence demonstrate measurably faster judgment convergence and lower variance in client experience outcomes. One missed session is an amber signal — two consecutive misses triggers a governance deviation flag. Reschedule immediately.</div>
+</div>
+</div>
+<div class="drift-item">
+<div style="font-size:1.2rem;flex-shrink:0;">🔍</div>
+<div>
+<div class="drift-title">Three Tests Compliance Trending Down — 94% → 87% Over 3 Weeks</div>
+<div class="drift-body">Three Tests compliance has declined from 94% to 87% over the past three weeks. The Stakes Test is the lowest performer at 87%. This is a quiet regression — no single failure is visible, but the trend indicates discipline is eroding. Raise in next Signal Review. Target: 95%+ across all three tests.</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<footer>EDE / CEES / EEP Frameworks  ·  Confidential  ·  Authorized Personnel Only</footer>
+</div>
+<script src="../js/main.js"></script>
+
+<script>
+Chart.defaults.color = '#8892a4';
+Chart.defaults.borderColor = 'rgba(255,255,255,0.06)';
+Chart.defaults.font.family = '"Segoe UI", Roboto, sans-serif';
+
+// ── Signal Stream Trend (1=Green, 2=Amber, 3=Red mapped to 0-2 score)
+(function(){
+  const ctx = document.getElementById('signalTrendChart');
+  if(!ctx) return;
+  new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: ['Wk 1','Wk 2','Wk 3','Wk 4','Wk 5','Wk 6'],
+      datasets: [
+        { label:'Customer Friction',       data:[1,1,1,1,1,1],   borderColor:'#34d399', backgroundColor:'rgba(52,211,153,0.07)',  tension:0.4, pointRadius:5, fill:true },
+        { label:'Communication Clarity',   data:[1,1,1,2,2,2],   borderColor:'#fbbf24', backgroundColor:'rgba(251,191,36,0.07)',  tension:0.4, pointRadius:5, fill:true },
+        { label:'Ownership Follow-Through',data:[1,1,2,2,2,3],   borderColor:'#f87171', backgroundColor:'rgba(248,113,113,0.07)', tension:0.4, pointRadius:5, fill:true },
+      ]
+    },
+    options: {
+      responsive:true, maintainAspectRatio:true,
+      plugins:{
+        legend:{ position:'bottom', labels:{ boxWidth:10, padding:14, color:'#8892a4' } },
+        tooltip:{ backgroundColor:'rgba(10,14,36,0.95)', borderColor:'rgba(124,58,237,0.3)', borderWidth:1,
+          callbacks:{ label: ctx => { const map=['','🟢 Green','🟡 Amber','🔴 Red']; return ` ${ctx.dataset.label}: ${map[ctx.parsed.y]||ctx.parsed.y}`; } } }
+      },
+      scales:{
+        x:{ grid:{ color:'rgba(255,255,255,0.05)' }, ticks:{ color:'#8892a4' } },
+        y:{ min:0.5, max:3.5, grid:{ color:'rgba(255,255,255,0.05)' }, ticks:{ color:'#8892a4', stepSize:1,
+          callback: v => ({1:'Green',2:'Amber',3:'Red'}[v]||'') } }
+      }
+    }
+  });
+})();
+
+// ── Cadence Adherence Bar Chart
+(function(){
+  const ctx = document.getElementById('cadenceBar');
+  if(!ctx) return;
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: ['Signal Review','OO Kickoff','CEES Session','Signal Fw Review'],
+      datasets:[
+        { label:'Held', data:[6,11,3,1], backgroundColor:'rgba(124,58,237,0.75)', borderColor:'#7c3aed', borderWidth:1, borderRadius:5 },
+        { label:'Missed', data:[0,1,1,0], backgroundColor:'rgba(248,113,113,0.3)', borderColor:'#f87171', borderWidth:1, borderRadius:5 }
+      ]
+    },
+    options: {
+      responsive:true, maintainAspectRatio:true,
+      plugins:{ legend:{ position:'bottom', labels:{ boxWidth:10, padding:12, color:'#8892a4' } },
+        tooltip:{ backgroundColor:'rgba(10,14,36,0.95)', borderColor:'rgba(124,58,237,0.3)', borderWidth:1 } },
+      scales:{
+        x:{ grid:{ display:false }, ticks:{ color:'#8892a4' } },
+        y:{ grid:{ color:'rgba(255,255,255,0.05)' }, ticks:{ color:'#8892a4', stepSize:1 } }
+      }
+    }
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Self-Accountability Trend Dashboard — EDE Dashboards</title>
+<link href="../css/styles.css" rel="stylesheet"/>
+<style>
+    .dash-wrap { position:relative; z-index:1; padding:40px 24px 80px; }
+    .dash-back { max-width:1200px; margin:0 auto 24px; }
+    .dash-page-header { max-width:1200px; margin:0 auto 36px; }
+    .dash-page-header .eyebrow { font-size:11px; font-weight:700; letter-spacing:3px; text-transform:uppercase; color:#dc2626; margin-bottom:10px; }
+    .dash-page-header h1 { font-size:2rem; font-weight:800; color:#fff; margin-bottom:8px; }
+    .dash-page-header p { font-size:0.95rem; color:#8892a4; max-width:680px; line-height:1.7; }
+
+    .kpi-row { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; max-width:1200px; margin:0 auto 28px; }
+    .kpi-card { background:linear-gradient(160deg,rgba(17,24,39,0.97) 0%,rgba(10,14,36,0.97) 100%); border:1px solid rgba(220,38,38,0.18); border-radius:14px; padding:22px 24px; position:relative; overflow:hidden; }
+    .kpi-card::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; }
+    .kpi-card.c1::before { background:linear-gradient(90deg,#dc2626,#f87171); }
+    .kpi-card.c2::before { background:linear-gradient(90deg,#059669,#34d399); }
+    .kpi-card.c3::before { background:linear-gradient(90deg,#d97706,#fbbf24); }
+    .kpi-card.c4::before { background:linear-gradient(90deg,#7c3aed,#a78bfa); }
+    .kpi-label { font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:#8892a4; margin-bottom:10px; }
+    .kpi-value { font-size:2.4rem; font-weight:800; line-height:1; margin-bottom:6px; }
+    .kpi-card.c1 .kpi-value { color:#f87171; }
+    .kpi-card.c2 .kpi-value { color:#34d399; }
+    .kpi-card.c3 .kpi-value { color:#fbbf24; }
+    .kpi-card.c4 .kpi-value { color:#a78bfa; }
+    .kpi-sub { font-size:0.78rem; color:#8892a4; }
+
+    .main-grid { display:grid; grid-template-columns:1fr 1fr; gap:20px; max-width:1200px; margin:0 auto 20px; }
+    .three-col { display:grid; grid-template-columns:1fr 1fr 1fr; gap:20px; max-width:1200px; margin:0 auto 20px; }
+    .full-width { max-width:1200px; margin:0 auto 20px; }
+    .panel { background:linear-gradient(160deg,rgba(17,24,39,0.97) 0%,rgba(10,14,36,0.97) 100%); border:1px solid rgba(220,38,38,0.12); border-radius:14px; padding:24px 28px; position:relative; overflow:hidden; }
+    .panel::before { content:''; position:absolute; top:0; left:0; right:0; height:1px; background:linear-gradient(90deg,transparent,rgba(248,113,113,0.4),transparent); }
+    .panel-title { font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:#f87171; margin-bottom:18px; }
+
+    /* Pillar score bars */
+    .pillar-row { margin-bottom:16px; }
+    .pillar-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; }
+    .pillar-name { font-size:0.88rem; font-weight:700; color:#fff; }
+    .pillar-score { font-size:0.88rem; font-weight:800; }
+    .pillar-bar-bg { height:10px; background:rgba(255,255,255,0.07); border-radius:5px; overflow:hidden; margin-bottom:4px; }
+    .pillar-bar-fill { height:100%; border-radius:5px; transition:width 0.8s ease; }
+    .pillar-desc { font-size:0.75rem; color:#8892a4; }
+
+    /* Score scale legend */
+    .scale-legend { display:flex; gap:0; margin-bottom:20px; border-radius:8px; overflow:hidden; }
+    .scale-item { flex:1; padding:8px 4px; text-align:center; font-size:9px; font-weight:700; letter-spacing:1px; text-transform:uppercase; }
+    .scale-1 { background:rgba(220,38,38,0.2); color:#f87171; }
+    .scale-2 { background:rgba(220,38,38,0.12); color:#fca5a5; }
+    .scale-3 { background:rgba(217,119,6,0.15); color:#fbbf24; }
+    .scale-4 { background:rgba(5,150,105,0.12); color:#6ee7b7; }
+    .scale-5 { background:rgba(5,150,105,0.2); color:#34d399; }
+
+    /* Rubric table */
+    .rubric-table { width:100%; border-collapse:collapse; }
+    .rubric-table th { font-size:9px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:#8892a4; padding:0 8px 12px 0; text-align:left; border-bottom:1px solid rgba(255,255,255,0.06); }
+    .rubric-table td { font-size:0.78rem; color:#b0bac8; padding:10px 8px 10px 0; border-bottom:1px solid rgba(255,255,255,0.04); vertical-align:top; line-height:1.5; }
+    .rubric-table tr:last-child td { border-bottom:none; }
+    .rubric-table td:first-child { font-weight:700; color:#fff; white-space:nowrap; }
+    .rubric-table td.at-std { color:#34d399; }
+    .rubric-table td.above-std { color:#a78bfa; }
+
+    /* 30-day trend */
+    .trend-row { display:flex; align-items:center; justify-content:space-between; padding:11px 0; border-bottom:1px solid rgba(255,255,255,0.05); }
+    .trend-row:last-child { border-bottom:none; }
+    .trend-name { font-size:0.85rem; font-weight:700; color:#fff; }
+    .trend-scores { display:flex; gap:6px; align-items:center; }
+    .trend-dot { width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.72rem; font-weight:800; }
+    .t-red   { background:rgba(220,38,38,0.2); color:#f87171; }
+    .t-amber { background:rgba(217,119,6,0.2); color:#fbbf24; }
+    .t-green { background:rgba(5,150,105,0.2); color:#34d399; }
+    .trend-arrow { font-size:1rem; }
+    .arrow-up   { color:#34d399; }
+    .arrow-down { color:#f87171; }
+    .arrow-flat { color:#8892a4; }
+
+    /* Evidence requirement */
+    .evidence-row { display:flex; align-items:flex-start; gap:14px; padding:14px 0; border-bottom:1px solid rgba(255,255,255,0.05); }
+    .evidence-row:last-child { border-bottom:none; }
+    .evidence-icon { font-size:1.1rem; flex-shrink:0; margin-top:2px; }
+    .evidence-title { font-size:0.88rem; font-weight:700; color:#fff; margin-bottom:4px; }
+    .evidence-body { font-size:0.78rem; color:#8892a4; line-height:1.6; }
+
+    /* Drift watch */
+    .drift-item { display:flex; align-items:flex-start; gap:14px; padding:14px 16px; background:rgba(220,38,38,0.07); border:1px solid rgba(248,113,113,0.2); border-radius:10px; margin-bottom:10px; }
+    .drift-item:last-child { margin-bottom:0; }
+    .drift-title { font-size:0.88rem; font-weight:700; color:#f87171; margin-bottom:4px; }
+    .drift-body { font-size:0.78rem; color:#8892a4; line-height:1.6; }
+
+    @media(max-width:900px){ .main-grid,.three-col{grid-template-columns:1fr;} .kpi-row{grid-template-columns:repeat(2,1fr);} }
+    @media(max-width:500px){ .kpi-row{grid-template-columns:1fr;} }
+  </style>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+<canvas id="particle-canvas"></canvas>
+<div class="page-wrap">
+<header>
+<div class="header-title"><span>EDE</span> / CEES / EEP  Frameworks</div>
+<div class="header-badge">Restricted Access</div>
+</header>
+<div class="dash-wrap">
+<div class="dash-back"><a class="back-btn" href="../dashboards.html">← Back to Dashboards</a></div>
+<div class="dash-page-header">
+<div class="eyebrow">Dashboard 05 — Live</div>
+<h1>Self-Accountability Trend Dashboard</h1>
+<p>30-day rolling view of scorecard performance across all five pillars — CX, clarity, ownership, signal, and accountability. Visualize score trends, evidence gaps, and Drift Watch alerts over time.</p>
+</div>
+<!-- KPI Row -->
+<div class="kpi-row">
+<div class="kpi-card c1">
+<div class="kpi-label">Team Avg Score</div>
+<div class="kpi-value">3.2</div>
+<div class="kpi-sub">Across all 5 pillars · 1–5 scale</div>
+</div>
+<div class="kpi-card c2">
+<div class="kpi-label">Evidence Rate</div>
+<div class="kpi-value">78%</div>
+<div class="kpi-sub">Scores with supporting evidence</div>
+</div>
+<div class="kpi-card c3">
+<div class="kpi-label">At Standard (3+)</div>
+<div class="kpi-value">4 / 5</div>
+<div class="kpi-sub">Pillars meeting baseline</div>
+</div>
+<div class="kpi-card c4">
+<div class="kpi-label">Drift Alerts</div>
+<div class="kpi-value">2</div>
+<div class="kpi-sub">Quiet regressions this cycle</div>
+</div>
+</div>
+<!-- Score Scale -->
+<div class="full-width">
+<div class="panel">
+<div class="panel-title">1–5 Scoring Scale — Absent → Embedded</div>
+<div class="scale-legend">
+<div class="scale-item scale-1">1<br/>Absent</div>
+<div class="scale-item scale-2">2<br/>Developing</div>
+<div class="scale-item scale-3">3<br/>At Standard</div>
+<div class="scale-item scale-4">4<br/>Above Std</div>
+<div class="scale-item scale-5">5<br/>Embedded</div>
+</div>
+<div style="font-size:0.78rem;color:#8892a4;line-height:1.7;">
+<strong style="color:#f87171;">Rating Integrity Rule:</strong> Ratings must be supported by observable evidence. A rating of "At Standard" or "Above Standard" requires documentation a second reader can verify — an output, an observation, a dated log entry, or a specific client interaction record. Ratings without supporting evidence are treated as "Developing" pending documentation.
+        </div>
+</div>
+</div>
+<!-- Five Pillar Scores -->
+<div class="main-grid">
+<div class="panel">
+<div class="panel-title">Five Pillar Scores — Current Cycle</div>
+<div class="pillar-row">
+<div class="pillar-header"><span class="pillar-name">Customer Experience (CX)</span><span class="pillar-score" style="color:#34d399;">4.1</span></div>
+<div class="pillar-bar-bg"><div class="pillar-bar-fill" style="width:82%;background:linear-gradient(90deg,#059669,#34d399);"></div></div>
+<div class="pillar-desc">Client-first decisions. Clarity over technical elegance. Evidence: 3 client validation records on file.</div>
+</div>
+<div class="pillar-row">
+<div class="pillar-header"><span class="pillar-name">Clarity</span><span class="pillar-score" style="color:#fbbf24;">2.8</span></div>
+<div class="pillar-bar-bg"><div class="pillar-bar-fill" style="width:56%;background:linear-gradient(90deg,#d97706,#fbbf24);"></div></div>
+<div class="pillar-desc">Three Tests compliance at 87%. Below 95% target. 2 clarification requests this week. Evidence gap flagged.</div>
+</div>
+<div class="pillar-row">
+<div class="pillar-header"><span class="pillar-name">Ownership</span><span class="pillar-score" style="color:#34d399;">3.6</span></div>
+<div class="pillar-bar-bg"><div class="pillar-bar-fill" style="width:72%;background:linear-gradient(90deg,#059669,#34d399);"></div></div>
+<div class="pillar-desc">11/12 engagements have named OO. 1 RMOT pending assignment. No orphaned issues this week.</div>
+</div>
+<div class="pillar-row">
+<div class="pillar-header"><span class="pillar-name">Signal</span><span class="pillar-score" style="color:#f87171;">2.4</span></div>
+<div class="pillar-bar-bg"><div class="pillar-bar-fill" style="width:48%;background:linear-gradient(90deg,#dc2626,#f87171);"></div></div>
+<div class="pillar-desc">Ownership Follow-Through stream is Red. Signal language used in only 68% of updates. Drift Watch active.</div>
+</div>
+<div class="pillar-row">
+<div class="pillar-header"><span class="pillar-name">Accountability</span><span class="pillar-score" style="color:#34d399;">3.4</span></div>
+<div class="pillar-bar-bg"><div class="pillar-bar-fill" style="width:68%;background:linear-gradient(90deg,#059669,#34d399);"></div></div>
+<div class="pillar-desc">Quarterly narrative submitted. CEES Session attendance: 4/5 this cycle. 1 missed session flagged.</div>
+</div>
+</div>
+<!-- 30-Day Trend -->
+<div class="panel">
+<div class="panel-title">30-Day Score Trend — By Pillar</div>
+<div style="font-size:0.75rem;color:#8892a4;margin-bottom:14px;">Scores shown: Week -4 → Week -3 → Week -2 → Current</div>
+<div class="trend-row">
+<div class="trend-name">CX</div>
+<div class="trend-scores">
+<div class="trend-dot t-green">3.8</div>
+<div class="trend-dot t-green">3.9</div>
+<div class="trend-dot t-green">4.0</div>
+<div class="trend-dot t-green">4.1</div>
+</div>
+<div class="trend-arrow arrow-up">↑</div>
+</div>
+<div class="trend-row">
+<div class="trend-name">Clarity</div>
+<div class="trend-scores">
+<div class="trend-dot t-green">3.4</div>
+<div class="trend-dot t-green">3.2</div>
+<div class="trend-dot t-amber">3.0</div>
+<div class="trend-dot t-amber">2.8</div>
+</div>
+<div class="trend-arrow arrow-down">↓</div>
+</div>
+<div class="trend-row">
+<div class="trend-name">Ownership</div>
+<div class="trend-scores">
+<div class="trend-dot t-amber">3.2</div>
+<div class="trend-dot t-green">3.4</div>
+<div class="trend-dot t-green">3.5</div>
+<div class="trend-dot t-green">3.6</div>
+</div>
+<div class="trend-arrow arrow-up">↑</div>
+</div>
+<div class="trend-row">
+<div class="trend-name">Signal</div>
+<div class="trend-scores">
+<div class="trend-dot t-green">3.1</div>
+<div class="trend-dot t-amber">2.9</div>
+<div class="trend-dot t-amber">2.6</div>
+<div class="trend-dot t-red">2.4</div>
+</div>
+<div class="trend-arrow arrow-down">↓</div>
+</div>
+<div class="trend-row">
+<div class="trend-name">Accountability</div>
+<div class="trend-scores">
+<div class="trend-dot t-green">3.5</div>
+<div class="trend-dot t-green">3.5</div>
+<div class="trend-dot t-green">3.4</div>
+<div class="trend-dot t-green">3.4</div>
+</div>
+<div class="trend-arrow arrow-flat">→</div>
+</div>
+<div style="margin-top:18px;padding:12px 14px;background:rgba(0,0,0,0.2);border-radius:8px;font-size:0.78rem;color:#8892a4;line-height:1.6;">
+<strong style="color:#f87171;">Drift Watch:</strong> Signal pillar has declined 4 consecutive weeks. Clarity pillar declining 3 consecutive weeks. Both require immediate attention in next CEES Session.
+        </div>
+</div>
+</div>
+<!-- Skills Rubric Summary -->
+<div class="full-width">
+<div class="panel">
+<div class="panel-title">Skills Rubric — Six Dimensions (Summary View)</div>
+<table class="rubric-table">
+<thead>
+<tr>
+<th>Dimension</th>
+<th>Below Standard</th>
+<th>Developing</th>
+<th class="at-std">At Standard ✓</th>
+<th class="above-std">Above Standard ★</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Signal Intelligence</td>
+<td>Reactive; client surfaces problems first</td>
+<td>Partial monitoring; inconsistent signal language</td>
+<td class="at-std">All 3 streams, weekly, 48hr surface, signal language always</td>
+<td class="above-std">Pre-emptive interventions; teaches signal language</td>
+</tr>
+<tr>
+<td>Ownership Clarity</td>
+<td>Ambiguous ownership; silent handoffs</td>
+<td>Named at kickoff; client comm sometimes delayed</td>
+<td class="at-std">Named, communicated in writing pre-delivery; full runbook; no orphans</td>
+<td class="above-std">Closes others' gaps; models runbook under pressure</td>
+</tr>
+<tr>
+<td>Communication Discipline</td>
+<td>No systematic quality check; tests fail regularly</td>
+<td>Tests applied to major comms only</td>
+<td class="at-std">All 3 tests, every comm, rewrite when fails, no exceptions</td>
+<td class="above-std">Referenced as model; volunteers to review peers</td>
+</tr>
+<tr>
+<td>Outcome Validation</td>
+<td>Closes on task completion; no validation questions</td>
+<td>Validation inconsistent; client sometimes can't articulate value</td>
+<td class="at-std">3 validation questions every close; client articulates value in writing</td>
+<td class="above-std">Close generates reference, expansion, or testimonial</td>
+</tr>
+<tr>
+<td>Trust Architecture</td>
+<td>No structured trust approach</td>
+<td>Knows model; inconsistent application</td>
+<td class="at-std">Identifies active trust layer; applies behaviors; uses vocabulary</td>
+<td class="above-std">Designs trust moments; documented referenceability outcome</td>
+</tr>
+<tr>
+<td>Program Stewardship</td>
+<td>Participates when required; no contributions</td>
+<td>1 scenario/quarter; minimal playbook updates</td>
+<td class="at-std">1 complete lesson/6 months; anti-patterns surfaced early</td>
+<td class="above-std">3+ lessons; program evolution proposed; active mentoring</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Drift Watch Alerts -->
+<div class="full-width">
+<div class="panel">
+<div class="panel-title">Drift Watch — Identify Quiet Regressions Early</div>
+<div class="drift-item">
+<div style="font-size:1.2rem;flex-shrink:0;">📉</div>
+<div>
+<div class="drift-title">Signal Pillar — 4-Week Consecutive Decline (3.1 → 2.4)</div>
+<div class="drift-body">Signal language usage has dropped from 82% to 68% over four weeks. No single week showed a dramatic drop — this is a quiet regression. Ownership Follow-Through stream is now Red. Raise in next Signal Review. Target corrective action: CEES Session scenario focused on signal language vs. status language.</div>
+</div>
+</div>
+<div class="drift-item">
+<div style="font-size:1.2rem;flex-shrink:0;">📉</div>
+<div>
+<div class="drift-title">Clarity Pillar — 3-Week Decline (3.4 → 2.8) + Evidence Gap</div>
+<div class="drift-body">Three Tests compliance declining for three consecutive weeks. Stakes Test is the lowest performer at 87%. Additionally, 22% of Clarity scores this cycle lack supporting evidence documentation — these are being treated as "Developing" per the Rating Integrity Rule. Evidence must be filed before scores are finalized.</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<footer>EDE / CEES / EEP Frameworks  ·  Confidential  ·  Authorized Personnel Only</footer>
+</div>
+<script src="../js/main.js"></script>
+
+<script>
+Chart.defaults.color = '#8892a4';
+Chart.defaults.borderColor = 'rgba(255,255,255,0.06)';
+Chart.defaults.font.family = '"Segoe UI", Roboto, sans-serif';
+
+// ── Radar Chart — Five Pillars
+(function(){
+  const ctx = document.getElementById('pillarRadar');
+  if(!ctx) return;
+  new Chart(ctx, {
+    type: 'radar',
+    data: {
+      labels: ['CX','Clarity','Ownership','Signal','Accountability'],
+      datasets:[
+        {
+          label: 'Current Score',
+          data: [4.1, 2.8, 3.6, 2.4, 3.4],
+          borderColor: '#f87171',
+          backgroundColor: 'rgba(248,113,113,0.15)',
+          pointBackgroundColor: '#f87171',
+          pointBorderColor: '#fff',
+          pointHoverBackgroundColor: '#fff',
+          pointHoverBorderColor: '#f87171',
+          borderWidth: 2, pointRadius: 5
+        },
+        {
+          label: 'At Standard (3.0)',
+          data: [3, 3, 3, 3, 3],
+          borderColor: 'rgba(52,211,153,0.5)',
+          backgroundColor: 'rgba(52,211,153,0.05)',
+          borderDash: [5,5],
+          pointRadius: 0, borderWidth: 1.5
+        }
+      ]
+    },
+    options: {
+      responsive:true, maintainAspectRatio:true,
+      plugins:{
+        legend:{ position:'bottom', labels:{ boxWidth:10, padding:14, color:'#8892a4' } },
+        tooltip:{ backgroundColor:'rgba(10,14,36,0.95)', borderColor:'rgba(248,113,113,0.3)', borderWidth:1 }
+      },
+      scales:{
+        r:{
+          min:0, max:5, ticks:{ stepSize:1, color:'#8892a4', backdropColor:'transparent' },
+          grid:{ color:'rgba(255,255,255,0.08)' },
+          angleLines:{ color:'rgba(255,255,255,0.08)' },
+          pointLabels:{ color:'#e8eaf6', font:{ size:12, weight:'700' } }
+        }
+      }
+    }
+  });
+})();
+
+// ── 30-Day Pillar Trend Line Chart
+(function(){
+  const ctx = document.getElementById('pillarTrendLine');
+  if(!ctx) return;
+  new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: ['Week -4','Week -3','Week -2','Current'],
+      datasets:[
+        { label:'CX',             data:[3.8,3.9,4.0,4.1], borderColor:'#00c8ff', backgroundColor:'rgba(0,200,255,0.06)', tension:0.4, pointRadius:5, fill:true },
+        { label:'Clarity',        data:[3.4,3.2,3.0,2.8], borderColor:'#fbbf24', backgroundColor:'rgba(251,191,36,0.06)', tension:0.4, pointRadius:5, fill:true },
+        { label:'Ownership',      data:[3.2,3.4,3.5,3.6], borderColor:'#34d399', backgroundColor:'rgba(52,211,153,0.06)', tension:0.4, pointRadius:5, fill:true },
+        { label:'Signal',         data:[3.1,2.9,2.6,2.4], borderColor:'#f87171', backgroundColor:'rgba(248,113,113,0.06)', tension:0.4, pointRadius:5, fill:true },
+        { label:'Accountability', data:[3.5,3.5,3.4,3.4], borderColor:'#a78bfa', backgroundColor:'rgba(167,139,250,0.06)', tension:0.4, pointRadius:5, fill:true },
+        { label:'At Standard',    data:[3.0,3.0,3.0,3.0], borderColor:'rgba(255,255,255,0.2)', borderDash:[5,5], pointRadius:0, fill:false }
+      ]
+    },
+    options: {
+      responsive:true, maintainAspectRatio:true,
+      plugins:{
+        legend:{ position:'bottom', labels:{ boxWidth:10, padding:12, color:'#8892a4' } },
+        tooltip:{ backgroundColor:'rgba(10,14,36,0.95)', borderColor:'rgba(248,113,113,0.3)', borderWidth:1 }
+      },
+      scales:{
+        x:{ grid:{ color:'rgba(255,255,255,0.05)' }, ticks:{ color:'#8892a4' } },
+        y:{ min:1, max:5, grid:{ color:'rgba(255,255,255,0.05)' }, ticks:{ color:'#8892a4', stepSize:1 } }
+      }
+    }
+  });
+})();
+</script>
+</body>
+</html>

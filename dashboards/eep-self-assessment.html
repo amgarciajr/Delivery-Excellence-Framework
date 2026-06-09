@@ -1,0 +1,1112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EEP Self-Assessment Tool</title>
+<style>
+:root{
+  --orange:#FF6200;--orange-dark:#CC4E00;--orange-light:#FFF3EC;
+  --charcoal:#1C1C1C;--white:#FFFFFF;--light-gray:#F5F5F5;
+  --mid-gray:#9E9E9E;--border:#E0E0E0;
+  --green:#2E7D32;--green-light:#E8F5E9;
+  --amber:#F57C00;--amber-light:#FFF8E1;
+  --red:#C62828;--red-light:#FFEBEE;
+  --blue:#1565C0;--blue-light:#E3F2FD;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Calibri','Segoe UI',Arial,sans-serif;background:var(--light-gray);color:var(--charcoal);min-height:100vh;font-size:15px}
+.app-header{background:var(--charcoal);color:#fff;border-bottom:3px solid var(--orange)}
+.header-inner{max-width:1200px;margin:0 auto;padding:18px 32px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.header-badge{background:var(--orange);color:#fff;font-size:10px;font-weight:700;letter-spacing:1.5px;padding:3px 8px;border-radius:3px;display:inline-block;margin-bottom:4px}
+.header-title{font-size:20px;font-weight:700}
+.header-sub{font-size:12px;color:var(--mid-gray);margin-top:2px}
+.header-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.btn{padding:8px 18px;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer;border:none;font-family:inherit;transition:all .15s}
+.btn-orange{background:var(--orange);color:#fff}
+.btn-orange:hover{background:var(--orange-dark)}
+.btn-dark{background:var(--charcoal);color:#fff;border:1px solid #555}
+.btn-dark:hover{border-color:#aaa}
+.btn-green{background:var(--green);color:#fff}
+.btn-sm{padding:6px 12px;font-size:12px}
+.app-body{max-width:1200px;margin:0 auto;padding:28px 32px 60px}
+.progress-header{background:#fff;border-radius:10px;border:1px solid var(--border);padding:20px 24px;margin-bottom:24px;display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+.progress-info{flex:1;min-width:200px}
+.progress-info h2{font-size:16px;font-weight:700;margin-bottom:4px}
+.progress-info p{font-size:12px;color:var(--mid-gray)}
+.progress-steps{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
+.step-dot{width:32px;height:32px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--mid-gray);transition:all .2s;cursor:pointer;user-select:none}
+.step-dot.active{border-color:var(--orange);background:var(--orange);color:#fff}
+.step-dot.done{border-color:var(--green);background:var(--green);color:#fff}
+.progress-bar-wrap{width:100%;background:var(--border);border-radius:10px;height:6px}
+.progress-bar-fill{height:100%;background:var(--orange);border-radius:10px;transition:width .4s}
+.view{display:none}
+.view.active{display:block}
+.welcome-card{background:#fff;border-radius:12px;border:1px solid var(--border);padding:40px;text-align:center;max-width:700px;margin:0 auto}
+.welcome-card .big-icon{font-size:56px;margin-bottom:16px}
+.welcome-card h1{font-size:28px;font-weight:700;margin-bottom:10px}
+.welcome-card p{font-size:15px;color:#555;line-height:1.7;margin-bottom:20px}
+.welcome-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:24px 0;text-align:left}
+.welcome-feature{background:var(--light-gray);border-radius:8px;padding:14px;border-left:3px solid var(--orange)}
+.welcome-feature .feat-icon{font-size:20px;margin-bottom:6px}
+.welcome-feature h3{font-size:13px;font-weight:700;margin-bottom:4px}
+.welcome-feature p{font-size:12px;color:#555;line-height:1.5}
+.user-setup{background:var(--light-gray);border-radius:8px;padding:20px;margin:20px 0;text-align:left}
+.user-setup label{font-size:13px;font-weight:700;display:block;margin-bottom:6px}
+.user-setup input,.user-setup select{width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:6px;font-size:14px;font-family:inherit;background:#fff;color:var(--charcoal)}
+.user-setup input:focus,.user-setup select:focus{outline:2px solid var(--orange);border-color:transparent}
+.setup-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+.assessment-layout{display:grid;grid-template-columns:1fr 380px;gap:24px;align-items:start}
+.dim-card{background:#fff;border-radius:12px;border:1px solid var(--border);overflow:hidden}
+.dim-card-header{padding:20px 24px;border-bottom:1px solid var(--border)}
+.dim-number{font-size:11px;font-weight:700;color:var(--orange);letter-spacing:1.5px;margin-bottom:4px}
+.dim-title{font-size:20px;font-weight:700;margin-bottom:6px}
+.dim-desc{font-size:13px;color:#555;line-height:1.6}
+.dim-card-body{padding:24px}
+.rating-label{font-size:13px;font-weight:700;margin-bottom:14px}
+.rating-options{display:flex;flex-direction:column;gap:10px;margin-bottom:24px}
+.rating-option{border:2px solid var(--border);border-radius:8px;padding:14px 16px;cursor:pointer;transition:all .15s;display:flex;gap:14px;align-items:flex-start;background:#fff}
+.rating-option:hover{border-color:var(--orange);background:var(--orange-light)}
+.rating-option.sel-below{border-color:var(--red);background:var(--red-light)}
+.rating-option.sel-developing{border-color:var(--amber);background:var(--amber-light)}
+.rating-option.sel-at{border-color:var(--green);background:var(--green-light)}
+.rating-option.sel-above{border-color:var(--blue);background:var(--blue-light)}
+.rating-badge{flex-shrink:0;padding:4px 10px;border-radius:12px;font-size:11px;font-weight:700;white-space:nowrap;margin-top:1px}
+.rb-below{background:var(--red-light);color:var(--red)}
+.rb-developing{background:var(--amber-light);color:var(--amber)}
+.rb-at{background:var(--green-light);color:var(--green)}
+.rb-above{background:var(--blue-light);color:var(--blue)}
+.rating-text{font-size:13px;line-height:1.5;color:#333}
+.rating-text strong{display:block;font-size:13px;font-weight:700;margin-bottom:3px}
+.evidence-section{border-top:1px solid var(--border);padding-top:20px}
+.evidence-section label{font-size:13px;font-weight:700;display:block;margin-bottom:6px}
+.evidence-hint{font-size:12px;color:var(--mid-gray);margin-bottom:8px}
+.evidence-section textarea{width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;resize:vertical;min-height:80px;color:var(--charcoal)}
+.evidence-section textarea:focus{outline:2px solid var(--orange);border-color:transparent}
+.dim-nav{display:flex;justify-content:space-between;align-items:center;padding:16px 24px;border-top:1px solid var(--border);background:var(--light-gray)}
+.radar-panel{background:#fff;border-radius:12px;border:1px solid var(--border);padding:20px;position:sticky;top:20px}
+.radar-panel-title{font-size:14px;font-weight:700;margin-bottom:4px}
+.radar-panel-sub{font-size:12px;color:var(--mid-gray);margin-bottom:16px}
+.radar-wrap{position:relative;width:100%;aspect-ratio:1/1}
+.radar-wrap canvas{width:100%!important;height:100%!important}
+.radar-legend{margin-top:14px;display:flex;flex-direction:column;gap:6px}
+.legend-item{display:flex;align-items:center;gap:8px;font-size:12px}
+.legend-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.score-summary{margin-top:16px;border-top:1px solid var(--border);padding-top:14px}
+.score-row{display:flex;align-items:center;padding:5px 0;font-size:12px;border-bottom:1px solid #f0f0f0;gap:6px}
+.score-row:last-child{border-bottom:none}
+.score-row .dim-name{color:#555;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.score-bar-mini{flex:1;height:6px;background:var(--border);border-radius:3px;overflow:hidden;min-width:40px}
+.score-bar-mini-fill{height:100%;border-radius:3px;transition:width .4s}
+.score-val{font-weight:700;font-size:12px;width:20px;text-align:right;flex-shrink:0}
+.results-header{background:#fff;border-radius:12px;border:1px solid var(--border);padding:28px;margin-bottom:24px;text-align:center}
+.results-header .result-icon{font-size:48px;margin-bottom:12px}
+.results-header h2{font-size:24px;font-weight:700;margin-bottom:6px}
+.results-header p{font-size:14px;color:#555;line-height:1.6}
+.results-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:24px}
+.results-radar-card{background:#fff;border-radius:12px;border:1px solid var(--border);padding:24px}
+.results-radar-card h3{font-size:15px;font-weight:700;margin-bottom:16px}
+.results-details{background:#fff;border-radius:12px;border:1px solid var(--border);padding:24px}
+.results-details h3{font-size:15px;font-weight:700;margin-bottom:16px}
+.result-dim-row{padding:14px 0;border-bottom:1px solid var(--border);display:flex;gap:14px;align-items:flex-start}
+.result-dim-row:last-child{border-bottom:none}
+.result-dim-icon{font-size:20px;flex-shrink:0;margin-top:2px}
+.result-dim-info{flex:1}
+.result-dim-name{font-size:14px;font-weight:700;margin-bottom:4px}
+.result-dim-evidence{font-size:12px;color:#555;line-height:1.5;font-style:italic;background:var(--light-gray);padding:8px 10px;border-radius:4px;margin-top:6px}
+.result-dim-evidence.empty{color:var(--mid-gray)}
+.insights-card{background:#fff;border-radius:12px;border:1px solid var(--border);padding:24px;margin-bottom:24px}
+.insights-card h3{font-size:15px;font-weight:700;margin-bottom:16px}
+.insight-item{padding:14px;border-radius:8px;margin-bottom:10px;font-size:13px;line-height:1.6;border-left:4px solid}
+.insight-strength{background:var(--green-light);border-color:var(--green)}
+.insight-growth{background:var(--amber-light);border-color:var(--amber)}
+.insight-action{background:var(--blue-light);border-color:var(--blue)}
+.insight-item strong{display:block;font-weight:700;margin-bottom:4px}
+.overall-score-big{display:flex;align-items:center;justify-content:center;gap:20px;margin:16px 0;flex-wrap:wrap}
+.score-circle{width:80px;height:80px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-direction:column;border:4px solid var(--orange)}
+.score-circle .sc-num{font-size:24px;font-weight:700;color:var(--orange);line-height:1}
+.score-circle .sc-label{font-size:9px;color:var(--mid-gray);letter-spacing:0.5px;margin-top:2px}
+.score-circle-info{text-align:left;max-width:320px}
+.score-circle-info .sci-level{font-size:18px;font-weight:700;margin-bottom:4px}
+.score-circle-info .sci-desc{font-size:13px;color:#555;line-height:1.5}
+.history-card{background:#fff;border-radius:12px;border:1px solid var(--border);padding:24px;margin-bottom:24px}
+.history-card h3{font-size:15px;font-weight:700;margin-bottom:16px}
+.history-empty{font-size:13px;color:var(--mid-gray);text-align:center;padding:20px}
+.history-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);font-size:13px;flex-wrap:wrap}
+.history-row:last-child{border-bottom:none}
+.history-date{color:var(--mid-gray);font-size:12px;min-width:90px}
+.history-name{font-weight:600;flex:1}
+.history-score{font-weight:700;color:var(--orange)}
+.print-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:20px}
+.callout{border-radius:6px;padding:12px 16px;margin:12px 0;font-size:13px;line-height:1.6;border-left:4px solid}
+.callout-orange{background:var(--orange-light);border-color:var(--orange)}
+.callout-blue{background:var(--blue-light);border-color:var(--blue)}
+.callout strong{font-weight:700}
+.badge{display:inline-block;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:700}
+.badge-orange{background:var(--orange-light);color:var(--orange-dark)}
+.badge-green{background:var(--green-light);color:var(--green)}
+.badge-amber{background:var(--amber-light);color:var(--amber)}
+.badge-red{background:var(--red-light);color:var(--red)}
+.badge-blue{background:var(--blue-light);color:var(--blue)}
+.badge-gray{background:#f0f0f0;color:#555}
+@media(max-width:900px){
+  .assessment-layout{grid-template-columns:1fr}
+  .radar-panel{position:static}
+  .results-grid{grid-template-columns:1fr}
+  .welcome-grid{grid-template-columns:1fr}
+  .setup-row{grid-template-columns:1fr}
+  .app-body{padding:16px}
+  .header-inner{padding:14px 16px}
+}
+@media print{
+  .app-header .header-actions,.dim-nav,.print-actions{display:none!important}
+  .view{display:block!important}
+  #view-welcome,#view-assessment,#view-history{display:none!important}
+  body{background:#fff}
+}
+</style>
+</head>
+<body>
+
+<header class="app-header">
+  <div class="header-inner">
+    <div>
+      <div class="header-badge">AVANADE &middot; EEP</div>
+      <div class="header-title">EEP Self-Assessment Tool</div>
+      <div class="header-sub">Skills Rubric &middot; Radar Chart &middot; Competency Profile &middot; Built on frameworks by Mike Garcia</div>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-dark btn-sm" onclick="showView('welcome')">&#8617; Restart</button>
+      <button class="btn btn-dark btn-sm" onclick="showHistory()">&#128203; History</button>
+      <button class="btn btn-orange btn-sm" onclick="window.print()">&#128424; Print</button>
+    </div>
+    <button onclick="document.getElementById('page-sa-help').style.display=document.getElementById('page-sa-help').style.display==='block'?'none':'block'" style="background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:#fff;padding:6px 14px;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;">❓ Help</button>
+</div>
+</header>
+
+<div class="app-body">
+
+<!-- WELCOME -->
+<div class="view active" id="view-welcome">
+  <div class="welcome-card">
+    <div class="big-icon">&#128202;</div>
+    <h1>EEP Competency Self-Assessment</h1>
+    <p>Rate yourself across all six EEP Skills Rubric dimensions. Your responses generate a live radar chart showing your competency profile &mdash; and personalized insights to guide your development.</p>
+    <div class="welcome-grid">
+      <div class="welcome-feature"><div class="feat-icon">&#128207;</div><h3>6 Dimensions</h3><p>Signal Intelligence, Ownership Clarity, Communication Discipline, Outcome Validation, Trust Architecture, Program Stewardship</p></div>
+      <div class="welcome-feature"><div class="feat-icon">&#127919;</div><h3>4 Proficiency Levels</h3><p>Below Standard &rarr; Developing &rarr; At Standard &rarr; Above Standard &mdash; each with specific behavioral descriptors</p></div>
+      <div class="welcome-feature"><div class="feat-icon">&#128200;</div><h3>Live Radar Chart</h3><p>See your competency profile update in real time as you rate each dimension. Compare against the At Standard benchmark.</p></div>
+    </div>
+    <div class="user-setup">
+      <div class="setup-row">
+        <div><label for="user-name">Your Name</label><input type="text" id="user-name" placeholder="e.g. Jordan Smith"></div>
+        <div><label for="user-level">Current Certification Level</label>
+          <select id="user-level">
+            <option value="0">Not yet certified</option>
+            <option value="1">Level 1 &mdash; EEP Practitioner</option>
+            <option value="2">Level 2 &mdash; EEP Lead</option>
+            <option value="3">Level 3 &mdash; EEP Trainer</option>
+          </select>
+        </div>
+      </div>
+      <div class="setup-row">
+        <div><label for="user-role">Role</label><input type="text" id="user-role" placeholder="e.g. Senior Consultant"></div>
+        <div><label for="user-month">Assessment Month</label><input type="month" id="user-month"></div>
+      </div>
+    </div>
+    <div class="callout callout-orange"><strong>Important:</strong> Rate yourself honestly based on observable evidence from your recent delivery work &mdash; not aspirational behavior. The rubric asks: what do you actually do, not what you intend to do.</div>
+    <button class="btn btn-orange" style="margin-top:20px;padding:12px 32px;font-size:15px;" onclick="startAssessment()">Begin Assessment &rarr;</button>
+  </div>
+</div>
+
+<!-- ASSESSMENT -->
+<div class="view" id="view-assessment">
+  <div class="progress-header">
+    <div class="progress-info">
+      <h2 id="progress-title">Dimension 1 of 6</h2>
+      <p id="progress-sub">Rate your behavior against the EEP standard</p>
+    </div>
+    <div style="flex:1;min-width:200px;">
+      <div class="progress-steps" id="progress-steps"></div>
+      <div class="progress-bar-wrap"><div class="progress-bar-fill" id="assess-progress-fill" style="width:0%"></div></div>
+    </div>
+  </div>
+  <div class="assessment-layout">
+    <div class="dim-card">
+      <div class="dim-card-header">
+        <div class="dim-number" id="dim-number">DIMENSION 1</div>
+        <div class="dim-title" id="dim-title">Signal Intelligence</div>
+        <div class="dim-desc" id="dim-desc"></div>
+      </div>
+      <div class="dim-card-body">
+        <div class="rating-label">Select the level that best describes your current behavior:</div>
+        <div class="rating-options" id="rating-options"></div>
+        <div class="evidence-section">
+          <label>Evidence Note <span style="font-weight:400;color:var(--mid-gray);">(optional but recommended)</span></label>
+          <div class="evidence-hint" id="evidence-hint"></div>
+          <textarea id="evidence-input" placeholder="Describe a specific example from your recent work..."></textarea>
+        </div>
+      </div>
+      <div class="dim-nav">
+        <button class="btn btn-dark" id="btn-prev" onclick="prevDim()">&larr; Previous</button>
+        <span id="dim-nav-label" style="font-size:12px;color:var(--mid-gray);"></span>
+        <button class="btn btn-orange" id="btn-next" onclick="nextDim()">Next &rarr;</button>
+      </div>
+    </div>
+    <div class="radar-panel">
+      <div class="radar-panel-title">&#128200; Live Competency Profile</div>
+      <div class="radar-panel-sub">Updates as you rate each dimension</div>
+      <div class="radar-wrap"><canvas id="radarChart"></canvas></div>
+      <div class="radar-legend">
+        <div class="legend-item"><div class="legend-dot" style="background:rgba(255,98,0,0.8)"></div><span>Your scores</span></div>
+        <div class="legend-item"><div class="legend-dot" style="background:rgba(46,125,50,0.5)"></div><span>At Standard benchmark (3)</span></div>
+      </div>
+      <div class="score-summary" id="score-summary"></div>
+    </div>
+  </div>
+</div>
+
+<!-- RESULTS -->
+<div class="view" id="view-results">
+  <div class="results-header">
+    <div class="result-icon" id="result-icon">&#127919;</div>
+    <h2 id="result-headline">Your EEP Competency Profile</h2>
+    <p id="result-subline">Assessment complete</p>
+    <div class="overall-score-big">
+      <div class="score-circle">
+        <div class="sc-num" id="result-avg">&mdash;</div>
+        <div class="sc-label">AVG SCORE</div>
+      </div>
+      <div class="score-circle-info">
+        <div class="sci-level" id="result-level">&mdash;</div>
+        <div class="sci-desc" id="result-level-desc">&mdash;</div>
+      </div>
+    </div>
+  </div>
+  <div class="results-grid">
+    <div class="results-radar-card">
+      <h3>&#128202; Competency Radar Chart</h3>
+      <div style="position:relative;width:100%;aspect-ratio:1/1;"><canvas id="radarChartResults"></canvas></div>
+      <div style="display:flex;gap:16px;margin-top:12px;flex-wrap:wrap;">
+        <div class="legend-item"><div class="legend-dot" style="background:rgba(255,98,0,0.8)"></div><span style="font-size:12px;">Your scores</span></div>
+        <div class="legend-item"><div class="legend-dot" style="background:rgba(46,125,50,0.5)"></div><span style="font-size:12px;">At Standard (3)</span></div>
+      </div>
+    </div>
+    <div class="results-details">
+      <h3>&#128203; Dimension Breakdown</h3>
+      <div id="result-dim-list"></div>
+    </div>
+  </div>
+  <div class="insights-card">
+    <h3>&#128161; Personalized Insights</h3>
+    <div id="insights-content"></div>
+  </div>
+  <div class="results-details" style="margin-bottom:24px;">
+    <h3>&#128221; Evidence Notes</h3>
+    <div id="evidence-summary"></div>
+  </div>
+  <div class="print-actions">
+    <button class="btn btn-green" onclick="saveToHistory()">&#128190; Save to History</button>
+    <button class="btn btn-dark" onclick="window.print()">&#128424; Print / Export PDF</button>
+    <button class="btn btn-dark" onclick="startAssessment()">&#128260; Retake Assessment</button>
+    <button class="btn btn-dark" onclick="showView('welcome')">&#127968; Start Over</button>
+  </div>
+</div>
+
+<!-- HISTORY -->
+<div class="view" id="view-history">
+  <div class="history-card">
+    <h3>&#128203; Assessment History <span style="font-size:12px;font-weight:400;color:var(--mid-gray);">Saved in this browser</span></h3>
+    <div id="history-list"></div>
+  </div>
+  <div style="text-align:center;margin-top:16px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
+    <button class="btn btn-orange" onclick="showView('welcome')">&larr; Back to Assessment</button>
+    <button class="btn btn-dark" onclick="clearHistory()">&#128465; Clear History</button>
+  </div>
+</div>
+
+</div><!-- /app-body -->
+
+<script>
+var DIMS = [
+  {
+    id:"signal", icon:"📡",
+    title:"Signal Intelligence",
+    desc:"Your ability to monitor all relevant engagement signal streams, surface findings using signal language (not status language), and act on friction before it reaches the client as a problem.",
+    hint:"Describe a specific signal you surfaced, when you surfaced it, and what you did with it.",
+    levels:[
+      {key:"below",label:"Below Standard",badge:"rb-below",sel:"sel-below",
+       title:"Reactive — client surfaces problems first",
+       desc:"Relies entirely on the client to surface problems. No consistent signal monitoring in place. Status language used exclusively: Things are going well, No issues to report."},
+      {key:"developing",label:"Developing",badge:"rb-developing",sel:"sel-developing",
+       title:"Partial monitoring — inconsistent signal language",
+       desc:"Monitors some signal streams some of the time. Surfaces findings within a week of observation, sometimes longer. Signal language used occasionally but inconsistently."},
+      {key:"at",label:"At Standard",badge:"rb-at",sel:"sel-at",
+       title:"All 3 streams, weekly, 48hr surface, signal language always",
+       desc:"Monitors all three signal streams on a weekly cadence without prompting. Surfaces signals within 48 hours. Uses signal language consistently: I am seeing a pattern of... No status-only updates in documented reviews."},
+      {key:"above",label:"Above Standard",badge:"rb-above",sel:"sel-above",
+       title:"Pre-emptive interventions — teaches signal language",
+       desc:"Identifies friction patterns before the client experiences them as problems. Proposes proactive interventions based on signal reading — not just flags, but recommendations with rationale. Teaches signal language to peers in CEES Sessions."}
+    ]
+  },
+  {
+    id:"ownership", icon:"🎯",
+    title:"Ownership Clarity",
+    desc:"Your ability to establish and maintain unambiguous Outcome Owner assignments on every active workstream, communicate those assignments to clients in writing, and execute clean handoffs according to the EEP runbook.",
+    hint:"Name a specific engagement where you assigned an Outcome Owner and communicated it to the client in writing.",
+    levels:[
+      {key:"below",label:"Below Standard",badge:"rb-below",sel:"sel-below",
+       title:"Ambiguous ownership — silent handoffs",
+       desc:"Ownership is ambiguous on active engagements. No named Outcome Owner on one or more workstreams. Silent handoffs occur: work transfers without documentation or client notification."},
+      {key:"developing",label:"Developing",badge:"rb-developing",sel:"sel-developing",
+       title:"Named at kickoff — client comm sometimes delayed",
+       desc:"Outcome Owner is named at kickoff but communication to the client is sometimes delayed or omitted. Handoffs occur but have documentation gaps — the runbook is followed partially."},
+      {key:"at",label:"At Standard",badge:"rb-at",sel:"sel-at",
+       title:"Named, communicated in writing pre-delivery — full runbook — no orphans",
+       desc:"Outcome Owner is named at kickoff and communicated to the client in writing before delivery begins — no exceptions. Handoffs follow the full EEP runbook: documented, communicated to client, confirmed. No orphaned workstreams."},
+      {key:"above",label:"Above Standard",badge:"rb-above",sel:"sel-above",
+       title:"Closes others gaps — models runbook under pressure",
+       desc:"Proactively closes ownership gaps created by others on the team. Visibly models runbook behavior under pressure — when timelines compress, documentation still happens. Peers reference this practitioner as the model."}
+    ]
+  },
+  {
+    id:"communication", icon:"✉️",
+    title:"Communication Discipline",
+    desc:"Your consistent application of the three EEP communication quality tests — repeat-back, stakes, and next-step — to all client-facing communications before send.",
+    hint:"Describe a specific communication you revised because it failed one of the three tests.",
+    levels:[
+      {key:"below",label:"Below Standard",badge:"rb-below",sel:"sel-below",
+       title:"No systematic quality check — tests fail regularly",
+       desc:"Client communications sent without systematic quality check. Messages regularly fail one or more of the three tests when reviewed post-send. No established discipline for pre-send review."},
+      {key:"developing",label:"Developing",badge:"rb-developing",sel:"sel-developing",
+       title:"Tests applied to major comms only — minor comms bypass",
+       desc:"Applies the three tests to major, high-stakes communications. Minor updates, scheduling messages, and routine check-ins sometimes bypass the gate. Applies tests selectively."},
+      {key:"at",label:"At Standard",badge:"rb-at",sel:"sel-at",
+       title:"All 3 tests, every comm, rewrite when fails, no exceptions",
+       desc:"All three tests applied before every client-facing communication — major or minor. When any test fails, the message is rewritten before send. No exceptions documented."},
+      {key:"above",label:"Above Standard",badge:"rb-above",sel:"sel-above",
+       title:"Referenced as model — volunteers to review peers — WGLL contributor",
+       desc:"Client communications are referenced by peers as quality models. Practitioner volunteers to review peers communications before send without being asked. Has contributed at least one communication example to the WGLL Library."}
+    ]
+  },
+  {
+    id:"validation", icon:"✅",
+    title:"Outcome Validation",
+    desc:"Your consistent execution of a structured close at every engagement end — one in which the client is asked the three validation questions and can articulate the value they received in their own words before the engagement is declared complete.",
+    hint:"Describe a specific engagement close where you asked the three validation questions and documented the client response.",
+    levels:[
+      {key:"below",label:"Below Standard",badge:"rb-below",sel:"sel-below",
+       title:"Closes on task completion — no validation questions",
+       desc:"Engagements are closed when the defined tasks are completed, without further validation. The three validation questions are not asked. No client value narrative is confirmed."},
+      {key:"developing",label:"Developing",badge:"rb-developing",sel:"sel-developing",
+       title:"Validation inconsistent — client sometimes cannot articulate value",
+       desc:"Validation questions are asked at some engagement closes but not consistently — typically in higher-stakes engagements or when prompted by a lead."},
+      {key:"at",label:"At Standard",badge:"rb-at",sel:"sel-at",
+       title:"3 validation questions every close — client articulates value in writing",
+       desc:"All three validation questions are asked at every engagement close — no exceptions. The engagement is not declared complete until the client can articulate the value they received in their own words."},
+      {key:"above",label:"Above Standard",badge:"rb-above",sel:"sel-above",
+       title:"Close generates reference, expansion, or testimonial",
+       desc:"The validated close leads to a tangible next outcome: the client becomes a reference, an expansion conversation is initiated, or a testimonial is captured for the program record."}
+    ]
+  },
+  {
+    id:"trust", icon:"🏛️",
+    title:"Trust Architecture",
+    desc:"Your ability to apply the CE Framework trust model — credibility, reliability, and referenceability — to active engagements. This evaluates whether you have a structured approach to building client trust or rely on relationship quality and technical delivery alone.",
+    hint:"Describe which trust layer was active on a recent engagement, what your approach was, and what the result was.",
+    levels:[
+      {key:"below",label:"Below Standard",badge:"rb-below",sel:"sel-below",
+       title:"No structured trust approach — relies on relationship and quality",
+       desc:"No structured approach to building client trust. Trust-building is implicit — relies on relationship quality and the strength of technical deliverables to generate client confidence. The three trust layers are not applied or referenced."},
+      {key:"developing",label:"Developing",badge:"rb-developing",sel:"sel-developing",
+       title:"Knows model — inconsistent application in delivery",
+       desc:"Aware of the credibility-reliability-referenceability model and can explain it when asked. Application to active engagements is inconsistent — the framework is referenced in planning occasionally but does not consistently influence behavior."},
+      {key:"at",label:"At Standard",badge:"rb-at",sel:"sel-at",
+       title:"Identifies active trust layer — applies behaviors — uses vocabulary",
+       desc:"Can identify which trust layer is active in a current engagement and apply the appropriate trust-building behaviors for that layer. Trust lifecycle vocabulary is used consistently with peers and in planning documentation."},
+      {key:"above",label:"Above Standard",badge:"rb-above",sel:"sel-above",
+       title:"Designs trust moments — documented referenceability outcome",
+       desc:"Proactively designs trust-building moments into engagement plans from kickoff. Has documented a referenceability outcome traceable to intentional trust design. Teaches trust architecture to peers in CEES Sessions."}
+    ]
+  },
+  {
+    id:"stewardship", icon:"🌱",
+    title:"Program Stewardship",
+    desc:"Your contribution to the EEP as a living program — not just your personal delivery performance. This evaluates whether you actively contribute to the program evolution, sustainability, and propagation. Required for Level 2+ practitioners.",
+    hint:"Describe a specific contribution you made to the EEP program — a scenario, a playbook entry, a mentoring interaction, or a program evolution proposal.",
+    levels:[
+      {key:"below",label:"Below Standard",badge:"rb-below",sel:"sel-below",
+       title:"Participates when required — no contributions",
+       desc:"Participates in CEES Sessions only when required or directly scheduled. Does not contribute scenarios, playbook lessons, or anti-patterns. Program participation is purely consumptive."},
+      {key:"developing",label:"Developing",badge:"rb-developing",sel:"sel-developing",
+       title:"1 scenario per quarter — minimal playbook updates",
+       desc:"Contributes one scenario per quarter to CEES Sessions — occasionally, but not at a consistent cadence. Playbook updates are minimal: partial entries, scenarios without contrast analysis."},
+      {key:"at",label:"At Standard",badge:"rb-at",sel:"sel-at",
+       title:"1 complete lesson per 6 months — anti-patterns surfaced early",
+       desc:"Contributes one complete lesson to the playbook per six-month period — scenario, contrast analysis, and reusable insight all present. Surfaces anti-patterns early in CEES Sessions without waiting for the facilitator to prompt them."},
+      {key:"above",label:"Above Standard",badge:"rb-above",sel:"sel-above",
+       title:"3+ lessons — program evolution proposed — active mentoring",
+       desc:"Has contributed three or more complete lessons to the playbook. Has proposed at least one program evolution that was considered or adopted by the Program Lead. Proactively mentors newer practitioners."}
+    ]
+  }
+];
+
+var SCORE_MAP = {below:1,developing:2,at:3,above:4};
+var SCORE_LABELS = {1:"Below Standard",2:"Developing",3:"At Standard",4:"Above Standard"};
+var SCORE_BADGES = {1:"badge-red",2:"badge-amber",3:"badge-green",4:"badge-blue"};
+var SCORE_COLORS = {1:"var(--red)",2:"var(--amber)",3:"var(--green)",4:"var(--blue)"};
+
+var state = {
+  currentDim:0,
+  ratings:{},
+  evidence:{},
+  userName:"",
+  userLevel:"0",
+  userRole:"",
+  userMonth:""
+};
+
+// ── RADAR CHART (pure canvas) ──
+function drawRadar(canvasId, scores, showBenchmark) {
+  var canvas = document.getElementById(canvasId);
+  if (!canvas) return;
+  var ctx = canvas.getContext("2d");
+  var dpr = window.devicePixelRatio || 1;
+  var size = canvas.parentElement.clientWidth || 300;
+  canvas.width = size * dpr;
+  canvas.height = size * dpr;
+  canvas.style.width = size + "px";
+  canvas.style.height = size + "px";
+  ctx.scale(dpr, dpr);
+
+  var cx = size / 2, cy = size / 2;
+  var r = size * 0.34;
+  var n = DIMS.length;
+  var maxVal = 4;
+
+  ctx.clearRect(0, 0, size, size);
+
+  // Grid rings
+  for (var ring = 1; ring <= maxVal; ring++) {
+    var rr = (ring / maxVal) * r;
+    ctx.beginPath();
+    for (var i = 0; i < n; i++) {
+      var angle = (i / n) * 2 * Math.PI - Math.PI / 2;
+      var px = cx + rr * Math.cos(angle);
+      var py = cy + rr * Math.sin(angle);
+      if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+    }
+    ctx.closePath();
+    ctx.strokeStyle = ring === 3 ? "rgba(46,125,50,0.35)" : "rgba(0,0,0,0.08)";
+    ctx.lineWidth = ring === 3 ? 1.5 : 1;
+    ctx.stroke();
+    if (ring === 3) { ctx.fillStyle = "rgba(46,125,50,0.05)"; ctx.fill(); }
+    ctx.fillStyle = "#bbb";
+    ctx.font = (size * 0.028) + "px Calibri,sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText(ring, cx + 4, cy - rr + size * 0.018);
+  }
+
+  // Spokes
+  for (var i = 0; i < n; i++) {
+    var angle = (i / n) * 2 * Math.PI - Math.PI / 2;
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(cx + r * Math.cos(angle), cy + r * Math.sin(angle));
+    ctx.strokeStyle = "rgba(0,0,0,0.1)";
+    ctx.lineWidth = 1;
+    ctx.stroke();
+  }
+
+  // User polygon
+  var hasAny = scores.some(function(s){ return s > 0; });
+  if (hasAny) {
+    ctx.beginPath();
+    for (var i = 0; i < n; i++) {
+      var angle = (i / n) * 2 * Math.PI - Math.PI / 2;
+      var val = (scores[i] || 0) / maxVal;
+      var px = cx + r * val * Math.cos(angle);
+      var py = cy + r * val * Math.sin(angle);
+      if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+    }
+    ctx.closePath();
+    ctx.fillStyle = "rgba(255,98,0,0.18)";
+    ctx.fill();
+    ctx.strokeStyle = "rgba(255,98,0,0.9)";
+    ctx.lineWidth = 2.5;
+    ctx.stroke();
+    // Dots
+    for (var i = 0; i < n; i++) {
+      var angle = (i / n) * 2 * Math.PI - Math.PI / 2;
+      var val = (scores[i] || 0) / maxVal;
+      var px = cx + r * val * Math.cos(angle);
+      var py = cy + r * val * Math.sin(angle);
+      ctx.beginPath();
+      ctx.arc(px, py, size * 0.022, 0, 2 * Math.PI);
+      ctx.fillStyle = scores[i] > 0 ? "#FF6200" : "rgba(255,98,0,0.3)";
+      ctx.fill();
+      ctx.strokeStyle = "#fff";
+      ctx.lineWidth = 2;
+      ctx.stroke();
+    }
+  }
+
+  // Labels
+  var labelR = r + size * 0.1;
+  for (var i = 0; i < n; i++) {
+    var angle = (i / n) * 2 * Math.PI - Math.PI / 2;
+    var lx = cx + labelR * Math.cos(angle);
+    var ly = cy + labelR * Math.sin(angle);
+    var words = DIMS[i].title.split(" ");
+    ctx.fillStyle = "#222";
+    ctx.font = "bold " + (size * 0.031) + "px Calibri,sans-serif";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    var lineH = size * 0.038;
+    var totalH = words.length * lineH;
+    for (var w = 0; w < words.length; w++) {
+      ctx.fillText(words[w], lx, ly - totalH / 2 + w * lineH + lineH / 2);
+    }
+  }
+}
+
+function getScores() {
+  return DIMS.map(function(d){ var r = state.ratings[d.id]; return r ? SCORE_MAP[r] : 0; });
+}
+
+function updateRadar() {
+  drawRadar("radarChart", getScores(), true);
+  updateScoreSummary();
+}
+
+function updateScoreSummary() {
+  var el = document.getElementById("score-summary");
+  if (!el) return;
+  var html = "";
+  DIMS.forEach(function(d) {
+    var r = state.ratings[d.id];
+    var score = r ? SCORE_MAP[r] : 0;
+    var pct = score ? (score / 4) * 100 : 0;
+    var color = score ? SCORE_COLORS[score] : "var(--border)";
+    html += '<div class="score-row"><span class="dim-name">' + d.icon + " " + d.title.split(" ")[0] + '</span><div class="score-bar-mini"><div class="score-bar-mini-fill" style="width:' + pct + '%;background:' + color + '"></div></div><span class="score-val" style="color:' + color + '">' + (score || "—") + "</span></div>";
+  });
+  el.innerHTML = html;
+}
+
+// ── NAVIGATION ──
+function showView(id) {
+  document.querySelectorAll(".view").forEach(function(v){ v.classList.remove("active"); });
+  var el = document.getElementById("view-" + id);
+  if (el) el.classList.add("active");
+  window.scrollTo(0, 0);
+}
+
+function startAssessment() {
+  state.userName = document.getElementById("user-name").value.trim() || "Practitioner";
+  state.userLevel = document.getElementById("user-level").value;
+  state.userRole = document.getElementById("user-role").value.trim();
+  state.userMonth = document.getElementById("user-month").value;
+  state.currentDim = 0;
+  renderDim(0);
+  showView("assessment");
+  setTimeout(updateRadar, 120);
+}
+
+function renderDim(idx) {
+  var dim = DIMS[idx];
+  document.getElementById("dim-number").textContent = "DIMENSION " + (idx + 1) + " OF " + DIMS.length;
+  document.getElementById("dim-title").textContent = dim.icon + " " + dim.title;
+  document.getElementById("dim-desc").textContent = dim.desc;
+  document.getElementById("evidence-hint").textContent = dim.hint;
+  document.getElementById("evidence-input").value = state.evidence[dim.id] || "";
+  document.getElementById("progress-title").textContent = "Dimension " + (idx + 1) + " of " + DIMS.length + ": " + dim.title;
+  document.getElementById("progress-sub").textContent = dim.desc.substring(0, 80) + "...";
+  document.getElementById("dim-nav-label").textContent = (idx + 1) + " / " + DIMS.length;
+
+  var prevBtn = document.getElementById("btn-prev");
+  prevBtn.disabled = idx === 0;
+  prevBtn.style.opacity = idx === 0 ? "0.4" : "1";
+
+  var nextBtn = document.getElementById("btn-next");
+  var isLast = idx === DIMS.length - 1;
+  var allRated = DIMS.every(function(d){ return state.ratings[d.id]; });
+  if (isLast && allRated) {
+    nextBtn.textContent = "View Results 🎯";
+    nextBtn.style.background = "var(--green)";
+  } else {
+    nextBtn.textContent = isLast ? "Next →" : "Next →";
+    nextBtn.style.background = "";
+  }
+
+  // Rating options
+  var container = document.getElementById("rating-options");
+  container.innerHTML = "";
+  dim.levels.forEach(function(level) {
+    var selected = state.ratings[dim.id] === level.key;
+    var div = document.createElement("div");
+    div.className = "rating-option" + (selected ? " " + level.sel : "");
+    div.innerHTML = '<span class="rating-badge ' + level.badge + '">' + level.label + '</span><div class="rating-text"><strong>' + level.title + "</strong>" + level.desc + "</div>";
+    div.onclick = (function(dimId, key, sel) {
+      return function() { selectRating(dimId, key, sel); };
+    })(dim.id, level.key, level.sel);
+    container.appendChild(div);
+  });
+
+  // Progress steps
+  var steps = document.getElementById("progress-steps");
+  steps.innerHTML = "";
+  DIMS.forEach(function(d, i) {
+    var dot = document.createElement("div");
+    dot.className = "step-dot" + (i === idx ? " active" : (state.ratings[d.id] ? " done" : ""));
+    dot.textContent = i + 1;
+    dot.title = d.title;
+    dot.onclick = (function(i2){ return function(){ saveCurrent(); state.currentDim = i2; renderDim(i2); }; })(i);
+    steps.appendChild(dot);
+  });
+
+  var pct = (idx / DIMS.length) * 100;
+  document.getElementById("assess-progress-fill").style.width = pct + "%";
+}
+
+function selectRating(dimId, key, sel) {
+  state.ratings[dimId] = key;
+  renderDim(state.currentDim);
+  updateRadar();
+}
+
+function saveCurrent() {
+  var dim = DIMS[state.currentDim];
+  var ev = document.getElementById("evidence-input").value.trim();
+  if (ev) state.evidence[dim.id] = ev;
+}
+
+function nextDim() {
+  saveCurrent();
+  if (state.currentDim < DIMS.length - 1) {
+    state.currentDim++;
+    renderDim(state.currentDim);
+  } else {
+    var allRated = DIMS.every(function(d){ return state.ratings[d.id]; });
+    if (allRated) {
+      showResults();
+    } else {
+      var first = DIMS.findIndex(function(d){ return !state.ratings[d.id]; });
+      if (first >= 0) { state.currentDim = first; renderDim(first); alert("Please rate all 6 dimensions before viewing results."); }
+    }
+  }
+}
+
+function prevDim() {
+  saveCurrent();
+  if (state.currentDim > 0) { state.currentDim--; renderDim(state.currentDim); }
+}
+
+// ── RESULTS ──
+function showResults() {
+  var scores = getScores();
+  var rated = scores.filter(function(s){ return s > 0; });
+  var avg = rated.length > 0 ? rated.reduce(function(a,b){ return a+b; }, 0) / rated.length : 0;
+
+  var level, levelDesc, icon;
+  if (avg >= 3.5) { level = "Above Standard"; levelDesc = "You are operating beyond the EEP standard and actively elevating others. Your behaviors are proactive, generative, and have visible impact beyond your own work."; icon = "⭐"; }
+  else if (avg >= 2.5) { level = "At Standard"; levelDesc = "You reliably demonstrate the required EEP behaviors in all relevant situations. Your performance is consistent, documented, and verifiable."; icon = "✅"; }
+  else if (avg >= 1.5) { level = "Developing"; levelDesc = "You are working toward the EEP standard — some behaviors are present but inconsistently applied. Focused practice on your lowest dimensions will accelerate your progress."; icon = "📈"; }
+  else { level = "Below Standard"; levelDesc = "The EEP standard is not yet being consistently applied. Review the behavioral descriptors for each dimension and identify one concrete action to take this week."; icon = "🎯"; }
+
+  document.getElementById("result-icon").textContent = icon;
+  document.getElementById("result-headline").textContent = (state.userName || "Your") + " EEP Competency Profile";
+  document.getElementById("result-subline").textContent = (state.userRole ? state.userRole + " · " : "") + (state.userMonth || new Date().toLocaleDateString("en-US",{month:"long",year:"numeric"}));
+  document.getElementById("result-avg").textContent = avg.toFixed(1);
+  document.getElementById("result-level").textContent = level;
+  document.getElementById("result-level-desc").textContent = levelDesc;
+
+  // Dimension breakdown
+  var dimList = document.getElementById("result-dim-list");
+  dimList.innerHTML = "";
+  DIMS.forEach(function(d) {
+    var r = state.ratings[d.id];
+    var score = r ? SCORE_MAP[r] : 0;
+    var levelData = r ? d.levels.find(function(l){ return l.key === r; }) : null;
+    var ev = state.evidence[d.id];
+    var html = '<div class="result-dim-row"><div class="result-dim-icon">' + d.icon + '</div><div class="result-dim-info"><div class="result-dim-name">' + d.title + '</div><div class="result-dim-rating"><span class="badge ' + (score ? SCORE_BADGES[score] : "badge-gray") + '">' + (score ? SCORE_LABELS[score] : "Not rated") + "</span>" + (levelData ? '<span style="font-size:12px;color:#555;margin-left:8px;">' + levelData.title + "</span>" : "") + "</div>" + (ev ? '<div class="result-dim-evidence">&ldquo;' + ev + "&rdquo;</div>" : "") + "</div></div>";
+    dimList.innerHTML += html;
+  });
+
+  // Insights
+  var sorted = DIMS.map(function(d,i){ return {dim:d,score:scores[i]}; }).filter(function(x){ return x.score > 0; }).sort(function(a,b){ return b.score - a.score; });
+  var strengths = sorted.filter(function(x){ return x.score >= 3; }).slice(0,2);
+  var growthAreas = sorted.filter(function(x){ return x.score < 3; }).sort(function(a,b){ return a.score - b.score; }).slice(0,2);
+  var insightsEl = document.getElementById("insights-content");
+  var ih = "";
+  if (strengths.length > 0) {
+    ih += '<div class="insight-item insight-strength"><strong>💪 Strengths</strong>Your highest-scoring dimensions are <strong>' + strengths.map(function(x){ return x.dim.title; }).join(" and ") + "</strong>. " + (strengths[0].score === 4 ? "You are operating above standard — consider contributing scenarios or mentoring peers in these areas." : "You are meeting the standard consistently. Maintain this through continued documentation and evidence collection.") + "</div>";
+  }
+  if (growthAreas.length > 0) {
+    ih += '<div class="insight-item insight-growth"><strong>🎯 Primary Growth Area</strong><strong>' + growthAreas[0].dim.title + "</strong> is your lowest-scoring dimension (" + SCORE_LABELS[growthAreas[0].score] + "). " + (growthAreas[0].score === 1 ? "Focus here first — this is where the EEP standard is not yet being applied." : "You have the foundation — consistent application and evidence documentation will move you to At Standard.") + "</div>";
+    var ga = growthAreas[0];
+    var nextScore = Math.min(ga.score + 1, 4);
+    var nextLevel = ga.dim.levels.find(function(l){ return SCORE_MAP[l.key] === nextScore; });
+    if (nextLevel) {
+      ih += '<div class="insight-item insight-action"><strong>📋 Recommended Practice Commitment</strong>To advance in <strong>' + ga.dim.title + "</strong>, focus on: <em>" + nextLevel.title + "</em>. Name one specific action you will take in the next 30 days to demonstrate this behavior with documented evidence.</div>";
+    }
+  }
+  var certLevel = parseInt(state.userLevel);
+  if (certLevel === 0 && avg >= 2.5) {
+    ih += '<div class="insight-item insight-action"><strong>🎓 Certification Readiness</strong>Your scores suggest you are ready to pursue Level 1 (EEP Practitioner) certification. Review the five requirements and schedule your scenario assessment with your Program Lead.</div>';
+  } else if (certLevel === 1 && avg >= 3) {
+    ih += '<div class="insight-item insight-action"><strong>🎓 Certification Readiness</strong>Your scores suggest you may be ready to begin the Level 2 (EEP Lead) track. Ensure you have 6 months of documented delivery under the standard and begin collecting your three playbook lesson contributions.</div>';
+  } else if (certLevel === 2 && avg >= 3.5) {
+    ih += '<div class="insight-item insight-action"><strong>🎓 Certification Readiness</strong>Your above-standard scores across multiple dimensions suggest you may be a strong candidate for Level 3 (EEP Trainer) nomination. Discuss with your Program Lead.</div>';
+  }
+  insightsEl.innerHTML = ih || '<p style="color:var(--mid-gray);font-size:13px;">Complete all dimensions to see personalized insights.</p>';
+
+  // Evidence summary
+  var evSummary = document.getElementById("evidence-summary");
+  var evHtml = "";
+  DIMS.forEach(function(d) {
+    var ev = state.evidence[d.id];
+    evHtml += '<div class="result-dim-row"><div class="result-dim-icon">' + d.icon + '</div><div class="result-dim-info"><div class="result-dim-name">' + d.title + '</div><div class="result-dim-evidence' + (ev ? "" : " empty") + '">' + (ev ? "&ldquo;" + ev + "&rdquo;" : "No evidence note recorded.") + "</div></div></div>";
+  });
+  evSummary.innerHTML = evHtml;
+
+  showView("results");
+  setTimeout(function(){ drawRadar("radarChartResults", scores, true); }, 150);
+}
+
+// ── HISTORY ──
+function saveToHistory() {
+  var scores = getScores();
+  var rated = scores.filter(function(s){ return s > 0; });
+  var avg = rated.length > 0 ? (rated.reduce(function(a,b){ return a+b; },0)/rated.length).toFixed(1) : "0";
+  var entry = {
+    date: new Date().toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric"}),
+    name: state.userName, role: state.userRole, level: state.userLevel,
+    month: state.userMonth, scores: scores, avg: avg,
+    ratings: Object.assign({}, state.ratings),
+    evidence: Object.assign({}, state.evidence)
+  };
+  var history = JSON.parse(localStorage.getItem("eep_history") || "[]");
+  history.unshift(entry);
+  localStorage.setItem("eep_history", JSON.stringify(history.slice(0,20)));
+  var btn = document.querySelector(".print-actions .btn-green");
+  if (btn) { btn.textContent = "✓ Saved!"; setTimeout(function(){ btn.textContent = "💾 Save to History"; }, 2000); }
+}
+
+function showHistory() {
+  var history = JSON.parse(localStorage.getItem("eep_history") || "[]");
+  var el = document.getElementById("history-list");
+  var levelNames = {"0":"Not certified","1":"L1 Practitioner","2":"L2 Lead","3":"L3 Trainer"};
+  if (history.length === 0) {
+    el.innerHTML = '<div class="history-empty">No saved assessments yet. Complete an assessment and click Save to History.</div>';
+  } else {
+    el.innerHTML = history.map(function(h,i){
+      return '<div class="history-row"><span class="history-date">' + h.date + '</span><span class="history-name">' + (h.name||"Practitioner") + (h.role ? " · " + h.role : "") + '</span><span class="badge badge-gray">' + (levelNames[h.level]||"") + '</span><span class="history-score">' + h.avg + ' avg</span><button class="btn btn-orange btn-sm" onclick="loadHistory(' + i + ')">View</button></div>';
+    }).join("");
+  }
+  showView("history");
+}
+
+function loadHistory(idx) {
+  var history = JSON.parse(localStorage.getItem("eep_history") || "[]");
+  var entry = history[idx];
+  if (!entry) return;
+  state.userName = entry.name; state.userLevel = entry.level;
+  state.userRole = entry.role; state.userMonth = entry.month;
+  state.ratings = Object.assign({}, entry.ratings);
+  state.evidence = Object.assign({}, entry.evidence);
+  showResults();
+}
+
+function clearHistory() {
+  if (confirm("Clear all saved assessments? This cannot be undone.")) {
+    localStorage.removeItem("eep_history");
+    showHistory();
+  }
+}
+
+// ── INIT ──
+document.getElementById("user-month").value = new Date().toISOString().slice(0,7);
+window.addEventListener("resize", function() {
+  if (document.getElementById("view-assessment").classList.contains("active")) updateRadar();
+  if (document.getElementById("view-results").classList.contains("active")) drawRadar("radarChartResults", getScores(), true);
+});
+</script>
+
+<!-- CONFIDENTIALITY NOTICE BANNER -->
+<style>
+.conf-banner {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #0a0a0a;
+  border-top: 2px solid #FF6200;
+  padding: 8px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 99999;
+  font-family: Calibri, Segoe UI, Arial, sans-serif;
+}
+.conf-banner .conf-text {
+  font-size: 11px;
+  color: #999;
+  letter-spacing: 0.5px;
+}
+.conf-banner .conf-text strong {
+  color: #FF6200;
+}
+.conf-banner .conf-link {
+  font-size: 11px;
+  color: #FF6200;
+  text-decoration: none;
+  border: 1px solid #FF6200;
+  padding: 3px 10px;
+  border-radius: 2px;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.conf-modal-overlay {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.85);
+  z-index: 999999;
+  align-items: center;
+  justify-content: center;
+}
+.conf-modal-overlay.active { display: flex; }
+.conf-modal {
+  background: #141414;
+  border: 1px solid #2a2a2a;
+  border-top: 3px solid #FF6200;
+  max-width: 680px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+  padding: 40px;
+  border-radius: 4px;
+  font-family: Calibri, Segoe UI, Arial, sans-serif;
+}
+.conf-modal h2 { color: #FF6200; font-size: 13px; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 16px; }
+.conf-modal h1 { color: #fff; font-size: 22px; margin-bottom: 8px; }
+.conf-modal p { color: #ccc; font-size: 14px; line-height: 1.8; margin-bottom: 12px; }
+.conf-modal ul { list-style: none; margin: 8px 0 16px 0; }
+.conf-modal ul li { color: #ccc; font-size: 14px; line-height: 1.8; padding: 4px 0 4px 20px; position: relative; border-bottom: 1px solid #1e1e1e; }
+.conf-modal ul li::before { content: "✕"; position: absolute; left: 0; color: #FF6200; font-size: 11px; font-weight: 700; }
+.conf-modal .conf-close { background: #FF6200; color: #fff; border: none; padding: 10px 28px; font-size: 13px; font-weight: 700; cursor: pointer; border-radius: 2px; margin-top: 16px; letter-spacing: 1px; }
+.conf-modal .conf-section-title { color: #FF6200; font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; margin: 20px 0 8px 0; }
+</style>
+<div class="conf-banner">
+  <span class="conf-text"><strong>CONFIDENTIAL &amp; PROPRIETARY</strong> — Mike Garcia. View-only access. Unauthorized use prohibited.</span>
+  <a class="conf-link" onclick="document.getElementById('confModal').classList.add('active')">READ TERMS</a>
+</div>
+<div class="conf-modal-overlay" id="confModal">
+  <div class="conf-modal">
+    <h2>⚠ Restricted Access</h2>
+    <h1>Confidentiality Terms</h1>
+    <p>By accessing this content, you acknowledge and agree to the following terms. If you do not agree, do not access or view the content.</p>
+    <div class="conf-section-title">Confidentiality</div>
+    <p>All materials are confidential and proprietary to <strong style="color:#fff">Mike Garcia</strong>, including frameworks, methodologies, templates, dashboards, and architecture models.</p>
+    <div class="conf-section-title">Permitted Use</div>
+    <p>You are granted <strong style="color:#fff">view-only access</strong> for the sole purpose of review. No other rights are granted or implied.</p>
+    <div class="conf-section-title">Prohibited Actions</div>
+    <p>Without explicit written permission, you may not:</p>
+    <ul>
+      <li>Copy, download, print, or export any content</li>
+      <li>Screenshot, record, or otherwise capture the content</li>
+      <li>Share, forward, or redistribute the link or materials</li>
+      <li>Use the content to create derivative works</li>
+      <li>Incorporate the content into internal or commercial deliverables</li>
+      <li>Use the content for competitive analysis or product development</li>
+    </ul>
+    <div class="conf-section-title">Intellectual Property</div>
+    <p>All content remains the exclusive intellectual property of Mike Garcia. No license or ownership rights are transferred through access.</p>
+    <div class="conf-section-title">Access Revocation</div>
+    <p>Access may be revoked at any time without notice. Continued access constitutes acceptance of these terms.</p>
+    <button class="conf-close" onclick="document.getElementById('confModal').classList.remove('active')">I ACKNOWLEDGE — CLOSE</button>
+  </div>
+</div>
+<!-- END CONFIDENTIALITY NOTICE -->
+
+
+<!-- SELF-ASSESSMENT HELP -->
+<style>
+.sa-help-hero{background:var(--charcoal);color:#fff;padding:24px 28px;border-radius:8px;margin-bottom:18px;border-left:4px solid var(--orange)}
+.sa-help-hero h2{font-size:19px;font-weight:800;margin-bottom:5px}
+.sa-help-hero p{font-size:13px;color:#aaa;line-height:1.6}
+.sa-help-sec{background:#fff;border:1px solid var(--border);border-radius:8px;margin-bottom:14px;overflow:hidden}
+.sa-help-sec-hdr{display:flex;align-items:center;gap:13px;padding:14px 20px;background:var(--light,#F5F5F5);border-bottom:1px solid var(--border)}
+.sa-help-sec-icon{font-size:22px;flex-shrink:0}
+.sa-help-sec-title{font-size:14px;font-weight:700;color:var(--charcoal)}
+.sa-help-sec-sub{font-size:11px;color:var(--mid,#9E9E9E);margin-top:1px}
+.sa-help-item{padding:13px 20px;border-bottom:1px solid var(--border)}
+.sa-help-item:last-child{border-bottom:none}
+.sa-help-q{font-size:13px;font-weight:700;color:var(--charcoal);margin-bottom:5px;display:flex;align-items:flex-start;gap:8px}
+.sa-help-q-badge{background:var(--orange);color:#fff;font-size:10px;font-weight:700;padding:1px 6px;border-radius:3px;flex-shrink:0;margin-top:1px}
+.sa-help-a{font-size:13px;color:#555;line-height:1.7;padding-left:26px}
+.sa-help-a ul{margin:5px 0 0 16px}
+.sa-help-a ul li{margin-bottom:3px}
+.sa-help-tip{background:#FFF8E1;border-left:3px solid var(--amber,#F57C00);padding:8px 12px;margin-top:8px;border-radius:0 6px 6px 0;font-size:12px;color:#555}
+.sa-help-tip strong{color:var(--amber,#F57C00)}
+.sa-rubric-table{width:100%;border-collapse:collapse;font-size:12px;margin-top:8px}
+.sa-rubric-table th{background:var(--charcoal);color:#fff;padding:7px 10px;text-align:left;font-size:11px;letter-spacing:.5px}
+.sa-rubric-table td{padding:7px 10px;border-bottom:1px solid var(--border);vertical-align:top}
+.sa-rubric-table tr:nth-child(even) td{background:var(--light,#F5F5F5)}
+</style>
+<div class="page" id="page-sa-help">
+  <div class="sa-help-hero">
+    <h2>📖 How to Use — EEP Skills Self-Assessment</h2>
+    <p>A guide to scoring yourself accurately, reading the radar chart, and using your results for development planning.</p>
+  </div>
+
+  <div class="sa-help-sec">
+    <div class="sa-help-sec-hdr"><span class="sa-help-sec-icon">🎯</span><div><div class="sa-help-sec-title">Getting Started</div><div class="sa-help-sec-sub">How to use the assessment correctly</div></div></div>
+    <div class="sa-help-item">
+      <div class="sa-help-q"><span class="sa-help-q-badge">Q</span>What is this assessment measuring?</div>
+      <div class="sa-help-a">Your behavioral proficiency across the six EEP Skills Rubric dimensions. It is not a knowledge test — it measures what you <em>do</em> in real engagements, not what you know about the standard.<div class="sa-help-tip"><strong>Key rule:</strong> A score without a specific behavioral example is not a score — it is a feeling. Score based on observable evidence from your recent engagements.</div></div>
+    </div>
+    <div class="sa-help-item">
+      <div class="sa-help-q"><span class="sa-help-q-badge">Q</span>How often should I complete this assessment?</div>
+      <div class="sa-help-a">Every <strong>30 days</strong>. Monthly scoring gives you enough time to observe real behavioral change between cycles. Your scores are saved automatically and persist between sessions.</div>
+    </div>
+    <div class="sa-help-item">
+      <div class="sa-help-q"><span class="sa-help-q-badge">Q</span>Should I score myself higher to look better?</div>
+      <div class="sa-help-a"><strong>No.</strong> The assessment only works if scored honestly. If the average score is rising but your customer signal is not improving, the scorecard is lying. The scorecard serves the standard, not the other way around. Score yourself where you actually are — not where you want to be.</div>
+    </div>
+  </div>
+
+  <div class="sa-help-sec">
+    <div class="sa-help-sec-hdr"><span class="sa-help-sec-icon">📋</span><div><div class="sa-help-sec-title">The Six Dimensions</div><div class="sa-help-sec-sub">What each dimension measures</div></div></div>
+    <div class="sa-help-item">
+      <div class="sa-help-q"><span class="sa-help-q-badge">Q</span>What does each dimension cover?</div>
+      <div class="sa-help-a">
+        <ul>
+          <li><strong>Signal Intelligence</strong> — Do you monitor the three signal streams weekly? Do you use signal language, not status language?</li>
+          <li><strong>Ownership Clarity</strong> — Is there always one named Outcome Owner per engagement, communicated in writing before delivery begins?</li>
+          <li><strong>Communication Discipline</strong> — Do you apply the Three Tests to every client-facing communication before sending?</li>
+          <li><strong>Outcome Validation</strong> — Does the client articulate value in their own words before you declare the engagement closed?</li>
+          <li><strong>Trust Architecture</strong> — Do you actively apply the CE Framework (Credibility → Reliability → Referenceability) to your engagements?</li>
+          <li><strong>Program Stewardship</strong> — (L2+ only) Do you model, coach, sustain, and expand the EEP standard beyond your own engagements?</li>
+        </ul>
+      </div>
+    </div>
+    <div class="sa-help-item">
+      <div class="sa-help-q"><span class="sa-help-q-badge">Q</span>What do the score levels mean?</div>
+      <div class="sa-help-a">
+        <table class="sa-rubric-table">
+          <thead><tr><th>Score</th><th>Level</th><th>What it means</th></tr></thead>
+          <tbody>
+            <tr><td><strong>5</strong></td><td>Above Standard</td><td>Embedded. Happens by default, without prompting. Visible to the team and the customer.</td></tr>
+            <tr><td><strong>4</strong></td><td>At Standard</td><td>Reliable. Happens consistently, with occasional reinforcement needed.</td></tr>
+            <tr><td><strong>3</strong></td><td>Developing</td><td>Present. Happens when paying attention. Drift returns when not.</td></tr>
+            <tr><td><strong>2</strong></td><td>Below Standard</td><td>Inconsistent. Happens sometimes. The exception, not the rule.</td></tr>
+            <tr><td><strong>1</strong></td><td>Absent</td><td>Named but not lived. The behavior is understood but not practiced.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="sa-help-sec">
+    <div class="sa-help-sec-hdr"><span class="sa-help-sec-icon">📈</span><div><div class="sa-help-sec-title">Reading the Radar Chart</div><div class="sa-help-sec-sub">How to interpret your competency profile</div></div></div>
+    <div class="sa-help-item">
+      <div class="sa-help-q"><span class="sa-help-q-badge">Q</span>How do I read the radar chart?</div>
+      <div class="sa-help-a">Each axis represents one dimension. The further from the center, the higher the score (1 = center, 5 = outer edge). A balanced hexagon indicates consistent proficiency across all dimensions. Spikes indicate strengths; indentations indicate development areas.</div>
+    </div>
+    <div class="sa-help-item">
+      <div class="sa-help-q"><span class="sa-help-q-badge">Q</span>What should I focus on improving first?</div>
+      <div class="sa-help-a">Focus on your <strong>lowest-scoring dimension</strong> first — it is the weakest link in your delivery chain. A score of 1 or 2 in any dimension means that dimension is failing in practice. Pick one specific behavior to change this month and re-score in 30 days.<div class="sa-help-tip"><strong>Tip:</strong> Don't try to improve all dimensions simultaneously. One focused behavior change per cycle compounds faster than diffuse effort across all six.</div></div>
+    </div>
+  </div>
+
+  <div class="sa-help-sec">
+    <div class="sa-help-sec-hdr"><span class="sa-help-sec-icon">💾</span><div><div class="sa-help-sec-title">Saving & Exporting</div><div class="sa-help-sec-sub">How your data is stored and shared</div></div></div>
+    <div class="sa-help-item">
+      <div class="sa-help-q"><span class="sa-help-q-badge">Q</span>Where are my scores saved?</div>
+      <div class="sa-help-a">Scores are saved automatically to your browser's <strong>localStorage</strong>. They persist between sessions on the same browser and device. They are not sent to any server. Clearing your browser data will erase your scores.</div>
+    </div>
+    <div class="sa-help-item">
+      <div class="sa-help-q"><span class="sa-help-q-badge">Q</span>How do I share my results with my manager?</div>
+      <div class="sa-help-a">Use the <strong>Export / Copy Summary</strong> button to copy your assessment results to the clipboard. Paste into an email, Teams message, or your bi-weekly check-in pre-read. Include your specific behavioral evidence for each score — not just the numbers.</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- SPLASH SCREEN -->
+<style>
+#sp-sa{position:fixed;inset:0;z-index:99999;background:linear-gradient(135deg,#0a0a0a 0%,#1C1C1C 60%,#0f0f0f 100%);display:flex;align-items:center;justify-content:center;font-family:'Calibri','Segoe UI',Arial,sans-serif;transition:opacity .5s,visibility .5s}
+#sp-sa.sp-gone{opacity:0;visibility:hidden;pointer-events:none}
+.sp-inner{max-width:540px;width:92%;text-align:center;animation:spIn .65s cubic-bezier(.4,0,.2,1) forwards}
+@keyframes spIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.sp-ring{width:84px;height:84px;border-radius:50%;background:rgba(255,98,0,.12);border:2px solid rgba(255,98,0,.35);display:flex;align-items:center;justify-content:center;font-size:36px;margin:0 auto 20px;box-shadow:0 0 40px rgba(255,98,0,.18);animation:spPulse 2.5s ease-in-out infinite}
+@keyframes spPulse{0%,100%{box-shadow:0 0 40px rgba(255,98,0,.18)}50%{box-shadow:0 0 64px rgba(255,98,0,.32)}}
+.sp-badge{display:inline-block;background:rgba(255,98,0,.12);border:1px solid rgba(255,98,0,.28);color:#FF6200;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:4px 14px;border-radius:20px;margin-bottom:14px}
+.sp-title{font-size:26px;font-weight:800;color:#fff;margin-bottom:7px;letter-spacing:-.4px;line-height:1.2}
+.sp-sub{font-size:13px;color:#888;margin-bottom:22px;line-height:1.65}
+.sp-prog{height:3px;background:rgba(255,255,255,.07);border-radius:2px;margin-bottom:20px;overflow:hidden}
+.sp-prog-bar{height:100%;background:linear-gradient(90deg,#FF6200,#CC4E00);border-radius:2px;width:0%;transition:width .35s ease}
+.sp-feats{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:22px;text-align:left}
+.sp-feat{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:8px;padding:11px;display:flex;align-items:flex-start;gap:9px}
+.sp-feat span{font-size:18px;flex-shrink:0;margin-top:1px}
+.sp-feat b{display:block;font-size:12px;font-weight:700;color:#fff;margin-bottom:2px}
+.sp-feat small{font-size:11px;color:#666;line-height:1.4}
+.sp-div{height:1px;background:linear-gradient(90deg,transparent,rgba(255,98,0,.25),transparent);margin-bottom:18px}
+.sp-conf{background:rgba(239,68,68,.07);border:1px solid rgba(239,68,68,.18);border-radius:8px;padding:11px 15px;margin-bottom:16px;text-align:left}
+.sp-conf-lbl{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#ef4444;margin-bottom:5px}
+.sp-conf p{font-size:11px;color:#999;line-height:1.6}
+.sp-conf p strong{color:#fff}
+.sp-cb-row{display:flex;align-items:flex-start;gap:9px;margin-bottom:16px;text-align:left}
+.sp-cb-row input{width:16px;height:16px;accent-color:#FF6200;flex-shrink:0;margin-top:2px;cursor:pointer}
+.sp-cb-row label{font-size:12px;color:#888;cursor:pointer;line-height:1.5}
+.sp-cb-row label strong{color:#ddd}
+.sp-btn{width:100%;padding:13px;background:linear-gradient(135deg,#FF6200,#CC4E00);color:#fff;font-size:14px;font-weight:700;letter-spacing:.4px;border:none;border-radius:8px;cursor:pointer;font-family:inherit;transition:all .2s;opacity:.35;pointer-events:none}
+.sp-btn.sp-ready{opacity:1;pointer-events:all;box-shadow:0 8px 24px rgba(255,98,0,.32)}
+.sp-btn.sp-ready:hover{transform:translateY(-2px);box-shadow:0 12px 32px rgba(255,98,0,.42)}
+.sp-ver{margin-top:12px;font-size:10px;color:#444;letter-spacing:.4px}
+</style>
+<div id="sp-sa">
+  <div class="sp-inner">
+    <div class="sp-ring">📊</div>
+    <div class="sp-badge">Mike Garcia · EEP Framework</div>
+    <div class="sp-title">EEP Skills Self-Assessment</div>
+    <div class="sp-sub">Evaluate your EEP competency across all six rubric dimensions with an interactive radar chart</div>
+    <div class="sp-prog"><div class="sp-prog-bar" id="sp-bar-sa"></div></div>
+    <div class="sp-feats"><div class="sp-feat"><span>🎯</span><div><b>Six Dimensions</b><small>Signal Intelligence · Ownership · Communication · Validation · Trust · Stewardship</small></div></div><div class="sp-feat"><span>📈</span><div><b>Radar Chart</b><small>Dynamic visualization of your competency profile</small></div></div><div class="sp-feat"><span>💾</span><div><b>localStorage Save</b><small>Your scores persist between sessions</small></div></div><div class="sp-feat"><span>📋</span><div><b>Rubric Reference</b><small>Below Standard → Developing → At Standard → Above Standard</small></div></div><div class="sp-feat"><span>🔄</span><div><b>Track Progress</b><small>Re-score monthly to track improvement over time</small></div></div><div class="sp-feat"><span>📤</span><div><b>Export Results</b><small>Copy your assessment summary for your manager review</small></div></div></div>
+    <div class="sp-div"></div>
+    <div class="sp-conf">
+      <div class="sp-conf-lbl">⚠ Confidential Material — Access Restricted</div>
+      <p>All content is <strong>proprietary to Mike Garcia</strong>. View-only access for review only. Unauthorized copying, distribution, or use is strictly prohibited.</p>
+    </div>
+    <div class="sp-cb-row">
+      <input type="checkbox" id="sp-cb-sa">
+      <label for="sp-cb-sa">I acknowledge this is <strong>confidential material</strong> and agree to the access terms. I will not copy, distribute, or use this content without explicit written permission from Mike Garcia.</label>
+    </div>
+    <button class="sp-btn" id="sp-btn-sa">Enter Dashboard →</button>
+    <div class="sp-ver">EEP Self-Assessment v1.0 · June 2026 · Built on original frameworks by Mike Garcia</div>
+  </div>
+</div>
+<script>
+(function(){
+  var KEY='ede_sp_sa_v2';
+  var ov=document.getElementById('sp-sa');
+  var cb=document.getElementById('sp-cb-sa');
+  var btn=document.getElementById('sp-btn-sa');
+  var bar=document.getElementById('sp-bar-sa');
+  var p=0,iv=setInterval(function(){p=Math.min(p+Math.random()*12,82);if(bar)bar.style.width=p+'%';if(p>=82)clearInterval(iv);},100);
+  try{var s=JSON.parse(localStorage.getItem(KEY)||'{}');if(s.ts&&(Date.now()-s.ts)<86400000){if(bar)bar.style.width='100%';setTimeout(function(){ov.classList.add('sp-gone');},250);return;}}catch(e){}
+  if(cb&&btn){
+    cb.addEventListener('change',function(){btn.classList.toggle('sp-ready',cb.checked);});
+    btn.addEventListener('click',function(){
+      if(!cb.checked)return;
+      clearInterval(iv);if(bar)bar.style.width='100%';
+      localStorage.setItem(KEY,JSON.stringify({ts:Date.now()}));
+      setTimeout(function(){ov.classList.add('sp-gone');},350);
+    });
+  }
+})();
+</script>
+
+</body>
+</html>

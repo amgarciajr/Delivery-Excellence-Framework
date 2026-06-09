@@ -1,0 +1,2122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Engineer Delivery Dashboard</title>
+<style>
+:root{--orange:#FF6200;--orange-dark:#CC4E00;--orange-light:#FFF3EC;--charcoal:#1C1C1C;--bg2:#2A2A2A;--white:#FFFFFF;--light:#F5F5F5;--border:#E0E0E0;--mid:#9E9E9E;--dark:#444444;--green:#2E7D32;--green-light:#E8F5E9;--amber:#F57C00;--amber-light:#FFF8E1;--red:#C62828;--red-light:#FFEBEE;--blue:#1565C0;--blue-light:#E3F2FD;--sidebar:260px;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Calibri','Segoe UI',Arial,sans-serif;background:var(--light);color:var(--charcoal);display:flex;min-height:100vh;font-size:15px}
+#sidebar{width:var(--sidebar);background:var(--charcoal);color:#fff;position:fixed;top:0;left:0;bottom:0;overflow-y:auto;z-index:100;display:flex;flex-direction:column}
+.sidebar-logo{padding:18px 16px 12px;border-bottom:2px solid var(--orange)}
+.sidebar-logo h1{font-size:14px;font-weight:700;line-height:1.3;color:#fff}
+.sidebar-logo p{font-size:10px;color:var(--mid);margin-top:3px}
+.nav-section{padding:8px 0 4px}
+.nav-section-label{font-size:9px;font-weight:700;letter-spacing:2px;color:var(--mid);padding:5px 16px 3px;text-transform:uppercase}
+.nav-item{display:flex;align-items:center;gap:9px;padding:8px 16px;cursor:pointer;font-size:13px;color:#ccc;border-left:3px solid transparent;transition:all .15s;text-decoration:none}
+.nav-item:hover{background:rgba(255,255,255,.06);color:#fff}
+.nav-item.active{background:rgba(255,98,0,.15);color:var(--orange);border-left-color:var(--orange);font-weight:600}
+.nav-item .icon{font-size:14px;width:16px;text-align:center;flex-shrink:0}
+.sidebar-footer{margin-top:auto;padding:12px 16px;border-top:1px solid #333;font-size:10px;color:var(--mid);line-height:1.5}
+#main{margin-left:var(--sidebar);flex:1;min-height:100vh}
+.topbar{background:#fff;border-bottom:1px solid var(--border);padding:12px 28px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
+.topbar-title{font-size:17px;font-weight:700}
+.topbar-sub{font-size:11px;color:var(--mid);margin-top:2px}
+.topbar-badge{background:var(--orange);color:#fff;font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;border:none;cursor:pointer;font-family:inherit}
+.page{display:none;padding:24px 28px 48px}
+.page.active{display:block}
+.card{background:#fff;border-radius:8px;border:1px solid var(--border);padding:20px;margin-bottom:18px}
+.card-title{font-size:15px;font-weight:700;margin-bottom:4px;display:flex;align-items:center;gap:8px}
+.card-title .icon{color:var(--orange);font-size:16px}
+.card-sub{font-size:11px;color:var(--mid);margin-bottom:14px}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.stat-tile{background:#fff;border:1px solid var(--border);border-radius:8px;padding:18px;text-align:center;border-top:3px solid var(--orange)}
+.stat-tile .num{font-size:28px;font-weight:700;color:var(--orange)}
+.stat-tile .label{font-size:11px;color:var(--mid);margin-top:4px}
+.stat-tile .desc{font-size:12px;font-weight:600;color:var(--charcoal);margin-top:5px}
+.section-header{border-left:4px solid var(--orange);padding-left:12px;margin-bottom:18px}
+.section-header h2{font-size:18px;font-weight:700}
+.section-header p{font-size:12px;color:var(--mid);margin-top:3px}
+.badge{display:inline-block;padding:3px 9px;border-radius:12px;font-size:11px;font-weight:700}
+.badge-orange{background:var(--orange-light);color:var(--orange-dark)}
+.badge-green{background:var(--green-light);color:var(--green)}
+.badge-amber{background:var(--amber-light);color:var(--amber)}
+.badge-red{background:var(--red-light);color:var(--red)}
+.badge-blue{background:var(--blue-light);color:var(--blue)}
+.badge-gray{background:#f0f0f0;color:#555}
+.callout{border-radius:6px;padding:12px 16px;margin:12px 0;font-size:13px;line-height:1.6;border-left:4px solid}
+.callout-orange{background:var(--orange-light);border-color:var(--orange)}
+.callout-green{background:var(--green-light);border-color:var(--green)}
+.callout-red{background:var(--red-light);border-color:var(--red)}
+.callout-blue{background:var(--blue-light);border-color:var(--blue)}
+.callout-amber{background:var(--amber-light);border-color:var(--amber)}
+.callout strong{font-weight:700}
+.tab-bar{display:flex;gap:4px;border-bottom:2px solid var(--border);margin-bottom:18px;flex-wrap:wrap}
+.tab-btn{padding:8px 16px;font-size:13px;font-weight:600;cursor:pointer;border:none;background:none;color:var(--mid);border-bottom:3px solid transparent;margin-bottom:-2px;transition:all .15s;font-family:inherit}
+.tab-btn:hover{color:var(--charcoal)}
+.tab-btn.active{color:var(--orange);border-bottom-color:var(--orange)}
+.tab-content{display:none}
+.tab-content.active{display:block}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{background:var(--charcoal);color:#fff;padding:9px 12px;text-align:left;font-size:11px;letter-spacing:.5px;font-weight:700}
+td{padding:9px 12px;border-bottom:1px solid var(--border);vertical-align:top}
+tr:nth-child(even) td{background:var(--light)}
+tr:hover td{background:#FFF3EC}
+.progress-bar-wrap{background:var(--border);border-radius:10px;height:7px;overflow:hidden;margin:6px 0}
+.progress-bar-fill{height:100%;background:var(--orange);border-radius:10px;transition:width .3s}
+.check-item{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px;line-height:1.5}
+.check-item:last-child{border-bottom:none}
+.check-box{width:20px;height:20px;border:2px solid var(--border);border-radius:4px;cursor:pointer;flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;font-size:11px;transition:all .15s;user-select:none}
+.check-box.checked{background:var(--green);border-color:var(--green);color:#fff}
+.signal-stream{border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:14px}
+.signal-stream-header{padding:12px 16px;display:flex;align-items:center;justify-content:space-between;cursor:pointer}
+.signal-stream-title{font-size:14px;font-weight:700}
+.signal-flag{padding:4px 12px;border-radius:20px;font-size:11px;font-weight:700;cursor:pointer;border:none;font-family:inherit}
+.flag-green{background:var(--green-light);color:var(--green)}
+.flag-amber{background:var(--amber-light);color:var(--amber)}
+.flag-red{background:var(--red-light);color:var(--red)}
+.signal-stream-body{padding:0 16px 14px;display:none}
+.signal-stream-body.open{display:block}
+.scenario-card{border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:14px}
+.scenario-header{background:var(--charcoal);color:#fff;padding:12px 16px;display:flex;align-items:center;justify-content:space-between}
+.scenario-header h3{font-size:13px;font-weight:700}
+.scenario-body{padding:16px}
+.scenario-situation{background:var(--light);border-radius:6px;padding:12px;font-size:13px;line-height:1.6;margin-bottom:12px;border-left:3px solid var(--orange)}
+.scenario-options{display:flex;flex-direction:column;gap:7px;margin-bottom:12px}
+.scenario-option{padding:9px 12px;border:2px solid var(--border);border-radius:6px;cursor:pointer;font-size:13px;line-height:1.5;transition:all .15s;background:#fff;text-align:left;font-family:inherit;width:100%}
+.scenario-option:hover{border-color:var(--orange);background:var(--orange-light)}
+.scenario-option.correct{border-color:var(--green);background:var(--green-light)}
+.scenario-option.incorrect{border-color:var(--red);background:var(--red-light)}
+.scenario-reveal{display:none}
+.scenario-reveal.show{display:block}
+.priority-item{display:flex;align-items:flex-start;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);font-size:13px}
+.priority-item:last-child{border-bottom:none}
+.priority-badge{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;margin-top:1px}
+.p1{background:var(--red-light);color:var(--red)}
+.p2{background:var(--amber-light);color:var(--amber)}
+.p3{background:var(--blue-light);color:var(--blue)}
+.p4{background:#f0f0f0;color:#555}
+.engagement-step{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px}
+.engagement-step:last-child{border-bottom:none}
+.step-status{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;margin-top:1px}
+.step-done{background:var(--green-light);color:var(--green)}
+.step-pending{background:var(--amber-light);color:var(--amber)}
+.step-missing{background:var(--red-light);color:var(--red)}
+.compliance-bar{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.compliance-label{font-size:12px;color:var(--dark);min-width:200px}
+.compliance-score{font-size:12px;font-weight:700;min-width:40px;text-align:right}
+.advisory-form{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.form-group{display:flex;flex-direction:column;gap:5px}
+.form-group label{font-size:12px;font-weight:700;color:var(--charcoal)}
+.form-group input,.form-group select,.form-group textarea{padding:8px 12px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;color:var(--charcoal);background:#fff}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{outline:2px solid var(--orange);border-color:transparent}
+.btn{padding:8px 18px;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer;border:none;font-family:inherit;transition:all .15s}
+.btn-orange{background:var(--orange);color:#fff}
+.btn-orange:hover{background:var(--orange-dark)}
+.btn-dark{background:var(--charcoal);color:#fff}
+.btn-outline{background:transparent;color:var(--charcoal);border:1px solid var(--border)}
+.btn-outline:hover{border-color:var(--orange);color:var(--orange)}
+.dim-btn{padding:6px 14px;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer;border:1px solid var(--border);background:#fff;font-family:inherit;transition:all .15s}
+.dim-btn.selected{background:var(--orange);color:#fff;border-color:var(--orange)}
+.radar-wrap{position:relative;width:100%;aspect-ratio:1/1}
+.radar-wrap canvas{width:100%!important;height:100%!important}
+.score-row{display:flex;align-items:center;padding:5px 0;font-size:12px;border-bottom:1px solid #f0f0f0;gap:6px}
+.score-row:last-child{border-bottom:none}
+.score-row .dim-name{color:#555;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.score-bar-mini{flex:1;height:5px;background:var(--border);border-radius:3px;overflow:hidden;min-width:40px}
+.score-bar-mini-fill{height:100%;border-radius:3px;transition:width .4s}
+.score-val{font-weight:700;font-size:12px;width:18px;text-align:right;flex-shrink:0}
+ul.bullet-list{list-style:none}
+ul.bullet-list li{padding:4px 0;font-size:13px;display:flex;gap:7px;line-height:1.5}
+ul.bullet-list li::before{content:"▸";color:var(--orange);flex-shrink:0}
+@media(max-width:900px){.grid-2,.grid-3,.grid-4{grid-template-columns:1fr}#sidebar{width:220px}#main{margin-left:220px}.page{padding:14px}}
+</style>
+<script src="https://alcdn.msauth.net/browser/2.38.3/js/msal-browser.min.js"></script>
+</head>
+<body>
+<nav id="sidebar">
+  <div class="sidebar-logo">
+    <h1>Engineer Delivery Dashboard</h1>
+    <p>Built on frameworks by Mike Garcia — EDEv4 · CEEDS · CE Framework</p>
+  </div>
+  <div class="nav-section">
+    <div class="nav-section-label">Overview</div>
+    <a class="nav-item active" onclick="showPage('home')"><span class="icon">🏠</span> Home</a>
+    <a class="nav-item" onclick="showPage('priority')"><span class="icon">⚡</span> Work Priority Inbox</a>
+  </div>
+  <div class="nav-section">
+    <div class="nav-section-label">Delivery</div>
+    <a class="nav-item" onclick="showPage('engagement')"><span class="icon">📋</span> Engagement Tracker</a>
+    <a class="nav-item" onclick="showPage('compliance')"><span class="icon">✅</span> Compliance Scorecard</a>
+    <a class="nav-item" onclick="showPage('signals')"><span class="icon">📡</span> Signal Intelligence</a>
+    <a class="nav-item" onclick="showPage('comms')"><span class="icon">✉️</span> Three Tests Checker</a>
+  </div>
+  <div class="nav-section">
+    <div class="nav-section-label">Scoping</div>
+    <a class="nav-item" onclick="showPage('scoping')"><span class="icon">🎯</span> Scoping Checklist</a>
+    <a class="nav-item" onclick="showPage('templates')"><span class="icon">📧</span> Email Templates</a>
+  </div>
+  <div class="nav-section">
+    <div class="nav-section-label">Microsoft 365</div>
+    <a class="nav-item" onclick="showPage('m365')"><span class="icon">📅</span> Calendar & Inbox</a>
+    <a class="nav-item" onclick="showPage('m365setup')"><span class="icon">🔑</span> M365 Connect</a>
+  </div>
+  <div class="nav-section">
+    <div class="nav-section-label">Advisory</div>
+    <a class="nav-item" onclick="showPage('advisory')"><span class="icon">📄</span> M365 Advisory Builder</a>
+  </div>
+  <div class="nav-section">
+    <div class="nav-section-label">Support</div>
+    <a class="nav-item" onclick="showPage('help')"><span class="icon">❓</span> Help & How-To</a>
+  </div>
+  <div class="nav-section">
+    <div class="nav-section-label">Development</div>
+    <a class="nav-item" onclick="showPage('selfassess')"><span class="icon">📊</span> Skills Self-Assessment</a>
+    <a class="nav-item" onclick="showPage('scenarios')"><span class="icon">🎯</span> CEES Scenarios</a>
+    <a class="nav-item" onclick="showPage('readiness')"><span class="icon">📈</span> Readiness Tracker</a>
+  </div>
+  <div class="sidebar-footer">
+    Built on original frameworks by Mike Garcia<br>
+    EDEv4 · CEEDS · CE Framework<br>
+    Engineer Delivery Dashboard v1.0 · June 2026
+  </div>
+</nav>
+
+<main id="main">
+  <div class="topbar">
+    <div>
+      <div class="topbar-title" id="topbar-title">Home</div>
+      <div class="topbar-sub" id="topbar-sub">Engineer Delivery Dashboard · Engagement Excellence Program</div>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;">
+      <button class="topbar-badge" onclick="showPage('priority')">⚡ Priority Inbox</button>
+    </div>
+  </div>
+
+<!-- HOME PAGE -->
+<div class="page active" id="page-home">
+  <div class="section-header"><h2>Engineer Delivery Dashboard</h2><p>Your daily delivery command center — built on the Engagement Excellence Program framework by Mike Garcia</p></div>
+  <div class="grid-4" style="margin-bottom:20px;">
+    <div class="stat-tile"><div class="num" id="home-open-items">3</div><div class="desc">Open Priority Items</div><div class="label">Work Priority Inbox</div></div>
+    <div class="stat-tile"><div class="num" id="home-compliance">0%</div><div class="desc">Compliance Score</div><div class="label">Current engagement</div></div>
+    <div class="stat-tile"><div class="num" id="home-signals">0</div><div class="desc">Active Signal Flags</div><div class="label">Amber + Red streams</div></div>
+    <div class="stat-tile"><div class="num" id="home-readiness">0%</div><div class="desc">Readiness Level</div><div class="label">Skills self-assessment</div></div>
+  </div>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title"><span class="icon">⚡</span> Today's Priority Actions</div>
+      <div class="card-sub">Items requiring your attention — click to navigate</div>
+      <div class="priority-item"><div class="priority-badge p2">P2</div><div style="flex:1;"><strong>Weekly Signal Review due</strong><br><span style="color:var(--mid);font-size:12px;">Complete before end of day — log all three streams</span></div><button class="btn btn-orange" style="padding:5px 12px;font-size:12px;" onclick="showPage('signals')">→ Go</button></div>
+      <div class="priority-item"><div class="priority-badge p2">P2</div><div style="flex:1;"><strong>Outcome Owner confirmation pending</strong><br><span style="color:var(--mid);font-size:12px;">Non-Negotiable I — must be in writing before delivery begins</span></div><button class="btn btn-orange" style="padding:5px 12px;font-size:12px;" onclick="showPage('engagement')">→ Go</button></div>
+      <div class="priority-item"><div class="priority-badge p3">P3</div><div style="flex:1;"><strong>CEES Session preparation</strong><br><span style="color:var(--mid);font-size:12px;">Confirm scenario contributor before bi-weekly session</span></div><button class="btn btn-outline" style="padding:5px 12px;font-size:12px;" onclick="showPage('scenarios')">→ Go</button></div>
+      <button class="btn btn-orange" style="margin-top:12px;" onclick="showPage('priority')">View Full Priority Inbox →</button>
+    </div>
+    <div class="card">
+      <div class="card-title"><span class="icon">💡</span> Core Principle</div>
+      <div class="card-sub">The foundation of the Engagement Excellence Program</div>
+      <div class="callout callout-orange"><strong>"Trustworthy by design, not by default."</strong><br>Client trust is not a byproduct of technical quality. It is a distinct output, with its own drivers, its own failure modes, and its own standards. — Mike Garcia</div>
+      <div style="margin-top:12px;display:flex;flex-direction:column;gap:7px;">
+        <button class="btn btn-outline" onclick="showPage('signals')" style="text-align:left;">📡 Check Signal Intelligence</button>
+        <button class="btn btn-outline" onclick="showPage('comms')" style="text-align:left;">✉️ Apply Three Tests to a Communication</button>
+        <button class="btn btn-outline" onclick="showPage('scoping')" style="text-align:left;">🎯 Review Scoping Checklist</button>
+        <button class="btn btn-outline" onclick="showPage('advisory')" style="text-align:left;">📄 Build M365 Change Advisory</button>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title"><span class="icon">🏗️</span> EEP Framework Quick Reference</div>
+    <div class="card-sub">Four components, one system — click any to navigate</div>
+    <div class="grid-4" style="margin-top:8px;">
+      <div style="background:var(--light);border-radius:8px;padding:14px;border-top:3px solid var(--orange);cursor:pointer;" onclick="showPage('signals')"><div style="font-size:11px;font-weight:700;color:var(--orange);letter-spacing:1px;margin-bottom:5px;">COMPONENT 1</div><div style="font-size:14px;font-weight:700;margin-bottom:5px;">EDEv4</div><div style="font-size:11px;color:#555;line-height:1.5;">Signal Intelligence · Ownership Clarity · Communication Discipline · Outcome Validation</div></div>
+      <div style="background:var(--light);border-radius:8px;padding:14px;border-top:3px solid var(--orange);cursor:pointer;" onclick="showPage('engagement')"><div style="font-size:11px;font-weight:700;color:var(--orange);letter-spacing:1px;margin-bottom:5px;">COMPONENT 2</div><div style="font-size:14px;font-weight:700;margin-bottom:5px;">CEEDS</div><div style="font-size:11px;color:#555;line-height:1.5;">4 Pillars · 5 Operating Motions · CEES Sessions · Signal Over Opinion</div></div>
+      <div style="background:var(--light);border-radius:8px;padding:14px;border-top:3px solid var(--orange);cursor:pointer;" onclick="showPage('compliance')"><div style="font-size:11px;font-weight:700;color:var(--orange);letter-spacing:1px;margin-bottom:5px;">COMPONENT 3</div><div style="font-size:14px;font-weight:700;margin-bottom:5px;">CE Framework</div><div style="font-size:11px;color:#555;line-height:1.5;">Credibility → Reliability → Referenceability · Know · Do · Tell</div></div>
+      <div style="background:var(--light);border-radius:8px;padding:14px;border-top:3px solid var(--orange);cursor:pointer;" onclick="showPage('readiness')"><div style="font-size:11px;font-weight:700;color:var(--orange);letter-spacing:1px;margin-bottom:5px;">COMPONENT 4</div><div style="font-size:14px;font-weight:700;margin-bottom:5px;">Gov App</div><div style="font-size:11px;color:#555;line-height:1.5;">Pre-Engagement Intelligence · Maturity Baseline · Portfolio Visibility</div></div>
+    </div>
+  </div>
+</div>
+<!-- PRIORITY INBOX -->
+<div class="page" id="page-priority">
+  <div class="section-header"><h2>Work Priority Inbox</h2><p>Prioritized work items — one click to the right place. P1=Critical, P2=High, P3=Medium, P4=Low</p></div>
+  <div class="callout callout-orange"><strong>Priority Intelligence:</strong> Items ranked by urgency × impact. Click any item to navigate to the relevant section of this dashboard.</div>
+  <div class="card">
+    <div class="card-title"><span class="icon">🔴</span> Active Work Items</div>
+    <div id="priority-list">
+      <div class="priority-item"><div class="priority-badge p1">P1</div><div style="flex:1;"><strong>Signal Review overdue — Customer Friction stream not logged</strong><br><span style="color:var(--mid);font-size:12px;">Engagement: [Enter engagement name] · Due: Today · Non-Negotiable V</span></div><button class="btn btn-orange" style="padding:5px 12px;font-size:12px;" onclick="showPage('signals')">→ Signal Tracker</button></div>
+      <div class="priority-item"><div class="priority-badge p2">P2</div><div style="flex:1;"><strong>Outcome Owner not confirmed in writing</strong><br><span style="color:var(--mid);font-size:12px;">Non-Negotiable I — must be communicated to client before delivery begins</span></div><button class="btn btn-orange" style="padding:5px 12px;font-size:12px;" onclick="showPage('engagement')">→ Engagement Tracker</button></div>
+      <div class="priority-item"><div class="priority-badge p2">P2</div><div style="flex:1;"><strong>Communication pending Three Tests review</strong><br><span style="color:var(--mid);font-size:12px;">Apply all three tests before sending — no exceptions for seniority or schedule pressure</span></div><button class="btn btn-orange" style="padding:5px 12px;font-size:12px;" onclick="showPage('comms')">→ Three Tests</button></div>
+      <div class="priority-item"><div class="priority-badge p3">P3</div><div style="flex:1;"><strong>CEES Session preparation — scenario contributor not confirmed</strong><br><span style="color:var(--mid);font-size:12px;">Bi-weekly cadence — confirm before session · Never cancel, use library if needed</span></div><button class="btn btn-orange" style="padding:5px 12px;font-size:12px;" onclick="showPage('scenarios')">→ CEES Scenarios</button></div>
+      <div class="priority-item"><div class="priority-badge p3">P3</div><div style="flex:1;"><strong>Scoping call not scheduled — delivery in 3 weeks</strong><br><span style="color:var(--mid);font-size:12px;">Scoping call must happen 2-4 weeks before delivery — never book travel before CSAM/manager confirms</span></div><button class="btn btn-orange" style="padding:5px 12px;font-size:12px;" onclick="showPage('scoping')">→ Scoping Checklist</button></div>
+      <div class="priority-item"><div class="priority-badge p4">P4</div><div style="flex:1;"><strong>Monthly skills self-assessment due</strong><br><span style="color:var(--mid);font-size:12px;">20-30 minute individual exercise — all 6 dimensions · Rate based on observable evidence</span></div><button class="btn btn-outline" style="padding:5px 12px;font-size:12px;" onclick="showPage('selfassess')">→ Self-Assessment</button></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title"><span class="icon">➕</span> Add Work Item</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:10px;align-items:end;">
+      <div class="form-group"><label>Item Description</label><input type="text" id="new-item-desc" placeholder="Describe the work item..."></div>
+      <div class="form-group"><label>Priority</label><select id="new-item-priority"><option value="p1">P1 — Critical</option><option value="p2">P2 — High</option><option value="p3" selected>P3 — Medium</option><option value="p4">P4 — Low</option></select></div>
+      <div class="form-group"><label>Route To</label><select id="new-item-route"><option>Signal Tracker</option><option>Engagement Tracker</option><option>Three Tests</option><option>Scoping Checklist</option><option>CEES Scenarios</option><option>Self-Assessment</option><option>Advisory Builder</option></select></div>
+      <button class="btn btn-orange" onclick="addPriorityItem()">Add Item</button>
+    </div>
+  </div>
+</div>
+
+<!-- ENGAGEMENT TRACKER -->
+<div class="page" id="page-engagement">
+  <div class="section-header"><h2>Engagement Tracker</h2><p>Per-dispatch delivery step checklist — track what was actually done, not just what was claimed</p></div>
+  <div class="callout callout-orange"><strong>EEP Standard:</strong> A step is Done only when validated (a signal exists). Self-reported alone renders as "Claimed — unverified." Missing = required, past due, no signal → feeds Compliance Scorecard.</div>
+  <div class="card">
+    <div class="card-title"><span class="icon">📋</span> Active Engagement</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:14px;">
+      <div class="form-group"><label>Engagement Name</label><input type="text" id="eng-name" placeholder="Enter engagement name..." oninput="updateEngName()"></div>
+      <div class="form-group"><label>Client</label><input type="text" id="eng-client" placeholder="Client organization..."></div>
+      <div class="form-group"><label>Outcome Owner</label><input type="text" id="eng-owner" placeholder="Named Outcome Owner..."></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:14px;">
+      <div class="form-group"><label>Delivery Start Date</label><input type="date" id="eng-start"></div>
+      <div class="form-group"><label>Delivery End Date</label><input type="date" id="eng-end"></div>
+      <div class="form-group"><label>Engagement Type</label><select><option>MIP — Consecutive days</option><option>VBD — Broken up per customer need</option><option>Assessment</option><option>Advisory</option></select></div>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px;">
+      <span style="font-size:13px;font-weight:700;">Validated Completion:</span>
+      <div class="progress-bar-wrap" style="flex:1;"><div class="progress-bar-fill" id="eng-progress" style="width:0%"></div></div>
+      <span id="eng-pct" style="font-size:13px;font-weight:700;color:var(--orange);">0/8 steps</span>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title"><span class="icon">✅</span> Delivery Step Checklist</div>
+    <div class="card-sub">Eight canonical delivery steps — each must be validated, not just self-reported</div>
+    <div id="delivery-steps">
+      <div class="engagement-step"><div class="step-status step-pending" id="step-1-status">1</div><div style="flex:1;"><strong>SCOPE — Scoping call completed (2-4 weeks pre-delivery)</strong><br><span style="color:var(--mid);font-size:12px;">Scoping Recap email (#Scoping) sent · Scope confirmed in writing · Use TPL-SCOP</span></div><div style="display:flex;gap:6px;"><button class="btn btn-outline" style="padding:4px 10px;font-size:11px;" onclick="markStep(1,'done')">✓ Validated</button><button class="btn btn-outline" style="padding:4px 10px;font-size:11px;" onclick="markStep(1,'claimed')">~ Claimed</button><button class="btn btn-outline" style="padding:4px 10px;font-size:11px;color:var(--red);" onclick="markStep(1,'missing')">✗ Missing</button></div></div>
+      <div class="engagement-step"><div class="step-status step-pending" id="step-2-status">2</div><div style="flex:1;"><strong>PREEMAIL — Pre-engagement / Pre-Poll email sent</strong><br><span style="color:var(--mid);font-size:12px;">#AdaptivePolling tag · Correct recipients · Three Tests applied · Use TPL-POLL</span></div><div style="display:flex;gap:6px;"><button class="btn btn-outline" style="padding:4px 10px;font-size:11px;" onclick="markStep(2,'done')">✓ Validated</button><button class="btn btn-outline" style="padding:4px 10px;font-size:11px;" onclick="markStep(2,'claimed')">~ Claimed</button><button class="btn btn-outline" style="padding:4px 10px;font-size:11px;color:var(--red);" onclick="markStep(2,'missing')">✗ Missing</button></div></div>
+      <div class="engagement-step"><div class="step-status step-pending" id="step-3-status">3</div><div style="flex:1;"><strong>UPLOAD — Workshop materials uploaded early (not late)</strong><br><span style="color:var(--mid);font-size:12px;">On-time flag matters · Late uploads flagged amber even if done · Bill of materials confirmed</span></div><div style="display:flex;gap:6px;"><button class="btn btn-outline" style="padding:4px 10px;font-size:11px;" onclick="markStep(3,'done')">✓ Validated</button><button class="btn btn-outline" style="padding:4px 10px;font-size:11px;" onclick="markStep(3,'claimed')">~ Claimed</button><button class="btn btn-outline" style="padding:4px 10px;font-size:11px;color:var(--red);" onclick="markStep(3,'missing')">✗ Missing</button></div></div>
+      <div class="engagement-step"><div class="step-status step-pending" id="step-4-status">4</div><div style="flex:1;"><strong>TECHCONTACT — Correct technical contact entered on dispatch</strong><br><span style="color:var(--mid);font-size:12px;">Customer contact interacted with most · Documented in engagement record</span></div><div style="display:flex;gap:6px;"><button class="btn btn-outline" style="padding:4px 10px;font-size:11px;" onclick="markStep(4,'done')">✓ Validated</button><button class="btn btn-outline" style="padding:4px 10px;font-size:11px;" onclick="markStep(4,'claimed')">~ Claimed</button><button class="btn btn-outline" style="padding:4px 10px;font-size:11px;color:var(--red);" onclick="markStep(4,'missing')">✗ Missing</button></div></div>
+      <div class="engagement-step"><div class="step-status step-pending" id="step-5-status">5</div><div style="flex:1;"><strong>POLL — Adaptive polling executed</strong><br><span style="color:var(--mid);font-size:12px;">Pre-poll sent · Live poll run · Results captured · Lab environment via aka.ms/LOD confirmed</span></div><div style="display:flex;gap:6px;"><button class="btn btn-outline" style="padding:4px 10px;font-size:11px;" onclick="markStep(5,'done')">✓ Validated</button><button class="btn btn-outline" style="padding:4px 10px;font-size:11px;" onclick="markStep(5,'claimed')">~ Claimed</button><button class="btn btn-outline" style="padding:4px 10px;font-size:11px;color:var(--red);" onclick="markStep(5,'missing')">✗ Missing</button></div></div>
+      <div class="engagement-step"><div class="step-status step-pending" id="step-6-status">6</div><div style="flex:1;"><strong>POSTEMAIL — Daily/Final Recap email sent</strong><br><span style="color:var(--mid);font-size:12px;">#DeliveryRecap tag · Three Tests applied · Correct recipients · Use TPL-DREC or TPL-FREC</span></div><div style="display:flex;gap:6px;"><button class="btn btn-outline" style="padding:4px 10px;font-size:11px;" onclick="markStep(6,'done')">✓ Validated</button><button class="btn btn-outline" style="padding:4px 10px;font-size:11px;" onclick="markStep(6,'claimed')">~ Claimed</button><button class="btn btn-outline" style="padding:4px 10px;font-size:11px;color:var(--red);" onclick="markStep(6,'missing')">✗ Missing</button></div></div>
+      <div class="engagement-step"><div class="step-status step-pending" id="step-7-status">7</div><div style="flex:1;"><strong>CLOSEOUT — Closeout motion completed</strong><br><span style="color:var(--mid);font-size:12px;">2-week Follow-Up (#DeliveryFollow-Up) scheduled · Three validation questions asked · Use TPL-FOLL</span></div><div style="display:flex;gap:6px;"><button class="btn btn-outline" style="padding:4px 10px;font-size:11px;" onclick="markStep(7,'done')">✓ Validated</button><button class="btn btn-outline" style="padding:4px 10px;font-size:11px;" onclick="markStep(7,'claimed')">~ Claimed</button><button class="btn btn-outline" style="padding:4px 10px;font-size:11px;color:var(--red);" onclick="markStep(7,'missing')">✗ Missing</button></div></div>
+      <div class="engagement-step"><div class="step-status step-pending" id="step-8-status">8</div><div style="flex:1;"><strong>SURVEY — Survey/closeout email sent · Client articulates value</strong><br><span style="color:var(--mid);font-size:12px;">Without interfering with CPE survey · Client states value in their own words · Documented</span></div><div style="display:flex;gap:6px;"><button class="btn btn-outline" style="padding:4px 10px;font-size:11px;" onclick="markStep(8,'done')">✓ Validated</button><button class="btn btn-outline" style="padding:4px 10px;font-size:11px;" onclick="markStep(8,'claimed')">~ Claimed</button><button class="btn btn-outline" style="padding:4px 10px;font-size:11px;color:var(--red);" onclick="markStep(8,'missing')">✗ Missing</button></div></div>
+    </div>
+  </div>
+</div>
+<!-- COMPLIANCE SCORECARD -->
+<div class="page" id="page-compliance">
+  <div class="section-header"><h2>Compliance Scorecard</h2><p>0-100% weighted compliance score — track all required delivery behaviors</p></div>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title"><span class="icon">📊</span> Overall Compliance Score</div>
+      <div style="text-align:center;padding:20px 0;">
+        <div style="font-size:56px;font-weight:700;color:var(--orange);" id="total-compliance-score">0%</div>
+        <div style="font-size:13px;color:var(--mid);margin-top:6px;">Weighted across all compliance items</div>
+        <div style="margin-top:12px;" id="compliance-level-badge"><span class="badge badge-gray">Not yet scored</span></div>
+      </div>
+      <div class="progress-bar-wrap" style="height:12px;"><div class="progress-bar-fill" id="compliance-progress" style="width:0%"></div></div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--mid);margin-top:4px;"><span>0%</span><span style="color:var(--amber);">70% threshold</span><span>100%</span></div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span class="icon">⚖️</span> Scoring Model (0-100%)</div>
+      <div class="card-sub">Weighted compliance scoring — mark items complete to update score</div>
+      <div style="display:flex;flex-direction:column;gap:5px;">
+        <div class="compliance-bar"><span class="compliance-label">Scoping Recap with #Scoping</span><div class="progress-bar-wrap" style="flex:1;"><div class="progress-bar-fill" id="comp-1" style="width:0%"></div></div><span class="compliance-score">15%</span></div>
+        <div class="compliance-bar"><span class="compliance-label">Pre-Poll with #AdaptivePolling</span><div class="progress-bar-wrap" style="flex:1;"><div class="progress-bar-fill" id="comp-2" style="width:0%"></div></div><span class="compliance-score">20%</span></div>
+        <div class="compliance-bar"><span class="compliance-label">Data Sheet attached</span><div class="progress-bar-wrap" style="flex:1;"><div class="progress-bar-fill" id="comp-3" style="width:0%"></div></div><span class="compliance-score">10%</span></div>
+        <div class="compliance-bar"><span class="compliance-label">RMOT in subject line</span><div class="progress-bar-wrap" style="flex:1;"><div class="progress-bar-fill" id="comp-4" style="width:0%"></div></div><span class="compliance-score">10%</span></div>
+        <div class="compliance-bar"><span class="compliance-label">PCC in CC on required emails</span><div class="progress-bar-wrap" style="flex:1;"><div class="progress-bar-fill" id="comp-5" style="width:0%"></div></div><span class="compliance-score">10%</span></div>
+        <div class="compliance-bar"><span class="compliance-label">Daily/Final Recap with #DeliveryRecap</span><div class="progress-bar-wrap" style="flex:1;"><div class="progress-bar-fill" id="comp-6" style="width:0%"></div></div><span class="compliance-score">15%</span></div>
+        <div class="compliance-bar"><span class="compliance-label">Follow-Up with #DeliveryFollow-Up</span><div class="progress-bar-wrap" style="flex:1;"><div class="progress-bar-fill" id="comp-7" style="width:0%"></div></div><span class="compliance-score">10%</span></div>
+        <div class="compliance-bar"><span class="compliance-label">All time-keeping tags logged</span><div class="progress-bar-wrap" style="flex:1;"><div class="progress-bar-fill" id="comp-8" style="width:0%"></div></div><span class="compliance-score">10%</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title"><span class="icon">✅</span> Mark Compliance Items Complete</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+      <div class="check-item"><div class="check-box" id="ci-1" onclick="toggleCompliance(1,15)"></div><div><strong>Scoping Recap with #Scoping tag</strong><br><span style="font-size:11px;color:var(--mid);">Hidden tag detected in CE Sent / PCC mailbox · Weight: 15%</span></div></div>
+      <div class="check-item"><div class="check-box" id="ci-2" onclick="toggleCompliance(2,20)"></div><div><strong>Pre-Poll with #AdaptivePolling + Forms link</strong><br><span style="font-size:11px;color:var(--mid);">Hidden tag + Forms link present · Weight: 20%</span></div></div>
+      <div class="check-item"><div class="check-box" id="ci-3" onclick="toggleCompliance(3,10)"></div><div><strong>Data Sheet attached to Pre-Poll & Scoping</strong><br><span style="font-size:11px;color:var(--mid);">Attachment check · Weight: 10%</span></div></div>
+      <div class="check-item"><div class="check-box" id="ci-4" onclick="toggleCompliance(4,10)"></div><div><strong>RMOT in subject line of all required emails</strong><br><span style="font-size:11px;color:var(--mid);">Subject parsing · Weight: 10%</span></div></div>
+      <div class="check-item"><div class="check-box" id="ci-5" onclick="toggleCompliance(5,10)"></div><div><strong>PCC in CC on all required emails</strong><br><span style="font-size:11px;color:var(--mid);">Recipient check · Weight: 10%</span></div></div>
+      <div class="check-item"><div class="check-box" id="ci-6" onclick="toggleCompliance(6,15)"></div><div><strong>Daily/Final Recap with #DeliveryRecap</strong><br><span style="font-size:11px;color:var(--mid);">Hidden tag detected · Weight: 15%</span></div></div>
+      <div class="check-item"><div class="check-box" id="ci-7" onclick="toggleCompliance(7,10)"></div><div><strong>Follow-Up with #DeliveryFollow-Up</strong><br><span style="font-size:11px;color:var(--mid);">Hidden tag detected · Weight: 10%</span></div></div>
+      <div class="check-item"><div class="check-box" id="ci-8" onclick="toggleCompliance(8,10)"></div><div><strong>All time-keeping tags logged [CT-05 through CT-10]</strong><br><span style="font-size:11px;color:var(--mid);">App time-keeping log · Weight: 10%</span></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- SIGNAL INTELLIGENCE -->
+<div class="page" id="page-signals">
+  <div class="section-header"><h2>Signal Intelligence Tracker</h2><p>Three signal streams — monitor weekly, surface within 48 hours, use signal language not status language</p></div>
+  <div class="callout callout-orange"><strong>Signal vs. Status:</strong> "I'm seeing a pattern of the client re-asking questions we've already answered" (signal) vs. "Things are going well" (status). Signal language is observable, specific, and actionable.</div>
+  <div class="signal-stream" id="stream-friction">
+    <div class="signal-stream-header" onclick="toggleStream('stream-friction')" style="background:var(--amber-light);">
+      <div><div class="signal-stream-title">📊 Stream 1: Customer Friction</div><div style="font-size:11px;color:#555;margin-top:2px;">Indicators that the client is experiencing confusion, dissatisfaction, or unmet expectation</div></div>
+      <div style="display:flex;gap:7px;align-items:center;">
+        <button class="signal-flag flag-green" onclick="setFlag(event,'stream-friction','green')">🟢 Green</button>
+        <button class="signal-flag flag-amber" onclick="setFlag(event,'stream-friction','amber')">🟡 Amber</button>
+        <button class="signal-flag flag-red" onclick="setFlag(event,'stream-friction','red')">🔴 Red</button>
+      </div>
+    </div>
+    <div class="signal-stream-body" id="stream-friction-body">
+      <table style="margin-top:8px;"><thead><tr><th>Leading Indicators</th><th>Amber Flag Condition</th><th>Red Flag Condition</th></tr></thead><tbody><tr><td>Client re-asks questions already answered; client escalates without warning; client reduces engagement in status calls</td><td><span class="badge badge-amber">One indicator in two consecutive weeks</span></td><td><span class="badge badge-red">Two+ indicators simultaneously; client mentions concern to non-engagement contact</span></td></tr></tbody></table>
+      <div class="form-group" style="margin-top:10px;"><label>This Week's Observation (use signal language)</label><textarea rows="2" placeholder="What did the client do or say this week? Describe observable behavior, not impressions..."></textarea></div>
+    </div>
+  </div>
+  <div class="signal-stream" id="stream-clarity">
+    <div class="signal-stream-header" onclick="toggleStream('stream-clarity')" style="background:var(--blue-light);">
+      <div><div class="signal-stream-title">💬 Stream 2: Communication Clarity</div><div style="font-size:11px;color:#555;margin-top:2px;">Indicators that our outbound messaging is landing with the intended meaning and producing the intended next action</div></div>
+      <div style="display:flex;gap:7px;align-items:center;">
+        <button class="signal-flag flag-green" onclick="setFlag(event,'stream-clarity','green')">🟢 Green</button>
+        <button class="signal-flag flag-amber" onclick="setFlag(event,'stream-clarity','amber')">🟡 Amber</button>
+        <button class="signal-flag flag-red" onclick="setFlag(event,'stream-clarity','red')">🔴 Red</button>
+      </div>
+    </div>
+    <div class="signal-stream-body" id="stream-clarity-body">
+      <table style="margin-top:8px;"><thead><tr><th>Leading Indicators</th><th>Amber Flag Condition</th><th>Red Flag Condition</th></tr></thead><tbody><tr><td>Client requests clarification within 24hrs; client action delayed or incorrect; client forwards comms without adding context</td><td><span class="badge badge-amber">Two clarification requests in one week; one delayed action traceable to communication ambiguity</span></td><td><span class="badge badge-red">Client expresses confusion about program status or next steps; missed action traceable to our communication failure</span></td></tr></tbody></table>
+      <div class="form-group" style="margin-top:10px;"><label>This Week's Observation (use signal language)</label><textarea rows="2" placeholder="What communication signals did you observe this week?"></textarea></div>
+    </div>
+  </div>
+  <div class="signal-stream" id="stream-ownership">
+    <div class="signal-stream-header" onclick="toggleStream('stream-ownership')" style="background:var(--green-light);">
+      <div><div class="signal-stream-title">🎯 Stream 3: Ownership Follow-Through</div><div style="font-size:11px;color:#555;margin-top:2px;">Indicators that commitments made to the client are being tracked and closed on schedule</div></div>
+      <div style="display:flex;gap:7px;align-items:center;">
+        <button class="signal-flag flag-green" onclick="setFlag(event,'stream-ownership','green')">🟢 Green</button>
+        <button class="signal-flag flag-amber" onclick="setFlag(event,'stream-ownership','amber')">🟡 Amber</button>
+        <button class="signal-flag flag-red" onclick="setFlag(event,'stream-ownership','red')">🔴 Red</button>
+      </div>
+    </div>
+    <div class="signal-stream-body" id="stream-ownership-body">
+      <table style="margin-top:8px;"><thead><tr><th>Leading Indicators</th><th>Amber Flag Condition</th><th>Red Flag Condition</th></tr></thead><tbody><tr><td>Committed action not completed on stated date; client asks "what happened with X?"; open issue count grows week-over-week</td><td><span class="badge badge-amber">One missed commitment with no proactive client notification; open issue count increasing for two consecutive weeks</span></td><td><span class="badge badge-red">Client raises a missed commitment in a formal communication; open issues aged beyond agreed resolution window</span></td></tr></tbody></table>
+      <div class="form-group" style="margin-top:10px;"><label>This Week's Observation (use signal language)</label><textarea rows="2" placeholder="What ownership signals did you observe this week?"></textarea></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title"><span class="icon">📋</span> Three Communication Tests — Quick Reference</div>
+    <div class="grid-3" style="margin-top:8px;">
+      <div style="padding:14px;background:var(--charcoal);color:#fff;border-radius:8px;"><div style="font-size:11px;font-weight:700;color:var(--orange);margin-bottom:6px;">TEST 1</div><div style="font-size:14px;font-weight:700;margin-bottom:6px;">Repeat-Back Test</div><div style="font-size:12px;color:#ccc;line-height:1.5;">Could the client accurately restate the key content in their own words after one reading?</div></div>
+      <div style="padding:14px;background:var(--charcoal);color:#fff;border-radius:8px;"><div style="font-size:11px;font-weight:700;color:var(--orange);margin-bottom:6px;">TEST 2</div><div style="font-size:14px;font-weight:700;margin-bottom:6px;">Stakes Test</div><div style="font-size:12px;color:#ccc;line-height:1.5;">Does the client understand what happens next if they do or do not take the requested action?</div></div>
+      <div style="padding:14px;background:var(--charcoal);color:#fff;border-radius:8px;"><div style="font-size:11px;font-weight:700;color:var(--orange);margin-bottom:6px;">TEST 3</div><div style="font-size:14px;font-weight:700;margin-bottom:6px;">Next-Step Test</div><div style="font-size:12px;color:#ccc;line-height:1.5;">Is the immediate next action crystal clear — who does it, when, and how will completion be confirmed?</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- THREE TESTS CHECKER -->
+<div class="page" id="page-comms">
+  <div class="section-header"><h2>Three Tests Communication Checker</h2><p>Apply all three tests to every client-facing communication before it is sent — no exceptions</p></div>
+  <div class="callout callout-orange"><strong>Non-Negotiable II:</strong> Every client-facing communication passes the Three Communication Tests before it is sent. A communication that fails any one of the three tests is revised before delivery. No exceptions for seniority or schedule pressure.</div>
+  <div class="card">
+    <div class="card-title"><span class="icon">✉️</span> Communication to Review</div>
+    <div class="form-group" style="margin-bottom:12px;"><label>Paste your draft communication here</label><textarea id="comm-draft" rows="6" placeholder="Paste your draft email, status update, escalation notice, or any client-facing communication here..."></textarea></div>
+    <button class="btn btn-orange" onclick="runThreeTests()">Run Three Tests →</button>
+  </div>
+  <div class="grid-3">
+    <div class="card" id="test-1-card">
+      <div class="card-title"><span class="icon">🔄</span> Test 1: Repeat-Back Test</div>
+      <div class="card-sub">Could the client accurately restate the key content in their own words after one reading?</div>
+      <div style="margin-bottom:10px;"><div style="font-size:12px;font-weight:700;color:var(--charcoal);margin-bottom:4px;">Pass:</div><div style="font-size:12px;color:#555;">Core message in plain client language. No jargon, no unexplained acronyms, no passive constructions that obscure meaning.</div></div>
+      <div style="margin-bottom:10px;"><div style="font-size:12px;font-weight:700;color:var(--charcoal);margin-bottom:4px;">Fail:</div><div style="font-size:12px;color:#555;">Message contains technical language the client does not use. Meaning requires interpretation.</div></div>
+      <div id="test-1-result" style="margin-top:10px;"></div>
+      <div style="display:flex;gap:8px;margin-top:10px;">
+        <button class="btn btn-outline" style="flex:1;" onclick="setTestResult(1,'pass')">✓ Pass</button>
+        <button class="btn btn-outline" style="flex:1;color:var(--red);border-color:var(--red);" onclick="setTestResult(1,'fail')">✗ Fail — Revise</button>
+      </div>
+    </div>
+    <div class="card" id="test-2-card">
+      <div class="card-title"><span class="icon">⚡</span> Test 2: Stakes Test</div>
+      <div class="card-sub">Does the client understand what happens next if they do or do not take the requested action?</div>
+      <div style="margin-bottom:10px;"><div style="font-size:12px;font-weight:700;color:var(--charcoal);margin-bottom:4px;">Pass:</div><div style="font-size:12px;color:#555;">Message explicitly states what the client needs to do, decide, or know — and what happens if they don't.</div></div>
+      <div style="margin-bottom:10px;"><div style="font-size:12px;font-weight:700;color:var(--charcoal);margin-bottom:4px;">Fail:</div><div style="font-size:12px;color:#555;">Message is technically accurate but describes what happened without connecting it to the client's world or required action.</div></div>
+      <div id="test-2-result" style="margin-top:10px;"></div>
+      <div style="display:flex;gap:8px;margin-top:10px;">
+        <button class="btn btn-outline" style="flex:1;" onclick="setTestResult(2,'pass')">✓ Pass</button>
+        <button class="btn btn-outline" style="flex:1;color:var(--red);border-color:var(--red);" onclick="setTestResult(2,'fail')">✗ Fail — Revise</button>
+      </div>
+    </div>
+    <div class="card" id="test-3-card">
+      <div class="card-title"><span class="icon">➡️</span> Test 3: Next-Step Test</div>
+      <div class="card-sub">Is the immediate next action crystal clear — who does it, when, and how will completion be confirmed?</div>
+      <div style="margin-bottom:10px;"><div style="font-size:12px;font-weight:700;color:var(--charcoal);margin-bottom:4px;">Pass:</div><div style="font-size:12px;color:#555;">Message ends with a specific next step: who does what, by when, and what the client will hear next.</div></div>
+      <div style="margin-bottom:10px;"><div style="font-size:12px;font-weight:700;color:var(--charcoal);margin-bottom:4px;">Fail:</div><div style="font-size:12px;color:#555;">Message ends with "please let us know if you have questions" or no defined next step.</div></div>
+      <div id="test-3-result" style="margin-top:10px;"></div>
+      <div style="display:flex;gap:8px;margin-top:10px;">
+        <button class="btn btn-outline" style="flex:1;" onclick="setTestResult(3,'pass')">✓ Pass</button>
+        <button class="btn btn-outline" style="flex:1;color:var(--red);border-color:var(--red);" onclick="setTestResult(3,'fail')">✗ Fail — Revise</button>
+      </div>
+    </div>
+  </div>
+  <div id="tests-summary" style="display:none;" class="card">
+    <div class="card-title"><span class="icon">📋</span> Test Summary</div>
+    <div id="tests-summary-content"></div>
+  </div>
+</div>
+<!-- SCOPING CHECKLIST -->
+<div class="page" id="page-scoping">
+  <div class="section-header"><h2>Engagement Scoping Checklist</h2><p>Scope it right before you commit — the highest-leverage hour in a delivery</p></div>
+  <div class="callout callout-red"><strong>Non-Negotiable:</strong> Never book travel before the manager/CSAM has confirmed the correct workshop and scope. The Scoping Call must happen 2-4 weeks before delivery. Scope confirmed in writing.</div>
+  <div class="tab-bar">
+    <button class="tab-btn active" onclick="switchTab(this,'scoping-tabs','scoping-call')">📞 Scoping Call</button>
+    <button class="tab-btn" onclick="switchTab(this,'scoping-tabs','scoping-worksheet')">📋 Worksheet</button>
+    <button class="tab-btn" onclick="switchTab(this,'scoping-tabs','scoping-alignment')">🤝 CSAM Alignment</button>
+    <button class="tab-btn" onclick="switchTab(this,'scoping-tabs','scoping-bom')">📦 Bill of Materials</button>
+    <button class="tab-btn" onclick="switchTab(this,'scoping-tabs','scoping-confirm')">✅ Scope Confirmation</button>
+  </div>
+  <div id="scoping-tabs">
+    <div class="tab-content active" id="scoping-call">
+      <div class="card">
+        <div class="card-title"><span class="icon">📞</span> Module 2: The Scoping Call (2-4 weeks before delivery)</div>
+        <div class="card-sub">Run the Scoping Call with the customer and CSAM — confirm scope, agenda, audience, and expectations</div>
+        <div class="callout callout-blue"><strong>Timeline Rule:</strong> The Scoping Call must happen 2-4 weeks before delivery. Scope, agenda, and expectations must be confirmed in writing after the call. This is the handoff into delivery preparation.</div>
+        <div style="margin-top:12px;">
+          <div class="check-item"><div class="check-box" onclick="this.classList.toggle('checked');this.textContent=this.classList.contains('checked')?'✓':''"></div><div><strong>Scoping call scheduled 2-4 weeks before delivery</strong><br><span style="font-size:11px;color:var(--mid);">With customer and CSAM — not just internal alignment</span></div></div>
+          <div class="check-item"><div class="check-box" onclick="this.classList.toggle('checked');this.textContent=this.classList.contains('checked')?'✓':''"></div><div><strong>Scope confirmed — correct workshop identified</strong><br><span style="font-size:11px;color:var(--mid);">MIP (consecutive days) vs VBD (broken up per customer need) — documented</span></div></div>
+          <div class="check-item"><div class="check-box" onclick="this.classList.toggle('checked');this.textContent=this.classList.contains('checked')?'✓':''"></div><div><strong>Audience confirmed — who will attend, technical level, prior experience</strong><br><span style="font-size:11px;color:var(--mid);">Drives workshop selection and lab environment decisions</span></div></div>
+          <div class="check-item"><div class="check-box" onclick="this.classList.toggle('checked');this.textContent=this.classList.contains('checked')?'✓':''"></div><div><strong>Constraints surfaced — time, environment, access, prerequisites</strong><br><span style="font-size:11px;color:var(--mid);">Everything that limits the engagement identified before commitment</span></div></div>
+          <div class="check-item"><div class="check-box" onclick="this.classList.toggle('checked');this.textContent=this.classList.contains('checked')?'✓':''"></div><div><strong>Scoping Recap email sent (#Scoping tag) — use TPL-SCOP</strong><br><span style="font-size:11px;color:var(--mid);">Written confirmation of agreed scope · Three Tests applied · PCC in CC</span></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="tab-content" id="scoping-worksheet">
+      <div class="card">
+        <div class="card-title"><span class="icon">📋</span> Module 3: Scoping Worksheet</div>
+        <div class="card-sub">Use the scoping worksheet to pressure-test the request against what can actually be delivered</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+          <div class="form-group"><label>Customer Name</label><input type="text" placeholder="Customer organization..."></div>
+          <div class="form-group"><label>Requested Workshop / Engagement Type</label><input type="text" placeholder="What was requested?"></div>
+          <div class="form-group"><label>Delivery Model</label><select><option>MIP — Consecutive days</option><option>VBD — Broken up over days/weeks per customer need</option></select></div>
+          <div class="form-group"><label>Lab Environment</label><select><option>Cloud-hosted via aka.ms/LOD</option><option>Local-host VMs via aka.ms/LOD</option><option>Customer environment</option><option>No lab required</option></select></div>
+          <div class="form-group"><label>Audience Technical Level</label><select><option>Beginner</option><option>Intermediate</option><option>Advanced</option><option>Mixed</option></select></div>
+          <div class="form-group"><label>Scope Confirmed in Writing?</label><select><option>Not yet</option><option>Yes — Scoping Recap email sent</option></select></div>
+        </div>
+        <div class="callout callout-amber"><strong>Placeholder:</strong> The verbatim 9 Rules and Fact-or-Fiction items from the EETS Day 3 scoping materials should be inserted here before use. Do not fabricate them — insert the exact list from the scoping deck / scoping worksheet.</div>
+      </div>
+    </div>
+    <div class="tab-content" id="scoping-alignment">
+      <div class="card">
+        <div class="card-title"><span class="icon">🤝</span> Module 4: CSAM & Manager Alignment</div>
+        <div class="card-sub">Before committing, align with the CSAM and your manager — one aligned voice to the customer through scoping</div>
+        <div class="callout callout-red"><strong>Non-Negotiable:</strong> Never book travel before the manager/CSAM has confirmed the correct workshop and scope. This rule has no exceptions.</div>
+        <div style="margin-top:12px;">
+          <div class="check-item"><div class="check-box" onclick="this.classList.toggle('checked');this.textContent=this.classList.contains('checked')?'✓':''"></div><div><strong>Correct workshop verified with CSAM</strong><br><span style="font-size:11px;color:var(--mid);">CSAM confirms this is the right engagement for the customer's needs</span></div></div>
+          <div class="check-item"><div class="check-box" onclick="this.classList.toggle('checked');this.textContent=this.classList.contains('checked')?'✓':''"></div><div><strong>Manager alignment confirmed before any commitment</strong><br><span style="font-size:11px;color:var(--mid);">Manager confirms the workshop and scope — documented</span></div></div>
+          <div class="check-item"><div class="check-box" onclick="this.classList.toggle('checked');this.textContent=this.classList.contains('checked')?'✓':''"></div><div><strong>Travel NOT booked until alignment confirmed</strong><br><span style="font-size:11px;color:var(--mid);">No-travel-before-confirmation rule — no exceptions</span></div></div>
+          <div class="check-item"><div class="check-box" onclick="this.classList.toggle('checked');this.textContent=this.classList.contains('checked')?'✓':''"></div><div><strong>One aligned voice to the customer through scoping</strong><br><span style="font-size:11px;color:var(--mid);">No conflicting messages from different team members</span></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="tab-content" id="scoping-bom">
+      <div class="card">
+        <div class="card-title"><span class="icon">📦</span> Module 5: Bill of Materials & Lab Environment</div>
+        <div class="card-sub">Confirm the bill of materials and set up the lab environment before delivery prep begins</div>
+        <div style="margin-top:8px;">
+          <div class="check-item"><div class="check-box" onclick="this.classList.toggle('checked');this.textContent=this.classList.contains('checked')?'✓':''"></div><div><strong>Bill of materials confirmed against scoped workshop</strong><br><span style="font-size:11px;color:var(--mid);">All required materials identified and available</span></div></div>
+          <div class="check-item"><div class="check-box" onclick="this.classList.toggle('checked');this.textContent=this.classList.contains('checked')?'✓':''"></div><div><strong>Lab environment stood up via aka.ms/LOD</strong><br><span style="font-size:11px;color:var(--mid);">Cloud-hosted or local-host VMs — confirmed against bill of materials</span></div></div>
+          <div class="check-item"><div class="check-box" onclick="this.classList.toggle('checked');this.textContent=this.classList.contains('checked')?'✓':''"></div><div><strong>Delivery model documented: MIP or VBD</strong><br><span style="font-size:11px;color:var(--mid);">MIP = consecutive days · VBD = broken up over days/weeks per customer need</span></div></div>
+          <div class="check-item"><div class="check-box" onclick="this.classList.toggle('checked');this.textContent=this.classList.contains('checked')?'✓':''"></div><div><strong>Workshop materials uploaded early (not late)</strong><br><span style="font-size:11px;color:var(--mid);">Late uploads flagged amber even if done — on-time flag matters</span></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="tab-content" id="scoping-confirm">
+      <div class="card">
+        <div class="card-title"><span class="icon">✅</span> Module 6: Confirming Scope & Follow-Up</div>
+        <div class="card-sub">Close the scoping loop — written confirmation of agreed scope before delivery prep begins</div>
+        <div class="form-group" style="margin-bottom:12px;"><label>Scope Confirmation Email Draft</label><textarea rows="5" placeholder="Write your scope confirmation email here. Include: agreed scope, MIP/VBD details, delivery dates, audience, lab environment, and any constraints confirmed during the scoping call..."></textarea></div>
+        <div style="margin-top:8px;">
+          <div class="check-item"><div class="check-box" onclick="this.classList.toggle('checked');this.textContent=this.classList.contains('checked')?'✓':''"></div><div><strong>Written scope confirmation sent to customer</strong><br><span style="font-size:11px;color:var(--mid);">Agreed scope, MIP/VBD details, delivery dates documented in writing</span></div></div>
+          <div class="check-item"><div class="check-box" onclick="this.classList.toggle('checked');this.textContent=this.classList.contains('checked')?'✓':''"></div><div><strong>Customer acknowledged the scope confirmation</strong><br><span style="font-size:11px;color:var(--mid);">Written acknowledgment received — not just verbal</span></div></div>
+          <div class="check-item"><div class="check-box" onclick="this.classList.toggle('checked');this.textContent=this.classList.contains('checked')?'✓':''"></div><div><strong>Handoff to delivery preparation complete</strong><br><span style="font-size:11px;color:var(--mid);">Scoping loop closed — delivery prep can begin</span></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- EMAIL TEMPLATES -->
+<div class="page" id="page-templates">
+  <div class="section-header"><h2>Email Template Reference</h2><p>Seven compliance templates — zero-touch compliance: auto-tags, required recipients, visible phrases</p></div>
+  <div class="callout callout-orange"><strong>Zero-Touch Compliance:</strong> These templates auto-populate RMOT, recipients, visible phrase, and attachments. The CE customizes content, not compliance plumbing. Apply Three Tests before sending every email.</div>
+  <div class="grid-2">
+    <div class="card"><div class="card-title"><span class="icon">📧</span> TPL-SCOP — Scoping Recap</div><table style="margin-top:8px;"><tbody><tr><td style="font-weight:700;width:110px;">Auto Tags</td><td><span class="badge badge-orange">#Scoping (CT-01)</span></td></tr><tr><td style="font-weight:700;">Auto CC</td><td>PCC · Solution-Area DL</td></tr><tr><td style="font-weight:700;">Auto BCC</td><td>Management DL</td></tr><tr><td style="font-weight:700;">Auto Attach</td><td>Data Sheet</td></tr><tr><td style="font-weight:700;">Visible Phrase</td><td>"Scoping Recap"</td></tr><tr><td style="font-weight:700;">Time-Keeping</td><td>[PRE-ENGAGEMENTCALL] (CT-05)</td></tr></tbody></table></div>
+    <div class="card"><div class="card-title"><span class="icon">📧</span> TPL-POLL — Pre-Poll</div><table style="margin-top:8px;"><tbody><tr><td style="font-weight:700;width:110px;">Auto Tags</td><td><span class="badge badge-orange">#AdaptivePolling (CT-02)</span></td></tr><tr><td style="font-weight:700;">Auto CC</td><td>PCC · Management DL</td></tr><tr><td style="font-weight:700;">Auto BCC</td><td>Management DL</td></tr><tr><td style="font-weight:700;">Auto Attach</td><td>Data Sheet</td></tr><tr><td style="font-weight:700;">Visible Phrase</td><td>"Adaptive Polling"</td></tr><tr><td style="font-weight:700;">Time-Keeping</td><td>[ADAPTIVEPOLLING] (CT-07)</td></tr></tbody></table></div>
+    <div class="card"><div class="card-title"><span class="icon">📧</span> TPL-DREC — Daily Recap</div><table style="margin-top:8px;"><tbody><tr><td style="font-weight:700;width:110px;">Auto Tags</td><td><span class="badge badge-orange">#DeliveryRecap (CT-03)</span></td></tr><tr><td style="font-weight:700;">Auto CC</td><td>PCC · Management DL</td></tr><tr><td style="font-weight:700;">Auto BCC</td><td>Management DL</td></tr><tr><td style="font-weight:700;">Auto Attach</td><td>None</td></tr><tr><td style="font-weight:700;">Visible Phrase</td><td>"Delivery Recap"</td></tr><tr><td style="font-weight:700;">Time-Keeping</td><td>[DAILYRECAP] (CT-10)</td></tr></tbody></table></div>
+    <div class="card"><div class="card-title"><span class="icon">📧</span> TPL-FREC — Final Recap</div><table style="margin-top:8px;"><tbody><tr><td style="font-weight:700;width:110px;">Auto Tags</td><td><span class="badge badge-orange">#DeliveryRecap (CT-03)</span></td></tr><tr><td style="font-weight:700;">Auto CC</td><td>PCC · Management DL</td></tr><tr><td style="font-weight:700;">Auto BCC</td><td>Management DL</td></tr><tr><td style="font-weight:700;">Auto Attach</td><td>None</td></tr><tr><td style="font-weight:700;">Visible Phrase</td><td>"Delivery Recap"</td></tr><tr><td style="font-weight:700;">Time-Keeping</td><td>[FINALRECAP] (CT-09)</td></tr></tbody></table></div>
+    <div class="card"><div class="card-title"><span class="icon">📧</span> TPL-FOLL — Follow-Up (2-week)</div><table style="margin-top:8px;"><tbody><tr><td style="font-weight:700;width:110px;">Auto Tags</td><td><span class="badge badge-orange">#DeliveryFollow-Up (CT-04)</span></td></tr><tr><td style="font-weight:700;">Auto CC</td><td>PCC · Management DL</td></tr><tr><td style="font-weight:700;">Auto BCC</td><td>Management DL</td></tr><tr><td style="font-weight:700;">Auto Attach</td><td>None</td></tr><tr><td style="font-weight:700;">Visible Phrase</td><td>"Dispatch Follow-Up"</td></tr><tr><td style="font-weight:700;">Time-Keeping</td><td>[FINALRECAP] (CT-09)</td></tr></tbody></table></div>
+    <div class="card"><div class="card-title"><span class="icon">📧</span> TPL-WKPL — WorkshopPLUS Pre-Poll</div><table style="margin-top:8px;"><tbody><tr><td style="font-weight:700;width:110px;">Auto Tags</td><td><span class="badge badge-orange">#AdaptivePolling (CT-02)</span></td></tr><tr><td style="font-weight:700;">Auto CC</td><td>PCC · Management DL</td></tr><tr><td style="font-weight:700;">Auto BCC</td><td>Management DL</td></tr><tr><td style="font-weight:700;">Auto Attach</td><td>Data Sheet</td></tr><tr><td style="font-weight:700;">Visible Phrase</td><td>"Adaptive Polling"</td></tr><tr><td style="font-weight:700;">Time-Keeping</td><td>[ADAPTIVEPOLLING] (CT-07)</td></tr></tbody></table></div>
+  </div>
+  <div class="card">
+    <div class="card-title"><span class="icon">🏷️</span> Compliance Tag Reference — CT-01 through CT-10</div>
+    <div class="grid-2" style="margin-top:8px;">
+      <div><div style="font-size:12px;font-weight:700;color:var(--orange);margin-bottom:8px;">EMAIL HASHTAGS (with required visible phrase)</div><table><tbody><tr><td><span class="badge badge-orange">CT-01</span></td><td><strong>#Scoping</strong></td><td style="font-size:11px;color:#555;">Scoping Recap email · "Scoping Recap"</td></tr><tr><td><span class="badge badge-orange">CT-02</span></td><td><strong>#AdaptivePolling</strong></td><td style="font-size:11px;color:#555;">Pre-Poll, Agenda · "Adaptive Polling"</td></tr><tr><td><span class="badge badge-orange">CT-03</span></td><td><strong>#DeliveryRecap</strong></td><td style="font-size:11px;color:#555;">Daily/Final Recap · "Delivery Recap"</td></tr><tr><td><span class="badge badge-orange">CT-04</span></td><td><strong>#DeliveryFollow-Up</strong></td><td style="font-size:11px;color:#555;">Follow-Up (2-week) · "Dispatch Follow-Up"</td></tr></tbody></table></div>
+      <div><div style="font-size:12px;font-weight:700;color:var(--orange);margin-bottom:8px;">TIME-KEEPING TAGS (auto-logged, no email)</div><table><tbody><tr><td><span class="badge badge-blue">CT-05</span></td><td><strong>[PRE-ENGAGEMENTCALL]</strong></td><td style="font-size:11px;color:#555;">Pre-Engagement Call marked complete</td></tr><tr><td><span class="badge badge-blue">CT-06</span></td><td><strong>[DELIVERYPREPARATION]</strong></td><td style="font-size:11px;color:#555;">Preparation checklist completed</td></tr><tr><td><span class="badge badge-blue">CT-07</span></td><td><strong>[ADAPTIVEPOLLING]</strong></td><td style="font-size:11px;color:#555;">Adaptive polling created and sent</td></tr><tr><td><span class="badge badge-blue">CT-08</span></td><td><strong>[RESEARCH]</strong></td><td style="font-size:11px;color:#555;">Research phase complete</td></tr><tr><td><span class="badge badge-blue">CT-09</span></td><td><strong>[FINALRECAP]</strong></td><td style="font-size:11px;color:#555;">Final Recap email sent</td></tr><tr><td><span class="badge badge-blue">CT-10</span></td><td><strong>[DAILYRECAP]</strong></td><td style="font-size:11px;color:#555;">Daily Recap email sent</td></tr></tbody></table></div>
+    </div>
+  </div>
+</div>
+<!-- M365 ADVISORY BUILDER -->
+<div class="page" id="page-advisory">
+  <div class="section-header"><h2>M365 Change Advisory Builder</h2><p>Generate the Weekly M365 Change Advisory — parameter-driven, 4-phase pipeline, 4-format export</p></div>
+  <div class="callout callout-blue"><strong>Advisory Builder:</strong> Configure parameters, add service change updates, then generate your advisory. Customer name is required. No "copy to Copilot" CTA — the pipeline runs in-app.</div>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title"><span class="icon">⚙️</span> Advisory Parameters</div>
+      <div class="advisory-form">
+        <div class="form-group"><label>Customer Name * (required)</label><input type="text" id="adv-customer" placeholder="Required to enable generation..." oninput="checkAdvisoryReady()"></div>
+        <div class="form-group"><label>Industry</label><select id="adv-industry"><option>Financial Services</option><option>Healthcare</option><option>Public Sector</option><option>Retail</option><option>Manufacturing</option><option>Education</option><option>Energy</option><option>Other</option></select></div>
+        <div class="form-group"><label>Region</label><select id="adv-region"><option>North America</option><option>EMEA</option><option>LATAM</option><option>APAC</option><option>ANZ</option><option>Global</option></select></div>
+        <div class="form-group"><label>Audience</label><select id="adv-audience"><option>Executive</option><option>IT Admin</option><option>End User</option><option>Mixed</option></select></div>
+        <div class="form-group"><label>Tone</label><select id="adv-tone"><option>Formal</option><option>Neutral</option><option>Conversational</option></select></div>
+        <div class="form-group"><label>Impact Level Filter</label><select id="adv-impact"><option>All</option><option>High only</option><option>Medium and above</option></select></div>
+      </div>
+      <div style="margin-top:14px;"><div style="font-size:12px;font-weight:700;color:var(--charcoal);margin-bottom:8px;">Services to Include (click to toggle)</div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;" id="services-pills">
+        <button class="btn btn-outline" style="padding:4px 10px;font-size:11px;border-radius:20px;" onclick="toggleService(this)">Exchange</button>
+        <button class="btn btn-outline" style="padding:4px 10px;font-size:11px;border-radius:20px;" onclick="toggleService(this)">Teams</button>
+        <button class="btn btn-outline" style="padding:4px 10px;font-size:11px;border-radius:20px;" onclick="toggleService(this)">SharePoint</button>
+        <button class="btn btn-outline" style="padding:4px 10px;font-size:11px;border-radius:20px;" onclick="toggleService(this)">OneDrive</button>
+        <button class="btn btn-outline" style="padding:4px 10px;font-size:11px;border-radius:20px;" onclick="toggleService(this)">Purview</button>
+        <button class="btn btn-outline" style="padding:4px 10px;font-size:11px;border-radius:20px;" onclick="toggleService(this)">Entra</button>
+        <button class="btn btn-outline" style="padding:4px 10px;font-size:11px;border-radius:20px;" onclick="toggleService(this)">Intune</button>
+        <button class="btn btn-outline" style="padding:4px 10px;font-size:11px;border-radius:20px;" onclick="toggleService(this)">Defender</button>
+        <button class="btn btn-outline" style="padding:4px 10px;font-size:11px;border-radius:20px;" onclick="toggleService(this)">Copilot</button>
+        <button class="btn btn-outline" style="padding:4px 10px;font-size:11px;border-radius:20px;" onclick="toggleService(this)">Power Platform</button>
+      </div></div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span class="icon">📋</span> Updates Panel</div>
+      <div class="card-sub">Add M365 service change updates to include in the advisory</div>
+      <div class="form-group" style="margin-bottom:10px;"><label>Paste Update Text (from Message Center or curated)</label><textarea id="adv-update-text" rows="4" placeholder="Paste M365 Message Center update or service change description here..."></textarea></div>
+      <button class="btn btn-outline" onclick="addAdvisoryUpdate()" style="margin-bottom:12px;">+ Add Update</button>
+      <div id="advisory-updates"><div style="font-size:12px;color:var(--mid);text-align:center;padding:20px;">No updates added yet. Paste update text above and click Add Update.</div></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title"><span class="icon">🚀</span> Generate Advisory — 4-Phase Pipeline</div>
+    <div id="advisory-pipeline" style="display:none;">
+      <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;">
+        <div id="phase-1" style="flex:1;padding:10px;border-radius:6px;background:var(--light);border:1px solid var(--border);text-align:center;font-size:12px;"><div style="font-weight:700;">Phase 1</div><div style="color:var(--mid);">Gathering</div></div>
+        <div id="phase-2" style="flex:1;padding:10px;border-radius:6px;background:var(--light);border:1px solid var(--border);text-align:center;font-size:12px;"><div style="font-weight:700;">Phase 2</div><div style="color:var(--mid);">Industry Lens</div></div>
+        <div id="phase-3" style="flex:1;padding:10px;border-radius:6px;background:var(--light);border:1px solid var(--border);text-align:center;font-size:12px;"><div style="font-weight:700;">Phase 3</div><div style="color:var(--mid);">Drafting</div></div>
+        <div id="phase-4" style="flex:1;padding:10px;border-radius:6px;background:var(--light);border:1px solid var(--border);text-align:center;font-size:12px;"><div style="font-weight:700;">Phase 4</div><div style="color:var(--mid);">Packaging</div></div>
+      </div>
+      <div class="progress-bar-wrap" style="height:10px;margin-bottom:10px;"><div class="progress-bar-fill" id="advisory-progress" style="width:0%"></div></div>
+      <div id="advisory-status" style="font-size:13px;color:var(--mid);text-align:center;margin-bottom:10px;">Initializing...</div>
+    </div>
+    <div id="advisory-output" style="display:none;" class="callout callout-green">
+      <strong>Advisory Ready!</strong> Your Weekly M365 Change Advisory has been generated.<br>
+      <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;">
+        <button class="btn btn-orange" onclick="downloadAdvisory('docx')">📄 Download Word</button>
+        <button class="btn btn-dark" onclick="downloadAdvisory('pdf')">📕 Download PDF</button>
+        <button class="btn btn-dark" onclick="downloadAdvisory('pptx')">📊 Download PPTX</button>
+        <button class="btn btn-outline" onclick="downloadAdvisory('md')">📝 Download Markdown</button>
+      </div>
+    </div>
+    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+      <button class="btn btn-orange" id="generate-btn" onclick="generateAdvisory()" disabled style="opacity:0.5;">Generate Advisory</button>
+      <button class="btn btn-outline" onclick="quickExport()">⚡ Quick Export (skip phases 2-3)</button>
+      <span style="font-size:12px;color:var(--mid);" id="advisory-ready-msg">Enter customer name to enable generation</span>
+    </div>
+  </div>
+</div>
+
+<!-- SELF-ASSESSMENT -->
+<div class="page" id="page-selfassess">
+  <div class="section-header"><h2>Skills Self-Assessment</h2><p>Six dimensions · Four proficiency levels · Rate yourself based on observable evidence from recent delivery work</p></div>
+  <div class="callout callout-orange"><strong>Rating Integrity:</strong> Rate yourself based on observable evidence — not aspirational behavior. The rubric asks: what do you actually do, not what you intend to do. Self-report is not sufficient evidence. Ratings must be supported by documentation a second reader can verify independently.</div>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title"><span class="icon">📊</span> Competency Radar Chart</div>
+      <div class="radar-wrap"><canvas id="radarChart"></canvas></div>
+      <div style="display:flex;gap:12px;margin-top:10px;flex-wrap:wrap;">
+        <div style="display:flex;align-items:center;gap:6px;font-size:11px;"><div style="width:10px;height:10px;border-radius:50%;background:rgba(255,98,0,0.8)"></div>Your scores</div>
+        <div style="display:flex;align-items:center;gap:6px;font-size:11px;"><div style="width:10px;height:10px;border-radius:50%;background:rgba(46,125,50,0.4)"></div>At Standard benchmark (3)</div>
+      </div>
+      <div id="radar-score-summary" style="margin-top:12px;"></div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span class="icon">📏</span> Rate Each Dimension</div>
+      <div class="card-sub">1=Below Standard · 2=Developing · 3=At Standard · 4=Above Standard</div>
+      <div id="dimension-ratings">
+        <div style="margin-bottom:12px;"><div style="font-size:13px;font-weight:700;margin-bottom:4px;">📡 Signal Intelligence</div><div style="font-size:11px;color:var(--mid);margin-bottom:6px;">Monitoring all three signal streams weekly, surfacing within 48 hours, using signal language</div><div style="display:flex;gap:6px;"><button class="dim-btn" onclick="setDimScore(0,1,this)">1 — Below</button><button class="dim-btn" onclick="setDimScore(0,2,this)">2 — Developing</button><button class="dim-btn" onclick="setDimScore(0,3,this)">3 — At Standard</button><button class="dim-btn" onclick="setDimScore(0,4,this)">4 — Above</button></div></div>
+        <div style="margin-bottom:12px;"><div style="font-size:13px;font-weight:700;margin-bottom:4px;">🎯 Ownership Clarity</div><div style="font-size:11px;color:var(--mid);margin-bottom:6px;">Named Outcome Owner, communicated in writing, full runbook, no orphaned workstreams</div><div style="display:flex;gap:6px;"><button class="dim-btn" onclick="setDimScore(1,1,this)">1 — Below</button><button class="dim-btn" onclick="setDimScore(1,2,this)">2 — Developing</button><button class="dim-btn" onclick="setDimScore(1,3,this)">3 — At Standard</button><button class="dim-btn" onclick="setDimScore(1,4,this)">4 — Above</button></div></div>
+        <div style="margin-bottom:12px;"><div style="font-size:13px;font-weight:700;margin-bottom:4px;">✉️ Communication Discipline</div><div style="font-size:11px;color:var(--mid);margin-bottom:6px;">All three tests applied to every communication, rewrite when fails, no exceptions</div><div style="display:flex;gap:6px;"><button class="dim-btn" onclick="setDimScore(2,1,this)">1 — Below</button><button class="dim-btn" onclick="setDimScore(2,2,this)">2 — Developing</button><button class="dim-btn" onclick="setDimScore(2,3,this)">3 — At Standard</button><button class="dim-btn" onclick="setDimScore(2,4,this)">4 — Above</button></div></div>
+        <div style="margin-bottom:12px;"><div style="font-size:13px;font-weight:700;margin-bottom:4px;">✅ Outcome Validation</div><div style="font-size:11px;color:var(--mid);margin-bottom:6px;">Three validation questions every close, client articulates value in writing before close</div><div style="display:flex;gap:6px;"><button class="dim-btn" onclick="setDimScore(3,1,this)">1 — Below</button><button class="dim-btn" onclick="setDimScore(3,2,this)">2 — Developing</button><button class="dim-btn" onclick="setDimScore(3,3,this)">3 — At Standard</button><button class="dim-btn" onclick="setDimScore(3,4,this)">4 — Above</button></div></div>
+        <div style="margin-bottom:12px;"><div style="font-size:13px;font-weight:700;margin-bottom:4px;">🏛️ Trust Architecture</div><div style="font-size:11px;color:var(--mid);margin-bottom:6px;">Identifies active trust layer, applies behaviors, uses CE Framework vocabulary consistently</div><div style="display:flex;gap:6px;"><button class="dim-btn" onclick="setDimScore(4,1,this)">1 — Below</button><button class="dim-btn" onclick="setDimScore(4,2,this)">2 — Developing</button><button class="dim-btn" onclick="setDimScore(4,3,this)">3 — At Standard</button><button class="dim-btn" onclick="setDimScore(4,4,this)">4 — Above</button></div></div>
+        <div style="margin-bottom:12px;"><div style="font-size:13px;font-weight:700;margin-bottom:4px;">🌱 Program Stewardship</div><div style="font-size:11px;color:var(--mid);margin-bottom:6px;">Contributes to playbook, surfaces anti-patterns, active quarterly review (L2+ only)</div><div style="display:flex;gap:6px;"><button class="dim-btn" onclick="setDimScore(5,1,this)">1 — Below</button><button class="dim-btn" onclick="setDimScore(5,2,this)">2 — Developing</button><button class="dim-btn" onclick="setDimScore(5,3,this)">3 — At Standard</button><button class="dim-btn" onclick="setDimScore(5,4,this)">4 — Above</button></div></div>
+      </div>
+      <div id="assessment-insights" style="margin-top:12px;"></div>
+    </div>
+  </div>
+</div>
+
+<!-- CEES SCENARIOS -->
+<div class="page" id="page-scenarios">
+  <div class="section-header"><h2>CEES Scenario Practice</h2><p>Interactive scenario practice — select the EEP-standard response, then reveal the scoring rationale</p></div>
+  <div class="callout callout-blue"><strong>How to Use:</strong> Read each scenario carefully. Select the response that best reflects the EEP standard. Click "Reveal Answer" to see the rubric-based scoring and explanation. Use these in bi-weekly CEES Sessions.</div>
+  <div class="scenario-card">
+    <div class="scenario-header"><h3>Scenario 1: The Missed Commitment</h3><span class="badge badge-orange">Signal Intelligence · Ownership Clarity</span></div>
+    <div class="scenario-body">
+      <div class="scenario-situation">During your weekly Signal Review, you notice that a deliverable you committed to the client for Tuesday has not been completed — it's now Thursday. The client has not yet raised it. What do you do?</div>
+      <div class="scenario-options" id="sc1-opts">
+        <button class="scenario-option" onclick="selectOption(this,'sc1',false)">A. Wait to see if the client raises it — they may not have noticed, and raising it proactively might draw unnecessary attention to the miss.</button>
+        <button class="scenario-option" onclick="selectOption(this,'sc1',false)">B. Send a brief note to the client saying the deliverable is "almost ready" and will be with them "shortly" — no specific date.</button>
+        <button class="scenario-option" onclick="selectOption(this,'sc1',true)">C. Contact the client proactively, acknowledge the missed commitment, name the new committed date, and explain what caused the delay in one sentence.</button>
+        <button class="scenario-option" onclick="selectOption(this,'sc1',false)">D. Escalate internally first and wait for leadership guidance before communicating anything to the client.</button>
+      </div>
+      <div class="scenario-reveal" id="sc1-reveal"><div class="callout callout-green"><strong>✓ Correct: Option C</strong><br>The EEP standard requires proactive communication before the client raises the issue. A missed commitment that the team surfaces proactively — with a new committed date — is a trust-building event. A missed commitment that the client surfaces first is a trust-damaging event. The difference is not the missed commitment. The difference is who surfaces it first. Option A is a signal failure. Option B fails the Next-Step Test. Option D delays client communication unnecessarily.</div></div>
+      <button onclick="revealScenario('sc1')" style="background:var(--charcoal);color:#fff;border:none;border-radius:6px;padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;">Reveal Answer</button>
+    </div>
+  </div>
+  <div class="scenario-card">
+    <div class="scenario-header"><h3>Scenario 2: The Status Update Email</h3><span class="badge badge-orange">Communication Discipline</span></div>
+    <div class="scenario-body">
+      <div class="scenario-situation">You've drafted a weekly status update email. The Repeat-Back Test passes. The Next-Step Test fails — there's no clear action requested from the client. What do you do?</div>
+      <div class="scenario-options" id="sc2-opts">
+        <button class="scenario-option" onclick="selectOption(this,'sc2',false)">A. Send the email anyway — it's just a status update, so the Next-Step Test doesn't really apply here.</button>
+        <button class="scenario-option" onclick="selectOption(this,'sc2',true)">B. Revise the email to include a specific client action — even if it's just "please confirm you've received this and flag any concerns by Friday."</button>
+        <button class="scenario-option" onclick="selectOption(this,'sc2',false)">C. Add a generic "please let us know if you have any questions" line and send — that covers the next-step requirement.</button>
+        <button class="scenario-option" onclick="selectOption(this,'sc2',false)">D. Skip the status update this week since there's nothing urgent to communicate.</button>
+      </div>
+      <div class="scenario-reveal" id="sc2-reveal"><div class="callout callout-green"><strong>✓ Correct: Option B</strong><br>The Three Tests apply to every client-facing communication — major or minor. There are no exceptions for "just a status update." Option C fails the Next-Step Test — "please let us know if you have any questions" is not a specific next action; it's a passive invitation that produces no observable client behavior. Option B correctly applies the test: revise until the communication passes, then send.</div></div>
+      <button onclick="revealScenario('sc2')" style="background:var(--charcoal);color:#fff;border:none;border-radius:6px;padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;">Reveal Answer</button>
+    </div>
+  </div>
+  <div class="scenario-card">
+    <div class="scenario-header"><h3>Scenario 3: The Signal Review</h3><span class="badge badge-orange">Signal Intelligence</span></div>
+    <div class="scenario-body">
+      <div class="scenario-situation">During your Weekly Signal Review, a team member says: "The client seems happy — no complaints this week, the calls have been going well, and they seemed positive in the last meeting." How do you respond as the facilitator?</div>
+      <div class="scenario-options" id="sc3-opts">
+        <button class="scenario-option" onclick="selectOption(this,'sc3',false)">A. Accept the update and move on — positive sentiment is a good signal and the team member has direct client contact.</button>
+        <button class="scenario-option" onclick="selectOption(this,'sc3',true)">B. Redirect: "That's status language. What specific signals did you observe this week across the three streams — friction, clarity, and follow-through? What did the client do or say that you're reading as positive?"</button>
+        <button class="scenario-option" onclick="selectOption(this,'sc3',false)">C. Ask the team member to send a satisfaction survey to the client to get more objective data.</button>
+        <button class="scenario-option" onclick="selectOption(this,'sc3',false)">D. Note the positive sentiment in the engagement log and flag it as a green signal for all three streams.</button>
+      </div>
+      <div class="scenario-reveal" id="sc3-reveal"><div class="callout callout-green"><strong>✓ Correct: Option B</strong><br>"The client seems happy" is status language — it is a subjective impression, not an observable signal. The Signal Review is a diagnostic session, not a sentiment check. Option B is the correct facilitation move: name the language pattern, redirect to the three-stream model, and ask for observable behavioral evidence. "What did the client do or say?" is the right question. The answer to that question is a signal. The impression is not.</div></div>
+      <button onclick="revealScenario('sc3')" style="background:var(--charcoal);color:#fff;border:none;border-radius:6px;padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;">Reveal Answer</button>
+    </div>
+  </div>
+  <div class="scenario-card">
+    <div class="scenario-header"><h3>Scenario 4: The Engagement Close</h3><span class="badge badge-orange">Outcome Validation</span></div>
+    <div class="scenario-body">
+      <div class="scenario-situation">Your engagement is wrapping up. All deliverables have been completed and accepted. The client has signed the milestone completion document. Your manager is asking you to close the engagement in the system. The client has not yet been asked the three validation questions. What do you do?</div>
+      <div class="scenario-options" id="sc4-opts">
+        <button class="scenario-option" onclick="selectOption(this,'sc4',false)">A. Close the engagement — the signed milestone document is sufficient evidence of client satisfaction.</button>
+        <button class="scenario-option" onclick="selectOption(this,'sc4',false)">B. Close the engagement but make a note to follow up with the client next quarter about their experience.</button>
+        <button class="scenario-option" onclick="selectOption(this,'sc4',true)">C. Do not close the engagement. Schedule a brief call or send a structured email to ask the three validation questions and document the client's response before closing.</button>
+        <button class="scenario-option" onclick="selectOption(this,'sc4',false)">D. Ask your manager to close it since they have the authority to make exceptions to the close process.</button>
+      </div>
+      <div class="scenario-reveal" id="sc4-reveal"><div class="callout callout-green"><strong>✓ Correct: Option C</strong><br>Non-Negotiable Commitment III is explicit: no engagement is administratively closed without a validated client articulation of value received. A signed milestone document is not the same as a client who can articulate what they received and why it mattered. Option A confuses task completion with value validation. Option B defers the validation indefinitely. Option D attempts to route around the standard through seniority — the charter is explicit that seniority does not constitute an exemption.</div></div>
+      <button onclick="revealScenario('sc4')" style="background:var(--charcoal);color:#fff;border:none;border-radius:6px;padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;">Reveal Answer</button>
+    </div>
+  </div>
+</div>
+
+<!-- READINESS TRACKER -->
+<div class="page" id="page-readiness">
+  <div class="section-header"><h2>Readiness Tracker</h2><p>80-90% readiness threshold — track your progress toward certification and delivery excellence</p></div>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title"><span class="icon">📈</span> Overall Readiness</div>
+      <div style="text-align:center;padding:16px 0;">
+        <div style="font-size:52px;font-weight:700;color:var(--orange);" id="readiness-pct">0%</div>
+        <div style="font-size:12px;color:var(--mid);margin-top:4px;">of 80-90% readiness threshold</div>
+        <div style="margin-top:10px;" id="readiness-badge"><span class="badge badge-gray">Below readiness threshold</span></div>
+      </div>
+      <div class="progress-bar-wrap" style="height:12px;"><div class="progress-bar-fill" id="readiness-bar" style="width:0%"></div></div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--mid);margin-top:4px;"><span>0%</span><span style="color:var(--amber);">80% threshold</span><span>100%</span></div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span class="icon">🎓</span> Certification Status</div>
+      <div style="display:flex;flex-direction:column;gap:10px;margin-top:8px;">
+        <div style="display:flex;align-items:center;gap:12px;padding:10px;background:var(--light);border-radius:6px;"><div style="width:36px;height:36px;border-radius:50%;background:var(--orange);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0;">L1</div><div style="flex:1;"><div style="font-size:13px;font-weight:700;">EEP Practitioner</div><div style="font-size:11px;color:var(--mid);">Target: 4-6 weeks from onboarding · All client-facing team members</div></div><select style="font-size:11px;padding:4px 8px;border:1px solid var(--border);border-radius:4px;" onchange="updateReadiness()"><option>Not started</option><option>In progress</option><option>Certified</option></select></div>
+        <div style="display:flex;align-items:center;gap:12px;padding:10px;background:var(--light);border-radius:6px;"><div style="width:36px;height:36px;border-radius:50%;background:var(--blue);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0;">L2</div><div style="flex:1;"><div style="font-size:13px;font-weight:700;">EEP Lead</div><div style="font-size:11px;color:var(--mid);">Target: 6-9 months from L1 · Requires 6+ months active delivery under the standard</div></div><select style="font-size:11px;padding:4px 8px;border:1px solid var(--border);border-radius:4px;" onchange="updateReadiness()"><option>Not started</option><option>In progress</option><option>Certified</option></select></div>
+        <div style="display:flex;align-items:center;gap:12px;padding:10px;background:var(--light);border-radius:6px;"><div style="width:36px;height:36px;border-radius:50%;background:var(--green);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0;">L3</div><div style="flex:1;"><div style="font-size:13px;font-weight:700;">EEP Trainer</div><div style="font-size:11px;color:var(--mid);">Target: 3-6 months from L2 · Nomination-based — not all L2 Leads will pursue L3</div></div><select style="font-size:11px;padding:4px 8px;border:1px solid var(--border);border-radius:4px;" onchange="updateReadiness()"><option>Not started</option><option>Nominated</option><option>In progress</option><option>Certified</option></select></div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title"><span class="icon">📋</span> Readiness Checklist</div>
+    <div class="card-sub">Track your progress across all readiness dimensions — check items as you complete them</div>
+    <div class="grid-2">
+      <div>
+        <div style="font-size:12px;font-weight:700;color:var(--orange);margin-bottom:8px;">DELIVERY READINESS</div>
+        <div class="check-item"><div class="check-box" onclick="toggleReadiness(this)"></div><div>Signal Review log maintained weekly (12+ consecutive weeks)</div></div>
+        <div class="check-item"><div class="check-box" onclick="toggleReadiness(this)"></div><div>Three Tests applied to all client communications without exception</div></div>
+        <div class="check-item"><div class="check-box" onclick="toggleReadiness(this)"></div><div>Outcome Owner named and confirmed in writing on all engagements</div></div>
+        <div class="check-item"><div class="check-box" onclick="toggleReadiness(this)"></div><div>Engagement close validation completed (three questions asked, documented)</div></div>
+        <div class="check-item"><div class="check-box" onclick="toggleReadiness(this)"></div><div>Scoping call completed 2-4 weeks before delivery on all engagements</div></div>
+      </div>
+      <div>
+        <div style="font-size:12px;font-weight:700;color:var(--orange);margin-bottom:8px;">PROGRAM READINESS</div>
+        <div class="check-item"><div class="check-box" onclick="toggleReadiness(this)"></div><div>CEES Sessions attended bi-weekly (last 8 weeks without cancellation)</div></div>
+        <div class="check-item"><div class="check-box" onclick="toggleReadiness(this)"></div><div>At least one scenario contributed to CEES Session from real delivery</div></div>
+        <div class="check-item"><div class="check-box" onclick="toggleReadiness(this)"></div><div>Monthly self-assessment completed (last 3 months)</div></div>
+        <div class="check-item"><div class="check-box" onclick="toggleReadiness(this)"></div><div>Quarterly calibration conversation held with Engagement Lead</div></div>
+        <div class="check-item"><div class="check-box" onclick="toggleReadiness(this)"></div><div>Playbook lesson contribution submitted (L2+ only)</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- M365 CONNECT PAGE -->
+<div class="page" id="page-m365setup">
+  <div class="section-header"><h2>Microsoft 365 Connect</h2><p>Sign in with your Microsoft 365 account to display live calendar events and inbox items</p></div>
+
+  <!-- DEMO MODE BANNER -->
+  <div class="callout callout-blue" id="demo-mode-banner">
+    <strong>📊 Demo Mode Active</strong> — The dashboard is running with realistic mock data. Connect your Microsoft 365 account below to display your live calendar and inbox. All other dashboard features work without authentication.
+  </div>
+
+  <!-- AUTH STATUS -->
+  <div class="card" id="auth-status-card">
+    <div class="card-title"><span class="icon">🔐</span> Authentication Status</div>
+    <div id="auth-status-content">
+      <div style="display:flex;align-items:center;gap:16px;padding:16px 0;">
+        <div style="width:48px;height:48px;border-radius:50%;background:var(--light);display:flex;align-items:center;justify-content:center;font-size:24px;">👤</div>
+        <div>
+          <div style="font-size:15px;font-weight:700;" id="auth-name">Not signed in</div>
+          <div style="font-size:12px;color:var(--mid);" id="auth-email">Connect your Microsoft 365 account to get started</div>
+          <div style="margin-top:6px;" id="auth-badge"><span class="badge badge-gray">Demo Mode</span></div>
+        </div>
+        <div style="margin-left:auto;display:flex;gap:8px;">
+          <button class="btn btn-orange" id="btn-signin" onclick="m365SignIn()">🔑 Sign in with Microsoft</button>
+          <button class="btn btn-outline" id="btn-signout" onclick="m365SignOut()" style="display:none;">Sign Out</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SETUP GUIDE -->
+  <div class="card" id="setup-guide-card">
+    <div class="card-title"><span class="icon">⚙️</span> Azure App Registration Setup</div>
+    <div class="card-sub">One-time setup (~5 minutes) — required to enable live Microsoft 365 data</div>
+    <div class="callout callout-amber" style="margin-bottom:16px;">
+      <strong>Why is this needed?</strong> Microsoft requires an App Registration to authenticate users and access Microsoft Graph API (calendar, email, tasks). This is a standard OAuth 2.0 security requirement — your credentials are never stored in this app.
+    </div>
+    <div style="display:flex;flex-direction:column;gap:0;">
+      <div style="display:flex;gap:14px;padding:14px 0;border-bottom:1px solid var(--border);">
+        <div style="width:28px;height:28px;border-radius:50%;background:var(--orange);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0;">1</div>
+        <div><strong>Go to Azure Portal</strong><br><span style="font-size:12px;color:var(--mid);">Visit <a href="https://portal.azure.com" target="_blank" style="color:var(--orange);">portal.azure.com</a> → Microsoft Entra ID → App registrations → New registration</span></div>
+      </div>
+      <div style="display:flex;gap:14px;padding:14px 0;border-bottom:1px solid var(--border);">
+        <div style="width:28px;height:28px;border-radius:50%;background:var(--orange);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0;">2</div>
+        <div><strong>Configure the App Registration</strong><br><span style="font-size:12px;color:var(--mid);">Name: "Engineer Delivery Dashboard" · Supported account types: "Accounts in this organizational directory only" · Redirect URI: <code style="background:var(--light);padding:2px 6px;border-radius:3px;">http://localhost</code> (type: Single-page application)</span></div>
+      </div>
+      <div style="display:flex;gap:14px;padding:14px 0;border-bottom:1px solid var(--border);">
+        <div style="width:28px;height:28px;border-radius:50%;background:var(--orange);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0;">3</div>
+        <div><strong>Add API Permissions</strong><br><span style="font-size:12px;color:var(--mid);">API Permissions → Add permission → Microsoft Graph → Delegated permissions → Add: <code style="background:var(--light);padding:2px 6px;border-radius:3px;">User.Read</code>, <code style="background:var(--light);padding:2px 6px;border-radius:3px;">Calendars.Read</code>, <code style="background:var(--light);padding:2px 6px;border-radius:3px;">Mail.Read</code>, <code style="background:var(--light);padding:2px 6px;border-radius:3px;">Tasks.Read</code></span></div>
+      </div>
+      <div style="display:flex;gap:14px;padding:14px 0;border-bottom:1px solid var(--border);">
+        <div style="width:28px;height:28px;border-radius:50%;background:var(--orange);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0;">4</div>
+        <div><strong>Copy your Client ID</strong><br><span style="font-size:12px;color:var(--mid);">Overview tab → Application (client) ID → Copy the GUID (looks like: <code style="background:var(--light);padding:2px 6px;border-radius:3px;">xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx</code>)</span></div>
+      </div>
+      <div style="display:flex;gap:14px;padding:14px 0;">
+        <div style="width:28px;height:28px;border-radius:50%;background:var(--orange);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0;">5</div>
+        <div style="flex:1;"><strong>Enter your Client ID below and sign in</strong><br><span style="font-size:12px;color:var(--mid);">Paste your Client ID, save it, then click "Sign in with Microsoft" above</span>
+          <div style="display:flex;gap:8px;margin-top:10px;align-items:center;">
+            <input type="text" id="client-id-input" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" style="flex:1;padding:8px 12px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;" value="">
+            <button class="btn btn-orange" onclick="saveClientId()">Save Client ID</button>
+            <button class="btn btn-outline" onclick="clearClientId()">Clear</button>
+          </div>
+          <div id="client-id-status" style="font-size:12px;margin-top:6px;color:var(--mid);"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PERMISSIONS REFERENCE -->
+  <div class="card">
+    <div class="card-title"><span class="icon">🛡️</span> What This App Accesses</div>
+    <div class="card-sub">Minimal permissions — read-only access to your Microsoft 365 data</div>
+    <div class="grid-4" style="margin-top:8px;">
+      <div style="background:var(--light);border-radius:8px;padding:14px;border-top:3px solid var(--orange);">
+        <div style="font-size:20px;margin-bottom:6px;">👤</div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:4px;">User.Read</div>
+        <div style="font-size:11px;color:var(--mid);">Your name, email, and profile photo for the dashboard header</div>
+      </div>
+      <div style="background:var(--light);border-radius:8px;padding:14px;border-top:3px solid var(--orange);">
+        <div style="font-size:20px;margin-bottom:6px;">📅</div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:4px;">Calendars.Read</div>
+        <div style="font-size:11px;color:var(--mid);">Today's and upcoming calendar events — read only, no modifications</div>
+      </div>
+      <div style="background:var(--light);border-radius:8px;padding:14px;border-top:3px solid var(--orange);">
+        <div style="font-size:20px;margin-bottom:6px;">📧</div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:4px;">Mail.Read</div>
+        <div style="font-size:11px;color:var(--mid);">Recent inbox messages — read only, no send or delete access</div>
+      </div>
+      <div style="background:var(--light);border-radius:8px;padding:14px;border-top:3px solid var(--orange);">
+        <div style="font-size:20px;margin-bottom:6px;">✅</div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:4px;">Tasks.Read</div>
+        <div style="font-size:11px;color:var(--mid);">Microsoft To Do tasks — read only, surfaces flagged items in Priority Inbox</div>
+      </div>
+    </div>
+    <div class="callout callout-green" style="margin-top:14px;">
+      <strong>Privacy:</strong> This app runs entirely in your browser. No data is sent to any server. Your Microsoft 365 data is fetched directly from Microsoft Graph API and displayed locally. Nothing is stored beyond your browser session.
+    </div>
+  </div>
+</div>
+
+<!-- M365 CALENDAR & INBOX PAGE -->
+<div class="page" id="page-m365">
+  <div class="section-header"><h2>Calendar & Inbox</h2><p id="m365-page-sub">Connect Microsoft 365 to display live data — or browse demo data below</p></div>
+
+  <!-- CONNECT PROMPT (shown when not authenticated) -->
+  <div id="m365-connect-prompt" class="callout callout-blue" style="display:flex;align-items:center;justify-content:space-between;gap:16px;">
+    <div><strong>📊 Demo Mode</strong> — Showing sample data. <a onclick="showPage('m365setup')" style="color:var(--orange);cursor:pointer;font-weight:700;">Connect Microsoft 365 →</a> to display your live calendar and inbox.</div>
+    <button class="btn btn-orange" onclick="showPage('m365setup')" style="white-space:nowrap;">🔑 Connect Now</button>
+  </div>
+
+  <!-- LIVE MODE BANNER (shown when authenticated) -->
+  <div id="m365-live-banner" class="callout callout-green" style="display:none;align-items:center;justify-content:space-between;gap:16px;">
+    <div><strong>✅ Live Microsoft 365 Data</strong> — Showing real-time data from your account. Last refreshed: <span id="m365-last-refresh">just now</span></div>
+    <button class="btn btn-outline" onclick="refreshM365Data()" style="white-space:nowrap;">🔄 Refresh</button>
+  </div>
+
+  <div class="grid-2" style="margin-top:16px;">
+    <!-- CALENDAR PANEL -->
+    <div>
+      <div class="card">
+        <div class="card-title"><span class="icon">📅</span> Today's Calendar <span id="cal-live-badge" style="display:none;" class="badge badge-green" style="font-size:10px;">LIVE</span></div>
+        <div class="card-sub" id="cal-date-label">Loading...</div>
+        <div id="calendar-events" style="display:flex;flex-direction:column;gap:8px;margin-top:8px;">
+          <!-- populated by JS -->
+        </div>
+        <div style="margin-top:12px;border-top:1px solid var(--border);padding-top:12px;">
+          <div class="card-title" style="font-size:13px;margin-bottom:8px;"><span class="icon">📆</span> Upcoming (Next 7 Days)</div>
+          <div id="upcoming-events" style="display:flex;flex-direction:column;gap:6px;">
+            <!-- populated by JS -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- INBOX PANEL -->
+    <div>
+      <div class="card">
+        <div class="card-title"><span class="icon">📧</span> Recent Inbox <span id="inbox-live-badge" style="display:none;" class="badge badge-green" style="font-size:10px;">LIVE</span></div>
+        <div class="card-sub">Latest messages — flagged items surface in Priority Inbox</div>
+        <div style="display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap;">
+          <button class="tab-btn active" onclick="filterInbox(this,'all')">All</button>
+          <button class="tab-btn" onclick="filterInbox(this,'unread')">Unread</button>
+          <button class="tab-btn" onclick="filterInbox(this,'flagged')">Flagged</button>
+          <button class="tab-btn" onclick="filterInbox(this,'important')">Important</button>
+        </div>
+        <div id="inbox-messages" style="display:flex;flex-direction:column;gap:6px;">
+          <!-- populated by JS -->
+        </div>
+      </div>
+
+      <!-- TASKS PANEL -->
+      <div class="card" style="margin-top:0;">
+        <div class="card-title"><span class="icon">✅</span> Microsoft To Do <span id="tasks-live-badge" style="display:none;" class="badge badge-green" style="font-size:10px;">LIVE</span></div>
+        <div class="card-sub">Flagged tasks — due today and overdue surface in Priority Inbox</div>
+        <div id="tasks-list" style="display:flex;flex-direction:column;gap:6px;margin-top:8px;">
+          <!-- populated by JS -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EEP SIGNAL OVERLAY -->
+  <div class="card" style="margin-top:4px;">
+    <div class="card-title"><span class="icon">📡</span> EEP Signal Overlay</div>
+    <div class="card-sub">Calendar and inbox items analyzed against EEP signal streams — observable patterns surfaced automatically</div>
+    <div id="eep-signal-overlay" style="display:flex;flex-direction:column;gap:8px;margin-top:8px;">
+      <!-- populated by JS -->
+    </div>
+  </div>
+</div>
+
+
+<!-- HELP PAGE -->
+<style>
+.help-hero{background:var(--charcoal);color:#fff;padding:24px 28px;border-radius:8px;margin-bottom:18px;border-left:4px solid var(--orange)}
+.help-hero h2{font-size:19px;font-weight:800;margin-bottom:5px}
+.help-hero p{font-size:13px;color:#aaa;line-height:1.6}
+.help-toc{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:18px}
+.help-toc-btn{padding:5px 13px;border-radius:20px;font-size:12px;font-weight:700;background:rgba(255,98,0,.1);border:1px solid rgba(255,98,0,.22);color:var(--orange);cursor:pointer;font-family:inherit;transition:all .15s}
+.help-toc-btn:hover{background:var(--orange);color:#fff}
+.help-sec{background:#fff;border:1px solid var(--border);border-radius:8px;margin-bottom:14px;overflow:hidden}
+.help-sec-hdr{display:flex;align-items:center;gap:13px;padding:14px 20px;background:var(--light,#F5F5F5);border-bottom:1px solid var(--border)}
+.help-sec-icon{font-size:22px;flex-shrink:0}
+.help-sec-title{font-size:14px;font-weight:700;color:var(--charcoal)}
+.help-sec-sub{font-size:11px;color:var(--mid,#9E9E9E);margin-top:1px}
+.help-item{padding:13px 20px;border-bottom:1px solid var(--border)}
+.help-item:last-child{border-bottom:none}
+.help-q{font-size:13px;font-weight:700;color:var(--charcoal);margin-bottom:5px;display:flex;align-items:flex-start;gap:8px}
+.help-q-badge{background:var(--orange);color:#fff;font-size:10px;font-weight:700;padding:1px 6px;border-radius:3px;flex-shrink:0;margin-top:1px}
+.help-a{font-size:13px;color:#555;line-height:1.7;padding-left:26px}
+.help-a ul{margin:5px 0 0 16px}
+.help-a ul li{margin-bottom:3px}
+.help-a code{background:var(--light,#F5F5F5);border:1px solid var(--border);padding:1px 6px;border-radius:3px;font-size:12px;font-family:monospace}
+.help-a .help-tip{background:#FFF8E1;border-left:3px solid var(--amber,#F57C00);padding:8px 12px;margin-top:8px;border-radius:0 6px 6px 0;font-size:12px;color:#555}
+.help-a .help-tip strong{color:var(--amber,#F57C00)}
+.help-a .help-note{background:#E3F2FD;border-left:3px solid var(--blue,#1565C0);padding:8px 12px;margin-top:8px;border-radius:0 6px 6px 0;font-size:12px;color:#555}
+</style>
+<div class="page" id="page-help">
+  <div class="help-hero">
+    <h2>📖 How to Use — Engineer Delivery Dashboard</h2>
+    <p>Navigation guide, feature explanations, tips, and troubleshooting for every section of this dashboard.</p>
+  </div>
+  <div class="help-toc"><button class="help-toc-btn" onclick="document.getElementById('hs-nav').scrollIntoView({behavior:'smooth'})">🧭 Navigation</button><button class="help-toc-btn" onclick="document.getElementById('hs-engagement').scrollIntoView({behavior:'smooth'})">📋 Engagement Tracker</button><button class="help-toc-btn" onclick="document.getElementById('hs-signals').scrollIntoView({behavior:'smooth'})">📡 Signal Intelligence</button><button class="help-toc-btn" onclick="document.getElementById('hs-compliance').scrollIntoView({behavior:'smooth'})">✅ Compliance Scorecard</button><button class="help-toc-btn" onclick="document.getElementById('hs-comms').scrollIntoView({behavior:'smooth'})">✉️ Three Tests Checker</button><button class="help-toc-btn" onclick="document.getElementById('hs-m365').scrollIntoView({behavior:'smooth'})">📅 M365 Calendar & Inbox</button><button class="help-toc-btn" onclick="document.getElementById('hs-advisory').scrollIntoView({behavior:'smooth'})">📄 M365 Advisory Builder</button><button class="help-toc-btn" onclick="document.getElementById('hs-troubleshoot').scrollIntoView({behavior:'smooth'})">🔧 Troubleshooting</button></div>
+  <div class="help-sec" id="hs-nav">
+          <div class="help-sec-hdr">
+            <span class="help-sec-icon">🧭</span>
+            <div><div class="help-sec-title">Navigation</div><div class="help-sec-sub">How to move around the dashboard</div></div>
+          </div>
+          <div class="help-item">
+              <div class="help-q"><span class="help-q-badge">Q</span>How do I navigate between sections?</div>
+              <div class="help-a">Use the <strong>left sidebar</strong> to navigate. Click any item to switch pages instantly. The active page is highlighted in orange. On mobile, the sidebar collapses — tap the menu icon to open it.</div>
+            </div><div class="help-item">
+              <div class="help-q"><span class="help-q-badge">Q</span>What does the ⚡ Priority Inbox button do?</div>
+              <div class="help-a">The orange <strong>Priority Inbox</strong> button in the top bar is a quick-jump to your highest-priority work items. It's always visible regardless of which page you're on.</div>
+            </div><div class="help-item">
+              <div class="help-q"><span class="help-q-badge">Q</span>How do I get back to the Home page?</div>
+              <div class="help-a">Click <strong>🏠 Home</strong> in the sidebar, or click the dashboard title at the top of the sidebar.</div>
+            </div>
+        </div><div class="help-sec" id="hs-engagement">
+          <div class="help-sec-hdr">
+            <span class="help-sec-icon">📋</span>
+            <div><div class="help-sec-title">Engagement Tracker</div><div class="help-sec-sub">Per-dispatch delivery step checklist</div></div>
+          </div>
+          <div class="help-item">
+              <div class="help-q"><span class="help-q-badge">Q</span>What are the 8 delivery steps?</div>
+              <div class="help-a"><ul><li><strong>SCOPE</strong> — Scoping call completed, Recap email sent</li><li><strong>PREEMAIL</strong> — Pre-engagement/Pre-Poll email sent</li><li><strong>UPLOAD</strong> — Workshop materials uploaded early</li><li><strong>TECHCONTACT</strong> — Correct technical contact entered</li><li><strong>POLL</strong> — Adaptive polling executed</li><li><strong>POSTEMAIL</strong> — Daily/Final Recap email sent</li><li><strong>CLOSEOUT</strong> — Closeout motion completed</li><li><strong>SURVEY</strong> — Survey/closeout email sent</li></ul></div>
+            </div><div class="help-item">
+              <div class="help-q"><span class="help-q-badge">Q</span>What is the difference between Validated, Claimed, and Missing?</div>
+              <div class="help-a"><strong>Validated ✓</strong> — A system signal exists (sent email, calendar event, upload). <strong>Claimed ~</strong> — Self-reported only, no system evidence. <strong>Missing ✗</strong> — Required step, past due, no signal. Only Validated steps count toward your completion score.<div class="help-tip"><strong>Tip:</strong> Claimed steps show as "unverified" — always aim for Validated status.</div></div>
+            </div><div class="help-item">
+              <div class="help-q"><span class="help-q-badge">Q</span>How is the completion percentage calculated?</div>
+              <div class="help-a">Completion = Validated steps ÷ Total required steps. Claimed steps do not count. The progress bar updates in real time as you mark steps.</div>
+            </div>
+        </div><div class="help-sec" id="hs-signals">
+          <div class="help-sec-hdr">
+            <span class="help-sec-icon">📡</span>
+            <div><div class="help-sec-title">Signal Intelligence</div><div class="help-sec-sub">Three signal streams with flag detection</div></div>
+          </div>
+          <div class="help-item">
+              <div class="help-q"><span class="help-q-badge">Q</span>What are the three signal streams?</div>
+              <div class="help-a"><ul><li><strong>Customer Friction</strong> — Indicators of confusion, dissatisfaction, or unmet expectation</li><li><strong>Communication Clarity</strong> — Whether outbound messaging is landing correctly</li><li><strong>Ownership Follow-Through</strong> — Whether commitments are being tracked and closed</li></ul></div>
+            </div><div class="help-item">
+              <div class="help-q"><span class="help-q-badge">Q</span>When should I set Amber vs Red?</div>
+              <div class="help-a"><strong>Amber 🟡</strong> — One indicator present; investigate and address before it escalates. <strong>Red 🔴</strong> — Two or more indicators simultaneously, or client has raised concern to a non-engagement contact. Red = same-day escalation required.<div class="help-tip"><strong>Tip:</strong> When in doubt, set Amber. The cost of investigating a false Amber is one conversation. The cost of ignoring a real Amber is a trust failure.</div></div>
+            </div><div class="help-item">
+              <div class="help-q"><span class="help-q-badge">Q</span>What is signal language vs status language?</div>
+              <div class="help-a"><strong>Status:</strong> "Things are going well." — Zero information density.<br><strong>Signal:</strong> "The client's VP stopped attending our weekly calls — that's a friction signal." — Changes a decision. Always use signal language in your observations.</div>
+            </div>
+        </div><div class="help-sec" id="hs-compliance">
+          <div class="help-sec-hdr">
+            <span class="help-sec-icon">✅</span>
+            <div><div class="help-sec-title">Compliance Scorecard</div><div class="help-sec-sub">0–100% weighted compliance scoring</div></div>
+          </div>
+          <div class="help-item">
+              <div class="help-q"><span class="help-q-badge">Q</span>How is the compliance score calculated?</div>
+              <div class="help-a">Eight weighted items sum to 100%: Scoping Recap (15%), Pre-Poll (20%), Data Sheet (10%), RMOT in subject (10%), PCC in CC (10%), Delivery Recap (15%), Follow-Up (10%), Time-keeping tags (10%). Check each item as you complete it.</div>
+            </div><div class="help-item">
+              <div class="help-q"><span class="help-q-badge">Q</span>What is the passing threshold?</div>
+              <div class="help-a">The target threshold is <strong>70%</strong> — shown on the progress bar. Below 70% opens a compliance gap. The goal is 100% on every engagement.</div>
+            </div><div class="help-item">
+              <div class="help-q"><span class="help-q-badge">Q</span>Do I need to re-score for each engagement?</div>
+              <div class="help-a">Yes — the scorecard reflects your current engagement. Reset it at the start of each new dispatch by unchecking all items. Your score is stored in your browser session.</div>
+            </div>
+        </div><div class="help-sec" id="hs-comms">
+          <div class="help-sec-hdr">
+            <span class="help-sec-icon">✉️</span>
+            <div><div class="help-sec-title">Three Tests Checker</div><div class="help-sec-sub">Validate communications before sending</div></div>
+          </div>
+          <div class="help-item">
+              <div class="help-q"><span class="help-q-badge">Q</span>What are the Three Tests?</div>
+              <div class="help-a"><ul><li><strong>Repeat-Back Test</strong> — Could the client accurately restate the key content in their own words?</li><li><strong>Stakes Test</strong> — Does the client understand what happens next if they do or don't act?</li><li><strong>Next-Step Test</strong> — Is the immediate next action crystal clear — who, when, how confirmed?</li></ul></div>
+            </div><div class="help-item">
+              <div class="help-q"><span class="help-q-badge">Q</span>Are there exceptions to the Three Tests?</div>
+              <div class="help-a"><strong>No.</strong> There are no exceptions for seniority or schedule pressure. A communication that fails any one test is revised before delivery. The moments when you're most tempted to skip the tests are the moments when they matter most.</div>
+            </div><div class="help-item">
+              <div class="help-q"><span class="help-q-badge">Q</span>Do the Three Tests apply to internal communications?</div>
+              <div class="help-a">Yes — the Three Tests apply to internal handoffs as well as client-facing communications. Internal clarity is the leading indicator of external clarity.</div>
+            </div>
+        </div><div class="help-sec" id="hs-m365">
+          <div class="help-sec-hdr">
+            <span class="help-sec-icon">📅</span>
+            <div><div class="help-sec-title">M365 Calendar & Inbox</div><div class="help-sec-sub">Live Microsoft 365 data integration</div></div>
+          </div>
+          <div class="help-item">
+              <div class="help-q"><span class="help-q-badge">Q</span>How do I connect my Microsoft 365 account?</div>
+              <div class="help-a">Go to <strong>🔑 M365 Connect</strong> in the sidebar. Follow the 5-step Azure App Registration guide, paste your Client ID, and click Sign In. The setup takes approximately 5 minutes.</div>
+            </div><div class="help-item">
+              <div class="help-q"><span class="help-q-badge">Q</span>What data does the app access?</div>
+              <div class="help-a"><ul><li><strong>User.Read</strong> — Your name and profile</li><li><strong>Calendars.Read</strong> — Today's and upcoming events (read-only)</li><li><strong>Mail.Read</strong> — Recent inbox messages (read-only)</li><li><strong>Tasks.Read</strong> — Microsoft To Do tasks (read-only)</li></ul><div class="help-note">All data is fetched directly from Microsoft Graph API and displayed locally. Nothing is sent to any server.</div></div>
+            </div><div class="help-item">
+              <div class="help-q"><span class="help-q-badge">Q</span>What is Demo Mode?</div>
+              <div class="help-a">Demo Mode shows realistic mock data — EEP-themed calendar events, inbox messages, and tasks — without requiring authentication. It activates automatically when no Microsoft account is connected.</div>
+            </div><div class="help-item">
+              <div class="help-q"><span class="help-q-badge">Q</span>What is the EEP Signal Overlay?</div>
+              <div class="help-a">The Signal Overlay analyzes your inbox for EEP signal patterns — unread volume, flagged items, high-importance messages — and maps them to the three signal streams (Customer Friction, Communication Clarity, Ownership Follow-Through).</div>
+            </div>
+        </div><div class="help-sec" id="hs-advisory">
+          <div class="help-sec-hdr">
+            <span class="help-sec-icon">📄</span>
+            <div><div class="help-sec-title">M365 Advisory Builder</div><div class="help-sec-sub">4-phase advisory generation pipeline</div></div>
+          </div>
+          <div class="help-item">
+              <div class="help-q"><span class="help-q-badge">Q</span>What does the Advisory Builder do?</div>
+              <div class="help-a">It generates a Weekly M365 Change Advisory for a customer — a structured document covering relevant Microsoft 365 service changes, filtered by your customer's industry, region, and services. Output formats: Word, PDF, PPTX, Markdown.</div>
+            </div><div class="help-item">
+              <div class="help-q"><span class="help-q-badge">Q</span>What are the four generation phases?</div>
+              <div class="help-a"><ul><li><strong>Gathering</strong> — Applies config filters, groups included updates by section</li><li><strong>Industry Lens</strong> — Attaches industry-specific framing</li><li><strong>Drafting</strong> — Composes narrative per section with audience depth and tone</li><li><strong>Packaging</strong> — Renders all four output formats from one narrative</li></ul></div>
+            </div><div class="help-item">
+              <div class="help-q"><span class="help-q-badge">Q</span>What is Quick Export?</div>
+              <div class="help-a">Quick Export skips phases 2–3 and dumps grouped updates into artifact templates with minimal framing. Use it when you need a fast, unformatted export.</div>
+            </div>
+        </div><div class="help-sec" id="hs-troubleshoot">
+          <div class="help-sec-hdr">
+            <span class="help-sec-icon">🔧</span>
+            <div><div class="help-sec-title">Troubleshooting</div><div class="help-sec-sub">Common issues and fixes</div></div>
+          </div>
+          <div class="help-item">
+              <div class="help-q"><span class="help-q-badge">Q</span>My compliance score is not updating.</div>
+              <div class="help-a">Click the checkboxes in the <strong>Mark Compliance Items Complete</strong> section on the Compliance Scorecard page. Each checkbox triggers a score recalculation. If the score still doesn't update, try refreshing the page.</div>
+            </div><div class="help-item">
+              <div class="help-q"><span class="help-q-badge">Q</span>The M365 sign-in popup is blocked.</div>
+              <div class="help-a">Your browser is blocking the authentication popup. Allow popups for this page: in Chrome, click the popup-blocked icon in the address bar and select "Always allow." Then try signing in again.</div>
+            </div><div class="help-item">
+              <div class="help-q"><span class="help-q-badge">Q</span>My data is gone after refreshing.</div>
+              <div class="help-a">The dashboard stores data in your browser's session storage. Refreshing the page resets session data. For persistent storage, use the Export features where available, or note your entries before refreshing.</div>
+            </div><div class="help-item">
+              <div class="help-q"><span class="help-q-badge">Q</span>The splash screen keeps appearing.</div>
+              <div class="help-a">The splash screen reappears after 24 hours as a security measure. Accept the terms again to continue. If it appears immediately after accepting, check that your browser allows localStorage (not in private/incognito mode).</div>
+            </div>
+        </div>
+</div>
+
+</main>
+
+<script>
+// ── NAVIGATION ──
+const pageMap={home:'Home',priority:'Work Priority Inbox',engagement:'Engagement Tracker',compliance:'Compliance Scorecard',signals:'Signal Intelligence',comms:'Three Tests Communication Checker',scoping:'Scoping Checklist',templates:'Email Templates',advisory:'M365 Advisory Builder',selfassess:'Skills Self-Assessment',scenarios:'CEES Scenarios',readiness:'Readiness Tracker'};
+function showPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  const pg=document.getElementById('page-'+id);
+  if(pg)pg.classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n=>{if(n.getAttribute('onclick')&&n.getAttribute('onclick').includes("'"+id+"'"))n.classList.add('active');});
+  document.getElementById('topbar-title').textContent=pageMap[id]||id;
+  window.scrollTo(0,0);
+  if(id==='selfassess')setTimeout(drawRadar,100);
+}
+
+// ── TABS ──
+function switchTab(btn,groupId,tabId){
+  const group=document.getElementById(groupId);
+  if(!group)return;
+  group.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+  const tab=document.getElementById(tabId);
+  if(tab)tab.classList.add('active');
+  const bar=btn.closest('.tab-bar');
+  if(bar)bar.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+// ── SIGNAL STREAMS ──
+function toggleStream(id){const body=document.getElementById(id+'-body');if(body)body.classList.toggle('open');}
+function setFlag(e,streamId,color){
+  e.stopPropagation();
+  const stream=document.getElementById(streamId);
+  if(!stream)return;
+  const header=stream.querySelector('.signal-stream-header');
+  const colors={green:'var(--green-light)',amber:'var(--amber-light)',red:'var(--red-light)'};
+  if(header)header.style.background=colors[color]||'#fff';
+  stream.querySelectorAll('.signal-flag').forEach(b=>b.style.outline='none');
+  e.target.style.outline='2px solid #333';
+  updateHomeSignals();
+}
+function updateHomeSignals(){
+  let flags=0;
+  ['stream-friction','stream-clarity','stream-ownership'].forEach(id=>{
+    const h=document.getElementById(id)?.querySelector('.signal-stream-header');
+    if(h&&(h.style.background.includes('amber')||h.style.background.includes('red')))flags++;
+  });
+  document.getElementById('home-signals').textContent=flags;
+}
+
+// ── SCENARIOS ──
+function selectOption(btn,scId,isCorrect){
+  const opts=document.getElementById(scId+'-opts');
+  if(!opts)return;
+  opts.querySelectorAll('.scenario-option').forEach(b=>{b.classList.remove('correct','incorrect');b.disabled=true;});
+  btn.classList.add(isCorrect?'correct':'incorrect');
+  if(!isCorrect){opts.querySelectorAll('.scenario-option').forEach(b=>{if(b.getAttribute('onclick')&&b.getAttribute('onclick').includes('true'))b.classList.add('correct');});}
+}
+function revealScenario(scId){const reveal=document.getElementById(scId+'-reveal');if(reveal)reveal.classList.add('show');}
+
+// ── ENGAGEMENT TRACKER ──
+var stepStates={};
+function markStep(num,state){
+  stepStates[num]=state;
+  const el=document.getElementById('step-'+num+'-status');
+  if(!el)return;
+  if(state==='done'){el.className='step-status step-done';el.textContent='✓';}
+  else if(state==='claimed'){el.className='step-status step-pending';el.textContent='~';}
+  else if(state==='missing'){el.className='step-status step-missing';el.textContent='✗';}
+  updateEngProgress();
+}
+function updateEngProgress(){
+  const done=Object.values(stepStates).filter(s=>s==='done').length;
+  const pct=Math.round((done/8)*100);
+  const fill=document.getElementById('eng-progress');
+  const pctEl=document.getElementById('eng-pct');
+  if(fill)fill.style.width=pct+'%';
+  if(pctEl)pctEl.textContent=done+'/8 steps';
+  document.getElementById('home-open-items').textContent=8-done;
+}
+function updateEngName(){
+  const name=document.getElementById('eng-name')?.value||'Active Engagement';
+  document.getElementById('topbar-sub').textContent='Engineer Delivery Dashboard · '+name;
+}
+
+// ── COMPLIANCE SCORECARD ──
+var complianceScores={};
+function toggleCompliance(num,weight){
+  const el=document.getElementById('ci-'+num);
+  if(!el)return;
+  el.classList.toggle('checked');
+  el.textContent=el.classList.contains('checked')?'✓':'';
+  if(el.classList.contains('checked'))complianceScores[num]=weight;
+  else delete complianceScores[num];
+  const bar=document.getElementById('comp-'+num);
+  if(bar)bar.style.width=el.classList.contains('checked')?'100%':'0%';
+  updateComplianceTotal();
+}
+function updateComplianceTotal(){
+  const total=Object.values(complianceScores).reduce((a,b)=>a+b,0);
+  const el=document.getElementById('total-compliance-score');
+  const prog=document.getElementById('compliance-progress');
+  const badge=document.getElementById('compliance-level-badge');
+  if(el)el.textContent=total+'%';
+  if(prog)prog.style.width=total+'%';
+  if(badge){
+    let cls='badge-gray',txt='Not yet scored';
+    if(total>=90){cls='badge-green';txt='Above Standard';}
+    else if(total>=70){cls='badge-orange';txt='At Standard';}
+    else if(total>=50){cls='badge-amber';txt='Developing';}
+    else if(total>0){cls='badge-red';txt='Below Standard';}
+    badge.innerHTML='<span class="badge '+cls+'">'+txt+'</span>';
+  }
+  document.getElementById('home-compliance').textContent=total>0?total+'%':'0%';
+}
+
+// ── THREE TESTS ──
+var testResults={};
+function runThreeTests(){
+  const draft=document.getElementById('comm-draft')?.value;
+  if(!draft||draft.trim()===''){alert('Please paste a communication draft first.');return;}
+  testResults={};
+  ['test-1-result','test-2-result','test-3-result'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML='';});
+  document.getElementById('tests-summary').style.display='none';
+  alert('Draft loaded. Now evaluate each test and mark Pass or Fail.');
+}
+function setTestResult(num,result){
+  const el=document.getElementById('test-'+num+'-result');
+  if(!el)return;
+  testResults[num]=result;
+  if(result==='pass'){el.innerHTML='<div class="callout callout-green" style="margin:0;padding:8px 12px;"><strong>✓ Pass</strong> — This test is satisfied.</div>';}
+  else{el.innerHTML='<div class="callout callout-red" style="margin:0;padding:8px 12px;"><strong>✗ Fail — Revise before sending.</strong> Rewrite the communication to address this test, then re-check.</div>';}
+  if(Object.keys(testResults).length===3)showTestsSummary();
+}
+function showTestsSummary(){
+  const summary=document.getElementById('tests-summary');
+  const content=document.getElementById('tests-summary-content');
+  if(!summary||!content)return;
+  const allPass=Object.values(testResults).every(r=>r==='pass');
+  const fails=Object.entries(testResults).filter(([k,v])=>v==='fail').map(([k])=>['Repeat-Back','Stakes','Next-Step'][parseInt(k)-1]);
+  if(allPass){content.innerHTML='<div class="callout callout-green"><strong>✓ All Three Tests Pass</strong> — This communication meets the EEP standard. You may send it.</div>';}
+  else{content.innerHTML='<div class="callout callout-red"><strong>✗ '+fails.length+' Test(s) Failed: '+fails.join(', ')+'</strong><br>Revise the communication to address the failed tests, then re-run all three tests before sending. No exceptions for seniority or schedule pressure.</div>';}
+  summary.style.display='block';
+}
+
+// ── PRIORITY INBOX ──
+function addPriorityItem(){
+  const desc=document.getElementById('new-item-desc')?.value;
+  const priority=document.getElementById('new-item-priority')?.value;
+  const route=document.getElementById('new-item-route')?.value;
+  if(!desc||desc.trim()===''){alert('Please enter an item description.');return;}
+  const list=document.getElementById('priority-list');
+  const div=document.createElement('div');
+  div.className='priority-item';
+  div.innerHTML='<div class="priority-badge '+priority+'">'+priority.toUpperCase()+'</div><div style="flex:1;"><strong>'+desc+'</strong><br><span style="color:var(--mid);font-size:12px;">Route: '+route+'</span></div><button class="btn btn-outline" style="padding:5px 12px;font-size:12px;" onclick="this.parentElement.remove()">Remove</button>';
+  list.appendChild(div);
+  document.getElementById('new-item-desc').value='';
+}
+
+// ── ADVISORY BUILDER ──
+var advisoryUpdates=[];
+function checkAdvisoryReady(){
+  const customer=document.getElementById('adv-customer')?.value;
+  const btn=document.getElementById('generate-btn');
+  const msg=document.getElementById('advisory-ready-msg');
+  const ready=customer&&customer.trim()!=='';
+  if(btn){btn.disabled=!ready;btn.style.opacity=ready?'1':'0.5';}
+  if(msg)msg.textContent=ready?'Ready to generate — click Generate Advisory':'Enter customer name to enable generation';
+}
+function addAdvisoryUpdate(){
+  const text=document.getElementById('adv-update-text')?.value;
+  if(!text||text.trim()==='')return;
+  advisoryUpdates.push(text.trim());
+  renderAdvisoryUpdates();
+  document.getElementById('adv-update-text').value='';
+}
+function renderAdvisoryUpdates(){
+  const container=document.getElementById('advisory-updates');
+  if(!container)return;
+  if(advisoryUpdates.length===0){container.innerHTML='<div style="font-size:12px;color:var(--mid);text-align:center;padding:20px;">No updates added yet.</div>';return;}
+  container.innerHTML=advisoryUpdates.map((u,i)=>'<div style="padding:8px;background:var(--light);border-radius:6px;margin-bottom:6px;font-size:12px;display:flex;gap:8px;align-items:flex-start;"><span style="flex:1;">'+u.substring(0,120)+(u.length>120?'...':'')+'</span><button onclick="removeUpdate('+i+')" style="background:none;border:none;cursor:pointer;color:var(--red);font-size:14px;flex-shrink:0;">×</button></div>').join('');
+}
+function removeUpdate(i){advisoryUpdates.splice(i,1);renderAdvisoryUpdates();}
+function toggleService(btn){btn.classList.toggle('btn-orange');btn.classList.toggle('btn-outline');}
+function generateAdvisory(){
+  const pipeline=document.getElementById('advisory-pipeline');
+  const output=document.getElementById('advisory-output');
+  if(pipeline)pipeline.style.display='block';
+  if(output)output.style.display='none';
+  const phases=['phase-1','phase-2','phase-3','phase-4'];
+  const labels=['Gathering updates and applying config filter...','Applying industry lens and framing...','Drafting narrative per enabled sections...','Packaging artifacts (Word/PDF/PPTX/Markdown)...'];
+  let current=0;
+  const progress=document.getElementById('advisory-progress');
+  const status=document.getElementById('advisory-status');
+  function nextPhase(){
+    if(current>0){const prev=document.getElementById(phases[current-1]);if(prev){prev.style.background='var(--green-light)';prev.style.border='1px solid var(--green)';}}
+    if(current<phases.length){
+      const el=document.getElementById(phases[current]);
+      if(el){el.style.background='var(--orange-light)';el.style.border='1px solid var(--orange)';}
+      if(progress)progress.style.width=((current+1)/phases.length*100)+'%';
+      if(status)status.textContent=labels[current];
+      current++;
+      setTimeout(nextPhase,1200);
+    } else {
+      if(progress)progress.style.width='100%';
+      if(status)status.textContent='Advisory complete!';
+      setTimeout(()=>{if(output)output.style.display='block';},400);
+    }
+  }
+  nextPhase();
+}
+function quickExport(){
+  const customer=document.getElementById('adv-customer')?.value;
+  if(!customer||customer.trim()===''){alert('Enter customer name first.');return;}
+  alert('Quick Export: Skipping phases 2-3. Generating advisory from included updates with minimal framing...\n\nIn a full implementation, this would generate the 4-format artifacts immediately.');
+}
+function downloadAdvisory(format){
+  const customer=document.getElementById('adv-customer')?.value||'Customer';
+  const industry=document.getElementById('adv-industry')?.value||'Other';
+  const date=new Date().toISOString().slice(0,10);
+  const filename=`Weekly-M365-Change-Advisory-${customer.replace(/\s+/g,'-')}-${date}.${format}`;
+  alert(`Advisory ready for download:\n${filename}\n\nIn a full implementation, this would generate and download the ${format.toUpperCase()} file with the full narrative, industry lens (${industry}), and all included updates.`);
+}
+
+// ── SELF-ASSESSMENT RADAR ──
+var dimScores=[0,0,0,0,0,0];
+var DIMS=['Signal Intelligence','Ownership Clarity','Communication Discipline','Outcome Validation','Trust Architecture','Program Stewardship'];
+var COLORS={1:'var(--red)',2:'var(--amber)',3:'var(--green)',4:'var(--blue)'};
+
+function setDimScore(dimIdx,score,btn){
+  dimScores[dimIdx]=score;
+  const container=btn.closest('div');
+  container.querySelectorAll('.dim-btn').forEach(b=>b.classList.remove('selected'));
+  btn.classList.add('selected');
+  drawRadar();
+  updateScoreSummary();
+  updateAssessmentInsights();
+  const rated=dimScores.filter(s=>s>0);
+  const avg=rated.length>0?(rated.reduce((a,b)=>a+b,0)/rated.length):0;
+  document.getElementById('home-readiness').textContent=rated.length>0?Math.round(avg/4*100)+'%':'0%';
+}
+
+function drawRadar(){
+  const canvas=document.getElementById('radarChart');
+  if(!canvas)return;
+  const ctx=canvas.getContext('2d');
+  const dpr=window.devicePixelRatio||1;
+  const size=canvas.parentElement.clientWidth||300;
+  canvas.width=size*dpr; canvas.height=size*dpr;
+  canvas.style.width=size+'px'; canvas.style.height=size+'px';
+  ctx.scale(dpr,dpr);
+  const cx=size/2,cy=size/2,r=size*0.34,n=6,maxVal=4;
+  ctx.clearRect(0,0,size,size);
+  for(let ring=1;ring<=maxVal;ring++){
+    const rr=(ring/maxVal)*r;
+    ctx.beginPath();
+    for(let i=0;i<n;i++){const angle=(i/n)*2*Math.PI-Math.PI/2;const px=cx+rr*Math.cos(angle);const py=cy+rr*Math.sin(angle);i===0?ctx.moveTo(px,py):ctx.lineTo(px,py);}
+    ctx.closePath();
+    ctx.strokeStyle=ring===3?'rgba(46,125,50,0.35)':'rgba(0,0,0,0.08)';
+    ctx.lineWidth=ring===3?1.5:1;
+    ctx.stroke();
+    if(ring===3){ctx.fillStyle='rgba(46,125,50,0.05)';ctx.fill();}
+    ctx.fillStyle='#bbb';ctx.font=(size*0.028)+'px Calibri,sans-serif';ctx.textAlign='center';
+    ctx.fillText(ring,cx+4,cy-rr+size*0.018);
+  }
+  for(let i=0;i<n;i++){const angle=(i/n)*2*Math.PI-Math.PI/2;ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(cx+r*Math.cos(angle),cy+r*Math.sin(angle));ctx.strokeStyle='rgba(0,0,0,0.1)';ctx.lineWidth=1;ctx.stroke();}
+  const hasAny=dimScores.some(s=>s>0);
+  if(hasAny){
+    ctx.beginPath();
+    for(let i=0;i<n;i++){const angle=(i/n)*2*Math.PI-Math.PI/2;const val=(dimScores[i]||0)/maxVal;const px=cx+r*val*Math.cos(angle);const py=cy+r*val*Math.sin(angle);i===0?ctx.moveTo(px,py):ctx.lineTo(px,py);}
+    ctx.closePath();ctx.fillStyle='rgba(255,98,0,0.18)';ctx.fill();ctx.strokeStyle='rgba(255,98,0,0.9)';ctx.lineWidth=2.5;ctx.stroke();
+    for(let i=0;i<n;i++){const angle=(i/n)*2*Math.PI-Math.PI/2;const val=(dimScores[i]||0)/maxVal;const px=cx+r*val*Math.cos(angle);const py=cy+r*val*Math.sin(angle);ctx.beginPath();ctx.arc(px,py,size*0.022,0,2*Math.PI);ctx.fillStyle=dimScores[i]>0?'#FF6200':'rgba(255,98,0,0.3)';ctx.fill();ctx.strokeStyle='#fff';ctx.lineWidth=2;ctx.stroke();}
+  }
+  const labelR=r+size*0.1;
+  for(let i=0;i<n;i++){const angle=(i/n)*2*Math.PI-Math.PI/2;const lx=cx+labelR*Math.cos(angle);const ly=cy+labelR*Math.sin(angle);const words=DIMS[i].split(' ');ctx.fillStyle='#222';ctx.font='bold '+(size*0.031)+'px Calibri,sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';const lineH=size*0.038;const totalH=words.length*lineH;words.forEach((word,w)=>{ctx.fillText(word,lx,ly-totalH/2+w*lineH+lineH/2);});}
+}
+
+function updateScoreSummary(){
+  const el=document.getElementById('radar-score-summary');
+  if(!el)return;
+  const labels={1:'Below Standard',2:'Developing',3:'At Standard',4:'Above Standard'};
+  const colors={1:'var(--red)',2:'var(--amber)',3:'var(--green)',4:'var(--blue)'};
+  let html='';
+  DIMS.forEach((d,i)=>{
+    const s=dimScores[i];
+    const pct=s?(s/4)*100:0;
+    const color=s?colors[s]:'var(--border)';
+    html+='<div class="score-row"><span class="dim-name">'+d+'</span><div class="score-bar-mini"><div class="score-bar-mini-fill" style="width:'+pct+'%;background:'+color+'"></div></div><span class="score-val" style="color:'+color+'">'+(s||'—')+'</span></div>';
+  });
+  el.innerHTML=html;
+}
+
+function updateAssessmentInsights(){
+  const el=document.getElementById('assessment-insights');
+  if(!el)return;
+  const rated=dimScores.map((s,i)=>({dim:DIMS[i],score:s})).filter(x=>x.score>0);
+  if(rated.length===0){el.innerHTML='';return;}
+  const avg=rated.reduce((a,b)=>a+b.score,0)/rated.length;
+  const sorted=[...rated].sort((a,b)=>b.score-a.score);
+  const lowest=sorted[sorted.length-1];
+  let html='<div class="callout callout-orange" style="margin-top:8px;"><strong>Average Score: '+avg.toFixed(1)+'/4</strong>';
+  if(lowest&&lowest.score<3)html+='<br><strong>Primary Growth Area:</strong> '+lowest.dim+' ('+['','Below Standard','Developing','At Standard','Above Standard'][lowest.score]+') — focus here first.';
+  if(avg>=3.5)html+='<br><strong>Overall:</strong> Above Standard — consider contributing scenarios or mentoring peers.';
+  else if(avg>=2.5)html+='<br><strong>Overall:</strong> At Standard — maintain through continued documentation and evidence collection.';
+  else html+='<br><strong>Overall:</strong> Developing — focused practice on lowest dimensions will accelerate progress.';
+  html+='</div>';
+  el.innerHTML=html;
+}
+
+// ── READINESS TRACKER ──
+var readinessChecks=0;
+var totalReadinessChecks=10;
+function toggleReadiness(el){
+  el.classList.toggle('checked');
+  el.textContent=el.classList.contains('checked')?'✓':'';
+  readinessChecks=document.querySelectorAll('#page-readiness .check-box.checked').length;
+  const pct=Math.round((readinessChecks/totalReadinessChecks)*100);
+  const pctEl=document.getElementById('readiness-pct');
+  const bar=document.getElementById('readiness-bar');
+  const badge=document.getElementById('readiness-badge');
+  if(pctEl)pctEl.textContent=pct+'%';
+  if(bar)bar.style.width=pct+'%';
+  if(badge){
+    if(pct>=90){badge.innerHTML='<span class="badge badge-green">✓ Scoping-Ready</span>';}
+    else if(pct>=80){badge.innerHTML='<span class="badge badge-green">✓ At Readiness Threshold</span>';}
+    else{badge.innerHTML='<span class="badge badge-amber">⚠ Below 80% Readiness Threshold</span>';}
+  }
+  document.getElementById('home-readiness').textContent=pct+'%';
+}
+function updateReadiness(){
+  const selects=document.querySelectorAll('#page-readiness select');
+  let certScore=0;
+  selects.forEach(s=>{if(s.value==='Certified')certScore+=33;else if(s.value==='In progress'||s.value==='Nominated')certScore+=10;});
+  // Cert status influences readiness display
+}
+
+window.addEventListener('resize',()=>{if(document.getElementById('page-selfassess').classList.contains('active'))drawRadar();});
+
+
+// ═══════════════════════════════════════════════════════════════════════════
+// MICROSOFT 365 INTEGRATION — MSAL.js + Microsoft Graph API
+// ═══════════════════════════════════════════════════════════════════════════
+
+// ── CONFIG ──────────────────────────────────────────────────────────────────
+const M365_SCOPES = ['User.Read','Calendars.Read','Mail.Read','Tasks.ReadWrite'];
+let msalInstance = null;
+let m365Account = null;
+let m365Mode = 'demo'; // 'demo' | 'live'
+let inboxFilter = 'all';
+let allInboxMessages = [];
+
+function getClientId() {
+  return localStorage.getItem('eep_m365_client_id') || '';
+}
+
+function saveClientId() {
+  const val = document.getElementById('client-id-input').value.trim();
+  const uuidRe = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+  if (!val) {
+    document.getElementById('client-id-status').innerHTML = '<span style="color:var(--red);">Please enter a Client ID.</span>';
+    return;
+  }
+  if (!uuidRe.test(val)) {
+    document.getElementById('client-id-status').innerHTML = '<span style="color:var(--red);">Invalid format. Client ID should look like: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx</span>';
+    return;
+  }
+  localStorage.setItem('eep_m365_client_id', val);
+  document.getElementById('client-id-status').innerHTML = '<span style="color:var(--green);">✓ Client ID saved. Click "Sign in with Microsoft" to authenticate.</span>';
+  initMsal();
+}
+
+function clearClientId() {
+  localStorage.removeItem('eep_m365_client_id');
+  document.getElementById('client-id-input').value = '';
+  document.getElementById('client-id-status').innerHTML = '<span style="color:var(--mid);">Client ID cleared.</span>';
+  msalInstance = null;
+  m365Account = null;
+  setDemoMode();
+}
+
+// ── MSAL INITIALIZATION ──────────────────────────────────────────────────────
+function initMsal() {
+  const clientId = getClientId();
+  if (!clientId || typeof msal === 'undefined') return;
+  try {
+    const msalConfig = {
+      auth: {
+        clientId: clientId,
+        authority: 'https://login.microsoftonline.com/common',
+        redirectUri: window.location.href.split('?')[0].split('#')[0]
+      },
+      cache: { cacheLocation: 'sessionStorage', storeAuthStateInCookie: false }
+    };
+    msalInstance = new msal.PublicClientApplication(msalConfig);
+    msalInstance.initialize().then(() => {
+      // Handle redirect response
+      msalInstance.handleRedirectPromise().then(resp => {
+        if (resp && resp.account) {
+          m365Account = resp.account;
+          setLiveMode(resp.account);
+          loadM365Data();
+        } else {
+          const accounts = msalInstance.getAllAccounts();
+          if (accounts.length > 0) {
+            m365Account = accounts[0];
+            setLiveMode(accounts[0]);
+            loadM365Data();
+          }
+        }
+      }).catch(e => console.warn('MSAL redirect error:', e));
+    });
+  } catch(e) {
+    console.warn('MSAL init error:', e);
+  }
+}
+
+async function m365SignIn() {
+  const clientId = getClientId();
+  if (!clientId) {
+    alert('Please enter and save your Azure App Client ID first (Step 5 in the setup guide below).');
+    return;
+  }
+  if (!msalInstance) { initMsal(); await new Promise(r => setTimeout(r, 500)); }
+  if (!msalInstance) { alert('MSAL not initialized. Please check your Client ID and try again.'); return; }
+  try {
+    const resp = await msalInstance.loginPopup({ scopes: M365_SCOPES, prompt: 'select_account' });
+    m365Account = resp.account;
+    setLiveMode(resp.account);
+    loadM365Data();
+    showPage('m365');
+  } catch(e) {
+    if (e.errorCode !== 'user_cancelled') {
+      alert('Sign-in failed: ' + (e.message || e.errorCode) + '\n\nCommon fixes:\n• Ensure your Redirect URI in Azure matches this page URL\n• Check that API permissions are granted\n• Try opening in a different browser');
+    }
+  }
+}
+
+async function m365SignOut() {
+  if (msalInstance && m365Account) {
+    try { await msalInstance.logoutPopup({ account: m365Account }); } catch(e) {}
+  }
+  m365Account = null;
+  setDemoMode();
+}
+
+async function getAccessToken() {
+  if (!msalInstance || !m365Account) return null;
+  try {
+    const resp = await msalInstance.acquireTokenSilent({ scopes: M365_SCOPES, account: m365Account });
+    return resp.accessToken;
+  } catch(e) {
+    try {
+      const resp = await msalInstance.acquireTokenPopup({ scopes: M365_SCOPES, account: m365Account });
+      return resp.accessToken;
+    } catch(e2) { return null; }
+  }
+}
+
+async function graphGet(endpoint, token) {
+  const resp = await fetch('https://graph.microsoft.com/v1.0' + endpoint, {
+    headers: { Authorization: 'Bearer ' + token, 'Content-Type': 'application/json' }
+  });
+  if (!resp.ok) throw new Error('Graph API error: ' + resp.status);
+  return resp.json();
+}
+
+// ── MODE SWITCHING ───────────────────────────────────────────────────────────
+function setLiveMode(account) {
+  m365Mode = 'live';
+  const name = account.name || account.username;
+  const email = account.username;
+  document.getElementById('auth-name').textContent = name;
+  document.getElementById('auth-email').textContent = email;
+  document.getElementById('auth-badge').innerHTML = '<span class="badge badge-green">✅ Live — Microsoft 365 Connected</span>';
+  document.getElementById('btn-signin').style.display = 'none';
+  document.getElementById('btn-signout').style.display = '';
+  document.getElementById('demo-mode-banner').style.display = 'none';
+  document.getElementById('m365-connect-prompt').style.display = 'none';
+  document.getElementById('m365-live-banner').style.display = 'flex';
+  document.getElementById('cal-live-badge').style.display = '';
+  document.getElementById('inbox-live-badge').style.display = '';
+  document.getElementById('tasks-live-badge').style.display = '';
+  document.getElementById('m365-page-sub').textContent = 'Live Microsoft 365 data — calendar, inbox, and tasks from your account';
+  // Update topbar user area
+  const topbarRight = document.querySelector('.topbar > div:last-child');
+  if (topbarRight && !document.getElementById('topbar-user')) {
+    const userEl = document.createElement('div');
+    userEl.id = 'topbar-user';
+    userEl.style.cssText = 'display:flex;align-items:center;gap:8px;font-size:12px;color:var(--mid);';
+    userEl.innerHTML = '<span style="width:28px;height:28px;border-radius:50%;background:var(--orange);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;">' + (name[0]||'U') + '</span><span>' + name + '</span>';
+    topbarRight.prepend(userEl);
+  }
+}
+
+function setDemoMode() {
+  m365Mode = 'demo';
+  document.getElementById('auth-name').textContent = 'Not signed in';
+  document.getElementById('auth-email').textContent = 'Connect your Microsoft 365 account to get started';
+  document.getElementById('auth-badge').innerHTML = '<span class="badge badge-gray">Demo Mode</span>';
+  document.getElementById('btn-signin').style.display = '';
+  document.getElementById('btn-signout').style.display = 'none';
+  document.getElementById('demo-mode-banner').style.display = '';
+  document.getElementById('m365-connect-prompt').style.display = 'flex';
+  document.getElementById('m365-live-banner').style.display = 'none';
+  document.getElementById('cal-live-badge').style.display = 'none';
+  document.getElementById('inbox-live-badge').style.display = 'none';
+  document.getElementById('tasks-live-badge').style.display = 'none';
+  document.getElementById('m365-page-sub').textContent = 'Connect Microsoft 365 to display live data — or browse demo data below';
+  const userEl = document.getElementById('topbar-user');
+  if (userEl) userEl.remove();
+  renderDemoData();
+}
+
+// ── LIVE DATA LOADING ────────────────────────────────────────────────────────
+async function loadM365Data() {
+  const token = await getAccessToken();
+  if (!token) { setDemoMode(); return; }
+  document.getElementById('m365-last-refresh').textContent = new Date().toLocaleTimeString();
+  try { await Promise.all([loadCalendar(token), loadInbox(token), loadTasks(token)]); }
+  catch(e) { console.warn('M365 data load error:', e); }
+  renderEEPSignalOverlay();
+}
+
+async function refreshM365Data() {
+  if (m365Mode !== 'live') return;
+  document.getElementById('m365-last-refresh').textContent = 'refreshing...';
+  await loadM365Data();
+}
+
+async function loadCalendar(token) {
+  const now = new Date();
+  const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()).toISOString();
+  const todayEnd = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59).toISOString();
+  const weekEnd = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000).toISOString();
+
+  const [todayResp, upcomingResp] = await Promise.all([
+    graphGet(`/me/calendarView?startDateTime=${todayStart}&endDateTime=${todayEnd}&$orderby=start/dateTime&$top=20&$select=subject,start,end,location,isOnlineMeeting,onlineMeetingUrl,organizer,bodyPreview`, token),
+    graphGet(`/me/calendarView?startDateTime=${todayEnd}&endDateTime=${weekEnd}&$orderby=start/dateTime&$top=15&$select=subject,start,end,location,isOnlineMeeting,organizer`, token)
+  ]);
+
+  renderCalendarEvents(todayResp.value || [], upcomingResp.value || []);
+}
+
+async function loadInbox(token) {
+  const resp = await graphGet('/me/messages?$top=20&$orderby=receivedDateTime desc&$select=subject,from,receivedDateTime,isRead,flag,importance,bodyPreview,webLink', token);
+  allInboxMessages = resp.value || [];
+  renderInboxMessages(allInboxMessages, inboxFilter);
+}
+
+async function loadTasks(token) {
+  try {
+    const listsResp = await graphGet('/me/todo/lists', token);
+    const lists = listsResp.value || [];
+    let allTasks = [];
+    for (const list of lists.slice(0, 3)) {
+      try {
+        const tasksResp = await graphGet(`/me/todo/lists/${list.id}/tasks?$filter=status ne 'completed'&$top=10&$select=title,status,dueDateTime,importance,createdDateTime`, token);
+        allTasks = allTasks.concat((tasksResp.value || []).map(t => ({...t, listName: list.displayName})));
+      } catch(e) {}
+    }
+    renderTasks(allTasks);
+  } catch(e) { renderTasks([]); }
+}
+
+// ── RENDER FUNCTIONS ─────────────────────────────────────────────────────────
+function fmtTime(iso) {
+  if (!iso) return '';
+  const d = new Date(iso);
+  return d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+}
+function fmtDate(iso) {
+  if (!iso) return '';
+  const d = new Date(iso);
+  const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return `${days[d.getDay()]} ${months[d.getMonth()]} ${d.getDate()}`;
+}
+function fmtRelTime(iso) {
+  const diff = Date.now() - new Date(iso).getTime();
+  const mins = Math.floor(diff/60000);
+  if (mins < 60) return mins + 'm ago';
+  const hrs = Math.floor(mins/60);
+  if (hrs < 24) return hrs + 'h ago';
+  return Math.floor(hrs/24) + 'd ago';
+}
+
+function renderCalendarEvents(today, upcoming) {
+  const now = new Date();
+  const calEl = document.getElementById('calendar-events');
+  const upEl = document.getElementById('upcoming-events');
+  const dateLabel = document.getElementById('cal-date-label');
+  dateLabel.textContent = now.toLocaleDateString([], {weekday:'long', year:'numeric', month:'long', day:'numeric'});
+
+  if (!today.length) {
+    calEl.innerHTML = '<div style="text-align:center;padding:20px;color:var(--mid);font-size:13px;">📅 No events scheduled for today</div>';
+  } else {
+    calEl.innerHTML = today.map(ev => {
+      const start = new Date(ev.start?.dateTime || ev.start?.date);
+      const end = new Date(ev.end?.dateTime || ev.end?.date);
+      const isNow = start <= now && end >= now;
+      const isPast = end < now;
+      const loc = ev.location?.displayName || (ev.isOnlineMeeting ? 'Online Meeting' : '');
+      return `<div style="display:flex;gap:10px;padding:10px;border-radius:6px;background:${isNow?'var(--orange-light)':isPast?'var(--light)':'#fff'};border:1px solid ${isNow?'var(--orange)':'var(--border)'};align-items:flex-start;">
+        <div style="text-align:center;min-width:44px;flex-shrink:0;">
+          <div style="font-size:11px;font-weight:700;color:${isNow?'var(--orange)':'var(--mid)'};">${fmtTime(ev.start?.dateTime)}</div>
+          <div style="font-size:10px;color:var(--mid);">${fmtTime(ev.end?.dateTime)}</div>
+        </div>
+        <div style="flex:1;min-width:0;">
+          <div style="font-size:13px;font-weight:${isNow?'700':'600'};color:${isPast?'var(--mid)':'var(--charcoal)'};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${ev.subject||'(No title)'}</div>
+          ${loc?`<div style="font-size:11px;color:var(--mid);margin-top:2px;">📍 ${loc}</div>`:''}
+          ${ev.organizer?.emailAddress?.name?`<div style="font-size:11px;color:var(--mid);">👤 ${ev.organizer.emailAddress.name}</div>`:''}
+        </div>
+        ${isNow?'<span class="badge badge-orange" style="flex-shrink:0;">NOW</span>':''}
+        ${ev.isOnlineMeeting&&ev.onlineMeetingUrl?`<a href="${ev.onlineMeetingUrl}" target="_blank" class="btn btn-orange" style="padding:4px 10px;font-size:11px;flex-shrink:0;text-decoration:none;">Join</a>`:''}
+      </div>`;
+    }).join('');
+  }
+
+  if (!upcoming.length) {
+    upEl.innerHTML = '<div style="font-size:12px;color:var(--mid);padding:8px 0;">No upcoming events in the next 7 days</div>';
+  } else {
+    upEl.innerHTML = upcoming.slice(0,8).map(ev => {
+      return `<div style="display:flex;gap:8px;padding:6px 0;border-bottom:1px solid var(--border);align-items:center;">
+        <div style="min-width:60px;font-size:11px;font-weight:700;color:var(--orange);">${fmtDate(ev.start?.dateTime||ev.start?.date)}</div>
+        <div style="font-size:12px;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${ev.subject||'(No title)'}</div>
+        <div style="font-size:11px;color:var(--mid);flex-shrink:0;">${fmtTime(ev.start?.dateTime)}</div>
+      </div>`;
+    }).join('');
+  }
+}
+
+function renderInboxMessages(messages, filter) {
+  const el = document.getElementById('inbox-messages');
+  let filtered = messages;
+  if (filter === 'unread') filtered = messages.filter(m => !m.isRead);
+  else if (filter === 'flagged') filtered = messages.filter(m => m.flag?.flagStatus === 'flagged');
+  else if (filter === 'important') filtered = messages.filter(m => m.importance === 'high');
+
+  if (!filtered.length) {
+    el.innerHTML = `<div style="text-align:center;padding:20px;color:var(--mid);font-size:13px;">📭 No ${filter==='all'?'':filter+' '}messages</div>`;
+    return;
+  }
+  el.innerHTML = filtered.slice(0,12).map(msg => {
+    const isFlagged = msg.flag?.flagStatus === 'flagged';
+    const isImportant = msg.importance === 'high';
+    const from = msg.from?.emailAddress?.name || msg.from?.emailAddress?.address || 'Unknown';
+    return `<div style="padding:10px;border-radius:6px;border:1px solid ${!msg.isRead?'var(--orange)':'var(--border)'};background:${!msg.isRead?'var(--orange-light)':'#fff'};cursor:pointer;" onclick="${msg.webLink?`window.open('${msg.webLink}','_blank')`:''}">
+      <div style="display:flex;align-items:flex-start;gap:8px;">
+        <div style="flex:1;min-width:0;">
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
+            ${!msg.isRead?'<span style="width:7px;height:7px;border-radius:50%;background:var(--orange);flex-shrink:0;"></span>':''}
+            <span style="font-size:12px;font-weight:${!msg.isRead?'700':'600'};color:var(--charcoal);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${msg.subject||'(No subject)'}</span>
+          </div>
+          <div style="font-size:11px;color:var(--mid);">From: ${from}</div>
+          ${msg.bodyPreview?`<div style="font-size:11px;color:#666;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${msg.bodyPreview.substring(0,80)}...</div>`:''}
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0;">
+          <div style="font-size:10px;color:var(--mid);">${fmtRelTime(msg.receivedDateTime)}</div>
+          ${isFlagged?'<span style="font-size:14px;" title="Flagged">🚩</span>':''}
+          ${isImportant?'<span style="font-size:14px;" title="High importance">❗</span>':''}
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function filterInbox(btn, filter) {
+  inboxFilter = filter;
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  if (m365Mode === 'live') renderInboxMessages(allInboxMessages, filter);
+  else renderDemoInbox(filter);
+}
+
+function renderTasks(tasks) {
+  const el = document.getElementById('tasks-list');
+  if (!tasks.length) {
+    el.innerHTML = '<div style="font-size:12px;color:var(--mid);padding:8px 0;">No open tasks</div>';
+    return;
+  }
+  const now = new Date();
+  el.innerHTML = tasks.slice(0,8).map(t => {
+    const due = t.dueDateTime ? new Date(t.dueDateTime.dateTime) : null;
+    const isOverdue = due && due < now;
+    const isDueToday = due && due.toDateString() === now.toDateString();
+    return `<div style="display:flex;align-items:flex-start;gap:8px;padding:7px 0;border-bottom:1px solid var(--border);">
+      <span style="font-size:14px;flex-shrink:0;">${t.importance==='high'?'❗':'☐'}</span>
+      <div style="flex:1;min-width:0;">
+        <div style="font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${t.title}</div>
+        <div style="font-size:11px;color:var(--mid);">${t.listName||'Tasks'}${due?` · ${isOverdue?'<span style="color:var(--red);font-weight:700;">Overdue: ':isDueToday?'<span style="color:var(--amber);font-weight:700;">Due today</span>':'Due: '}${isOverdue||isDueToday?'':fmtDate(t.dueDateTime?.dateTime)}${isOverdue?fmtDate(t.dueDateTime?.dateTime)+'</span>':''}`:''}</div>
+      </div>
+      ${isOverdue?'<span class="badge badge-red">Overdue</span>':isDueToday?'<span class="badge badge-amber">Today</span>':''}
+    </div>`;
+  }).join('');
+}
+
+// ── EEP SIGNAL OVERLAY ───────────────────────────────────────────────────────
+function renderEEPSignalOverlay() {
+  const el = document.getElementById('eep-signal-overlay');
+  const signals = [];
+
+  if (m365Mode === 'live') {
+    // Analyze real data for EEP signals
+    const unread = allInboxMessages.filter(m => !m.isRead).length;
+    const flagged = allInboxMessages.filter(m => m.flag?.flagStatus === 'flagged').length;
+    const important = allInboxMessages.filter(m => m.importance === 'high').length;
+
+    if (unread > 10) signals.push({type:'amber', stream:'Communication Clarity', text:`${unread} unread messages — high inbox volume may indicate communication backlog. Review for client-facing items requiring Three Tests.`});
+    if (flagged > 0) signals.push({type:'orange', stream:'Ownership Follow-Through', text:`${flagged} flagged message${flagged>1?'s':''} in inbox — flagged items typically represent open commitments. Verify each has a named Outcome Owner and resolution date.`});
+    if (important > 2) signals.push({type:'amber', stream:'Customer Friction', text:`${important} high-importance messages — elevated importance signals may indicate client escalation risk. Review for friction indicators.`});
+    if (signals.length === 0) signals.push({type:'green', stream:'All Streams', text:'No EEP signal flags detected in current inbox. Continue weekly signal review cadence.'});
+  } else {
+    // Demo signals
+    signals.push({type:'amber', stream:'Customer Friction', text:'Demo: Client VP has not responded to last two status emails (sent Mon & Wed). Pattern of delayed response is a friction signal — consider proactive outreach before Friday.'});
+    signals.push({type:'orange', stream:'Ownership Follow-Through', text:'Demo: 2 flagged emails from client contain open action items. Verify each has a named Outcome Owner and committed resolution date in the Engagement Tracker.'});
+    signals.push({type:'green', stream:'Communication Clarity', text:'Demo: No clarification requests detected in recent inbox. Communication clarity stream is green this week.'});
+  }
+
+  el.innerHTML = signals.map(s => `
+    <div class="callout callout-${s.type==='green'?'green':s.type==='amber'?'amber':'orange'}">
+      <strong>📡 ${s.stream}:</strong> ${s.text}
+    </div>`).join('');
+}
+
+// ── DEMO DATA ────────────────────────────────────────────────────────────────
+function renderDemoData() {
+  const now = new Date();
+  const todayStr = now.toLocaleDateString([], {weekday:'long', year:'numeric', month:'long', day:'numeric'});
+  document.getElementById('cal-date-label').textContent = todayStr + ' (Demo Data)';
+
+  // Demo calendar events
+  const h = now.getHours();
+  const demoEvents = [
+    {subject:'Weekly Signal Review — Engagement Team', start: h-2, end: h-1, past:true, loc:'Microsoft Teams'},
+    {subject:'Client Status Call — Contoso Healthcare', start: h+1, end: h+2, past:false, loc:'Microsoft Teams', isOnline:true},
+    {subject:'CEES Session — Bi-Weekly Practice', start: h+3, end: h+4, past:false, loc:'Teams'},
+    {subject:'Outcome Validation — Fabrikam Engagement Close', start: h+5, end: h+6, past:false, loc:'In-person / Teams'},
+  ];
+
+  document.getElementById('calendar-events').innerHTML = demoEvents.map(ev => {
+    const startT = `${(ev.start%12||12)}:00 ${ev.start>=12?'PM':'AM'}`;
+    const endT = `${(ev.end%12||12)}:00 ${ev.end>=12?'PM':'AM'}`;
+    const isNow = !ev.past && ev.start <= h && ev.end > h;
+    return `<div style="display:flex;gap:10px;padding:10px;border-radius:6px;background:${isNow?'var(--orange-light)':ev.past?'var(--light)':'#fff'};border:1px solid ${isNow?'var(--orange)':'var(--border)'};align-items:flex-start;">
+      <div style="text-align:center;min-width:44px;flex-shrink:0;">
+        <div style="font-size:11px;font-weight:700;color:${isNow?'var(--orange)':'var(--mid)'};">${startT}</div>
+        <div style="font-size:10px;color:var(--mid);">${endT}</div>
+      </div>
+      <div style="flex:1;min-width:0;">
+        <div style="font-size:13px;font-weight:${isNow?'700':'600'};color:${ev.past?'var(--mid)':'var(--charcoal)'};">${ev.subject}</div>
+        <div style="font-size:11px;color:var(--mid);margin-top:2px;">📍 ${ev.loc}</div>
+      </div>
+      ${isNow?'<span class="badge badge-orange">NOW</span>':''}
+      ${ev.isOnline&&!ev.past?'<button class="btn btn-orange" style="padding:4px 10px;font-size:11px;flex-shrink:0;">Join</button>':''}
+    </div>`;
+  }).join('');
+
+  // Demo upcoming
+  const days = ['Mon','Tue','Wed','Thu','Fri'];
+  const upcomingDemo = [
+    {day:'Tomorrow', subject:'Scoping Call — Northwind Traders', time:'10:00 AM'},
+    {day:'Wed', subject:'Three Tests Workshop — Team Training', time:'2:00 PM'},
+    {day:'Thu', subject:'Quarterly Signal Framework Review', time:'9:00 AM'},
+    {day:'Fri', subject:'Engagement Closeout — Tailspin Toys', time:'3:00 PM'},
+    {day:'Next Mon', subject:'New Hire EEP Onboarding Session', time:'9:00 AM'},
+  ];
+  document.getElementById('upcoming-events').innerHTML = upcomingDemo.map(ev =>
+    `<div style="display:flex;gap:8px;padding:6px 0;border-bottom:1px solid var(--border);align-items:center;">
+      <div style="min-width:60px;font-size:11px;font-weight:700;color:var(--orange);">${ev.day}</div>
+      <div style="font-size:12px;flex:1;">${ev.subject}</div>
+      <div style="font-size:11px;color:var(--mid);">${ev.time}</div>
+    </div>`).join('');
+
+  renderDemoInbox('all');
+  renderDemoTasks();
+  renderEEPSignalOverlay();
+}
+
+function renderDemoInbox(filter) {
+  const demoMessages = [
+    {subject:'RE: Scoping Recap — Contoso Healthcare Engagement', from:'Sarah Chen (Contoso)', time:'32m ago', unread:true, flagged:true, important:true, preview:'Thank you for the detailed recap. I have a few questions about the timeline for Phase 2...'},
+    {subject:'RMOT-2847 — Pre-Poll Confirmation', from:'Dispatch System', time:'1h ago', unread:true, flagged:false, important:false, preview:'Your pre-poll has been confirmed for the upcoming delivery. Please ensure the data sheet is attached...'},
+    {subject:'Weekly Signal Review Reminder', from:'EEP System', time:'2h ago', unread:false, flagged:true, important:false, preview:'This is your weekly reminder to complete the Signal Intelligence review for all active engagements...'},
+    {subject:'RE: Outcome Validation Questions', from:'Mark Rodriguez (Fabrikam)', time:'3h ago', unread:false, flagged:false, important:true, preview:'The engagement has been very valuable. In terms of what we received, I would say the most impactful...'},
+    {subject:'CEES Session — Scenario Contributor Needed', from:'Team Lead', time:'5h ago', unread:false, flagged:false, important:false, preview:'Reminder that we need a scenario contributor for Thursday's CEES session. Please confirm by EOD...'},
+    {subject:'Delivery Materials Upload Confirmation', from:'Portal System', time:'Yesterday', unread:false, flagged:false, important:false, preview:'Your workshop materials have been successfully uploaded. Upload timestamp: 2026-06-07 14:23 UTC...'},
+    {subject:'RE: Follow-Up — Tailspin Toys Engagement', from:'Jennifer Park (Tailspin)', time:'Yesterday', unread:false, flagged:true, important:false, preview:'Following up on our conversation last week. We are still evaluating the recommendations and will...'},
+    {subject:'Quarterly Signal Framework Review — Agenda', from:'Engagement Lead', time:'2d ago', unread:false, flagged:false, important:false, preview:'Please find attached the agenda for Thursday's Quarterly Signal Framework Review. Key items include...'},
+  ];
+
+  let filtered = demoMessages;
+  if (filter === 'unread') filtered = demoMessages.filter(m => m.unread);
+  else if (filter === 'flagged') filtered = demoMessages.filter(m => m.flagged);
+  else if (filter === 'important') filtered = demoMessages.filter(m => m.important);
+
+  const el = document.getElementById('inbox-messages');
+  if (!filtered.length) { el.innerHTML = `<div style="text-align:center;padding:20px;color:var(--mid);font-size:13px;">📭 No ${filter} messages</div>`; return; }
+  el.innerHTML = filtered.map(msg =>
+    `<div style="padding:10px;border-radius:6px;border:1px solid ${msg.unread?'var(--orange)':'var(--border)'};background:${msg.unread?'var(--orange-light)':'#fff'};">
+      <div style="display:flex;align-items:flex-start;gap:8px;">
+        <div style="flex:1;min-width:0;">
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
+            ${msg.unread?'<span style="width:7px;height:7px;border-radius:50%;background:var(--orange);flex-shrink:0;"></span>':''}
+            <span style="font-size:12px;font-weight:${msg.unread?'700':'600'};color:var(--charcoal);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${msg.subject}</span>
+          </div>
+          <div style="font-size:11px;color:var(--mid);">From: ${msg.from}</div>
+          <div style="font-size:11px;color:#666;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${msg.preview}</div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0;">
+          <div style="font-size:10px;color:var(--mid);">${msg.time}</div>
+          ${msg.flagged?'<span style="font-size:14px;">🚩</span>':''}
+          ${msg.important?'<span style="font-size:14px;">❗</span>':''}
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function renderDemoTasks() {
+  const tasks = [
+    {title:'Complete Signal Review — Contoso Engagement', list:'EEP Tasks', due:'Today', overdue:false, important:true},
+    {title:'Send Scoping Recap email (TPL-SCOP) — Northwind', list:'Delivery', due:'Today', overdue:false, important:false},
+    {title:'Confirm CEES scenario contributor for Thursday', list:'EEP Tasks', due:'Tomorrow', overdue:false, important:false},
+    {title:'Upload workshop materials — Fabrikam delivery', list:'Delivery', due:'Overdue', overdue:true, important:true},
+    {title:'Complete Outcome Validation questions — Tailspin', list:'EEP Tasks', due:'Wed', overdue:false, important:false},
+  ];
+  document.getElementById('tasks-list').innerHTML = tasks.map(t =>
+    `<div style="display:flex;align-items:flex-start;gap:8px;padding:7px 0;border-bottom:1px solid var(--border);">
+      <span style="font-size:14px;flex-shrink:0;">${t.important?'❗':'☐'}</span>
+      <div style="flex:1;min-width:0;">
+        <div style="font-size:13px;font-weight:600;">${t.title}</div>
+        <div style="font-size:11px;color:var(--mid);">${t.list} · <span style="color:${t.overdue?'var(--red)':t.due==='Today'?'var(--amber)':'var(--mid)'};font-weight:${t.overdue||t.due==='Today'?'700':'400'};">${t.due}</span></div>
+      </div>
+      ${t.overdue?'<span class="badge badge-red">Overdue</span>':t.due==='Today'?'<span class="badge badge-amber">Today</span>':''}
+    </div>`).join('');
+}
+
+// ── INIT ON PAGE LOAD ────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', function() {
+  // Pre-fill saved client ID
+  const savedId = getClientId();
+  if (savedId) {
+    const inp = document.getElementById('client-id-input');
+    if (inp) { inp.value = savedId; document.getElementById('client-id-status').innerHTML = '<span style="color:var(--green);">✓ Client ID loaded from storage.</span>'; }
+    initMsal();
+  }
+  // Load demo data by default
+  renderDemoData();
+});
+
+// Patch showPage to refresh M365 data when navigating to m365 page
+const _origShowPage = showPage;
+window.showPage = function(id) {
+  _origShowPage(id);
+  if (id === 'm365') {
+    if (m365Mode === 'live') loadM365Data();
+    else renderDemoData();
+  }
+};
+
+</script>
+
+<!-- CONFIDENTIALITY NOTICE BANNER -->
+<style>
+.conf-banner {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #0a0a0a;
+  border-top: 2px solid #FF6200;
+  padding: 8px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 99999;
+  font-family: Calibri, Segoe UI, Arial, sans-serif;
+}
+.conf-banner .conf-text {
+  font-size: 11px;
+  color: #999;
+  letter-spacing: 0.5px;
+}
+.conf-banner .conf-text strong {
+  color: #FF6200;
+}
+.conf-banner .conf-link {
+  font-size: 11px;
+  color: #FF6200;
+  text-decoration: none;
+  border: 1px solid #FF6200;
+  padding: 3px 10px;
+  border-radius: 2px;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.conf-modal-overlay {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.85);
+  z-index: 999999;
+  align-items: center;
+  justify-content: center;
+}
+.conf-modal-overlay.active { display: flex; }
+.conf-modal {
+  background: #141414;
+  border: 1px solid #2a2a2a;
+  border-top: 3px solid #FF6200;
+  max-width: 680px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+  padding: 40px;
+  border-radius: 4px;
+  font-family: Calibri, Segoe UI, Arial, sans-serif;
+}
+.conf-modal h2 { color: #FF6200; font-size: 13px; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 16px; }
+.conf-modal h1 { color: #fff; font-size: 22px; margin-bottom: 8px; }
+.conf-modal p { color: #ccc; font-size: 14px; line-height: 1.8; margin-bottom: 12px; }
+.conf-modal ul { list-style: none; margin: 8px 0 16px 0; }
+.conf-modal ul li { color: #ccc; font-size: 14px; line-height: 1.8; padding: 4px 0 4px 20px; position: relative; border-bottom: 1px solid #1e1e1e; }
+.conf-modal ul li::before { content: "✕"; position: absolute; left: 0; color: #FF6200; font-size: 11px; font-weight: 700; }
+.conf-modal .conf-close { background: #FF6200; color: #fff; border: none; padding: 10px 28px; font-size: 13px; font-weight: 700; cursor: pointer; border-radius: 2px; margin-top: 16px; letter-spacing: 1px; }
+.conf-modal .conf-section-title { color: #FF6200; font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; margin: 20px 0 8px 0; }
+</style>
+<div class="conf-banner">
+  <span class="conf-text"><strong>CONFIDENTIAL &amp; PROPRIETARY</strong> — Mike Garcia. View-only access. Unauthorized use prohibited.</span>
+  <a class="conf-link" onclick="document.getElementById('confModal').classList.add('active')">READ TERMS</a>
+</div>
+<div class="conf-modal-overlay" id="confModal">
+  <div class="conf-modal">
+    <h2>⚠ Restricted Access</h2>
+    <h1>Confidentiality Terms</h1>
+    <p>By accessing this content, you acknowledge and agree to the following terms. If you do not agree, do not access or view the content.</p>
+    <div class="conf-section-title">Confidentiality</div>
+    <p>All materials are confidential and proprietary to <strong style="color:#fff">Mike Garcia</strong>, including frameworks, methodologies, templates, dashboards, and architecture models.</p>
+    <div class="conf-section-title">Permitted Use</div>
+    <p>You are granted <strong style="color:#fff">view-only access</strong> for the sole purpose of review. No other rights are granted or implied.</p>
+    <div class="conf-section-title">Prohibited Actions</div>
+    <p>Without explicit written permission, you may not:</p>
+    <ul>
+      <li>Copy, download, print, or export any content</li>
+      <li>Screenshot, record, or otherwise capture the content</li>
+      <li>Share, forward, or redistribute the link or materials</li>
+      <li>Use the content to create derivative works</li>
+      <li>Incorporate the content into internal or commercial deliverables</li>
+      <li>Use the content for competitive analysis or product development</li>
+    </ul>
+    <div class="conf-section-title">Intellectual Property</div>
+    <p>All content remains the exclusive intellectual property of Mike Garcia. No license or ownership rights are transferred through access.</p>
+    <div class="conf-section-title">Access Revocation</div>
+    <p>Access may be revoked at any time without notice. Continued access constitutes acceptance of these terms.</p>
+    <button class="conf-close" onclick="document.getElementById('confModal').classList.remove('active')">I ACKNOWLEDGE — CLOSE</button>
+  </div>
+</div>
+<!-- END CONFIDENTIALITY NOTICE -->
+
+
+<!-- SPLASH SCREEN -->
+<style>
+#sp-eng{position:fixed;inset:0;z-index:99999;background:linear-gradient(135deg,#0a0a0a 0%,#1C1C1C 60%,#0f0f0f 100%);display:flex;align-items:center;justify-content:center;font-family:'Calibri','Segoe UI',Arial,sans-serif;transition:opacity .5s,visibility .5s}
+#sp-eng.sp-gone{opacity:0;visibility:hidden;pointer-events:none}
+.sp-inner{max-width:540px;width:92%;text-align:center;animation:spIn .65s cubic-bezier(.4,0,.2,1) forwards}
+@keyframes spIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.sp-ring{width:84px;height:84px;border-radius:50%;background:rgba(255,98,0,.12);border:2px solid rgba(255,98,0,.35);display:flex;align-items:center;justify-content:center;font-size:36px;margin:0 auto 20px;box-shadow:0 0 40px rgba(255,98,0,.18);animation:spPulse 2.5s ease-in-out infinite}
+@keyframes spPulse{0%,100%{box-shadow:0 0 40px rgba(255,98,0,.18)}50%{box-shadow:0 0 64px rgba(255,98,0,.32)}}
+.sp-badge{display:inline-block;background:rgba(255,98,0,.12);border:1px solid rgba(255,98,0,.28);color:#FF6200;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:4px 14px;border-radius:20px;margin-bottom:14px}
+.sp-title{font-size:26px;font-weight:800;color:#fff;margin-bottom:7px;letter-spacing:-.4px;line-height:1.2}
+.sp-sub{font-size:13px;color:#888;margin-bottom:22px;line-height:1.65}
+.sp-prog{height:3px;background:rgba(255,255,255,.07);border-radius:2px;margin-bottom:20px;overflow:hidden}
+.sp-prog-bar{height:100%;background:linear-gradient(90deg,#FF6200,#CC4E00);border-radius:2px;width:0%;transition:width .35s ease}
+.sp-feats{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:22px;text-align:left}
+.sp-feat{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:8px;padding:11px;display:flex;align-items:flex-start;gap:9px}
+.sp-feat span{font-size:18px;flex-shrink:0;margin-top:1px}
+.sp-feat b{display:block;font-size:12px;font-weight:700;color:#fff;margin-bottom:2px}
+.sp-feat small{font-size:11px;color:#666;line-height:1.4}
+.sp-div{height:1px;background:linear-gradient(90deg,transparent,rgba(255,98,0,.25),transparent);margin-bottom:18px}
+.sp-conf{background:rgba(239,68,68,.07);border:1px solid rgba(239,68,68,.18);border-radius:8px;padding:11px 15px;margin-bottom:16px;text-align:left}
+.sp-conf-lbl{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#ef4444;margin-bottom:5px}
+.sp-conf p{font-size:11px;color:#999;line-height:1.6}
+.sp-conf p strong{color:#fff}
+.sp-cb-row{display:flex;align-items:flex-start;gap:9px;margin-bottom:16px;text-align:left}
+.sp-cb-row input{width:16px;height:16px;accent-color:#FF6200;flex-shrink:0;margin-top:2px;cursor:pointer}
+.sp-cb-row label{font-size:12px;color:#888;cursor:pointer;line-height:1.5}
+.sp-cb-row label strong{color:#ddd}
+.sp-btn{width:100%;padding:13px;background:linear-gradient(135deg,#FF6200,#CC4E00);color:#fff;font-size:14px;font-weight:700;letter-spacing:.4px;border:none;border-radius:8px;cursor:pointer;font-family:inherit;transition:all .2s;opacity:.35;pointer-events:none}
+.sp-btn.sp-ready{opacity:1;pointer-events:all;box-shadow:0 8px 24px rgba(255,98,0,.32)}
+.sp-btn.sp-ready:hover{transform:translateY(-2px);box-shadow:0 12px 32px rgba(255,98,0,.42)}
+.sp-ver{margin-top:12px;font-size:10px;color:#444;letter-spacing:.4px}
+</style>
+<div id="sp-eng">
+  <div class="sp-inner">
+    <div class="sp-ring">⚡</div>
+    <div class="sp-badge">Mike Garcia · EEP Framework</div>
+    <div class="sp-title">Engineer Delivery Dashboard</div>
+    <div class="sp-sub">Your daily delivery command center — built on the EEP framework by Mike Garcia</div>
+    <div class="sp-prog"><div class="sp-prog-bar" id="sp-bar-eng"></div></div>
+    <div class="sp-feats"><div class="sp-feat"><span>📋</span><div><b>Engagement Tracker</b><small>8-step delivery checklist with validated/claimed states</small></div></div><div class="sp-feat"><span>📡</span><div><b>Signal Intelligence</b><small>3 signal streams with Amber/Red flag detection</small></div></div><div class="sp-feat"><span>✅</span><div><b>Compliance Scorecard</b><small>0–100% weighted compliance scoring</small></div></div><div class="sp-feat"><span>📅</span><div><b>M365 Calendar & Inbox</b><small>Live Microsoft 365 data via Graph API</small></div></div><div class="sp-feat"><span>✉️</span><div><b>Three Tests Checker</b><small>Repeat-Back · Stakes · Next-Step validation</small></div></div><div class="sp-feat"><span>📄</span><div><b>M365 Advisory Builder</b><small>4-phase advisory generation pipeline</small></div></div></div>
+    <div class="sp-div"></div>
+    <div class="sp-conf">
+      <div class="sp-conf-lbl">⚠ Confidential Material — Access Restricted</div>
+      <p>All content is <strong>proprietary to Mike Garcia</strong>. View-only access for review only. Unauthorized copying, distribution, or use is strictly prohibited.</p>
+    </div>
+    <div class="sp-cb-row">
+      <input type="checkbox" id="sp-cb-eng">
+      <label for="sp-cb-eng">I acknowledge this is <strong>confidential material</strong> and agree to the access terms. I will not copy, distribute, or use this content without explicit written permission from Mike Garcia.</label>
+    </div>
+    <button class="sp-btn" id="sp-btn-eng">Enter Dashboard →</button>
+    <div class="sp-ver">Engineer Dashboard v1.0 · June 2026 · Built on original frameworks by Mike Garcia</div>
+  </div>
+</div>
+<script>
+(function(){
+  var KEY='ede_sp_eng_v2';
+  var ov=document.getElementById('sp-eng');
+  var cb=document.getElementById('sp-cb-eng');
+  var btn=document.getElementById('sp-btn-eng');
+  var bar=document.getElementById('sp-bar-eng');
+  var p=0,iv=setInterval(function(){p=Math.min(p+Math.random()*12,82);if(bar)bar.style.width=p+'%';if(p>=82)clearInterval(iv);},100);
+  try{var s=JSON.parse(localStorage.getItem(KEY)||'{}');if(s.ts&&(Date.now()-s.ts)<86400000){if(bar)bar.style.width='100%';setTimeout(function(){ov.classList.add('sp-gone');},250);return;}}catch(e){}
+  if(cb&&btn){
+    cb.addEventListener('change',function(){btn.classList.toggle('sp-ready',cb.checked);});
+    btn.addEventListener('click',function(){
+      if(!cb.checked)return;
+      clearInterval(iv);if(bar)bar.style.width='100%';
+      localStorage.setItem(KEY,JSON.stringify({ts:Date.now()}));
+      setTimeout(function(){ov.classList.add('sp-gone');},350);
+    });
+  }
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>EEP Certification Progress Tracker — EDE Dashboards</title>
+<link href="../css/styles.css" rel="stylesheet"/>
+<style>
+    .dash-wrap { position:relative; z-index:1; padding:40px 24px 80px; }
+    .dash-back { max-width:1200px; margin:0 auto 24px; }
+    .dash-page-header { max-width:1200px; margin:0 auto 36px; }
+    .dash-page-header .eyebrow { font-size:11px; font-weight:700; letter-spacing:3px; text-transform:uppercase; color:#d97706; margin-bottom:10px; }
+    .dash-page-header h1 { font-size:2rem; font-weight:800; color:#fff; margin-bottom:8px; }
+    .dash-page-header p { font-size:0.95rem; color:#8892a4; max-width:680px; line-height:1.7; }
+
+    .kpi-row { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; max-width:1200px; margin:0 auto 28px; }
+    .kpi-card { background:linear-gradient(160deg,rgba(17,24,39,0.97) 0%,rgba(10,14,36,0.97) 100%); border:1px solid rgba(217,119,6,0.18); border-radius:14px; padding:22px 24px; position:relative; overflow:hidden; }
+    .kpi-card::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; }
+    .kpi-card.c1::before { background:linear-gradient(90deg,#d97706,#fbbf24); }
+    .kpi-card.c2::before { background:linear-gradient(90deg,#0078ff,#00c8ff); }
+    .kpi-card.c3::before { background:linear-gradient(90deg,#7c3aed,#a78bfa); }
+    .kpi-card.c4::before { background:linear-gradient(90deg,#059669,#34d399); }
+    .kpi-label { font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:#8892a4; margin-bottom:10px; }
+    .kpi-value { font-size:2.4rem; font-weight:800; line-height:1; margin-bottom:6px; }
+    .kpi-card.c1 .kpi-value { color:#fbbf24; }
+    .kpi-card.c2 .kpi-value { color:#00c8ff; }
+    .kpi-card.c3 .kpi-value { color:#a78bfa; }
+    .kpi-card.c4 .kpi-value { color:#34d399; }
+    .kpi-sub { font-size:0.78rem; color:#8892a4; }
+
+    .main-grid { display:grid; grid-template-columns:1fr 1fr; gap:20px; max-width:1200px; margin:0 auto 20px; }
+    .three-col { display:grid; grid-template-columns:1fr 1fr 1fr; gap:20px; max-width:1200px; margin:0 auto 20px; }
+    .full-width { max-width:1200px; margin:0 auto 20px; }
+    .panel { background:linear-gradient(160deg,rgba(17,24,39,0.97) 0%,rgba(10,14,36,0.97) 100%); border:1px solid rgba(217,119,6,0.12); border-radius:14px; padding:24px 28px; position:relative; overflow:hidden; }
+    .panel::before { content:''; position:absolute; top:0; left:0; right:0; height:1px; background:linear-gradient(90deg,transparent,rgba(251,191,36,0.4),transparent); }
+    .panel-title { font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:#fbbf24; margin-bottom:18px; }
+
+    /* Cert level cards */
+    .cert-level-card { border-radius:12px; padding:20px 22px; margin-bottom:0; border:1px solid; }
+    .cert-level-card.l1 { background:rgba(0,120,255,0.07); border-color:rgba(96,165,250,0.25); }
+    .cert-level-card.l2 { background:rgba(124,58,237,0.07); border-color:rgba(167,139,250,0.25); }
+    .cert-level-card.l3 { background:rgba(217,119,6,0.07); border-color:rgba(251,191,36,0.25); }
+    .cert-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; }
+    .cert-badge { font-size:0.75rem; font-weight:800; letter-spacing:1px; text-transform:uppercase; padding:4px 12px; border-radius:20px; }
+    .cert-badge.l1 { background:rgba(0,120,255,0.15); color:#60a5fa; border:1px solid rgba(96,165,250,0.3); }
+    .cert-badge.l2 { background:rgba(124,58,237,0.15); color:#a78bfa; border:1px solid rgba(167,139,250,0.3); }
+    .cert-badge.l3 { background:rgba(217,119,6,0.15); color:#fbbf24; border:1px solid rgba(251,191,36,0.3); }
+    .cert-title { font-size:1.1rem; font-weight:800; color:#fff; }
+    .cert-audience { font-size:0.78rem; color:#8892a4; margin-bottom:12px; }
+    .cert-progress-wrap { display:flex; align-items:center; gap:12px; margin-bottom:10px; }
+    .cert-progress-bg { flex:1; height:8px; background:rgba(255,255,255,0.07); border-radius:4px; overflow:hidden; }
+    .cert-progress-fill { height:100%; border-radius:4px; }
+    .cert-progress-pct { font-size:0.88rem; font-weight:800; min-width:36px; text-align:right; }
+    .cert-stats { display:flex; gap:16px; }
+    .cert-stat { font-size:0.78rem; color:#8892a4; }
+    .cert-stat strong { color:#fff; }
+
+    /* Practitioner table */
+    .prac-table { width:100%; border-collapse:collapse; }
+    .prac-table th { font-size:9px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:#8892a4; padding:0 8px 12px 0; text-align:left; border-bottom:1px solid rgba(255,255,255,0.06); }
+    .prac-table td { font-size:0.82rem; color:#e8eaf6; padding:11px 8px 11px 0; border-bottom:1px solid rgba(255,255,255,0.04); vertical-align:middle; }
+    .prac-table tr:last-child td { border-bottom:none; }
+    .prac-name { font-weight:700; color:#fff; }
+    .prac-sub { font-size:0.75rem; color:#8892a4; margin-top:2px; }
+
+    .badge { display:inline-block; font-size:9px; font-weight:700; letter-spacing:1px; text-transform:uppercase; padding:3px 10px; border-radius:20px; }
+    .badge-green  { background:rgba(5,150,105,0.15);  color:#34d399; border:1px solid rgba(52,211,153,0.3); }
+    .badge-amber  { background:rgba(217,119,6,0.15);  color:#fbbf24; border:1px solid rgba(251,191,36,0.3); }
+    .badge-red    { background:rgba(220,38,38,0.15);  color:#f87171; border:1px solid rgba(248,113,113,0.3); }
+    .badge-blue   { background:rgba(0,120,255,0.15);  color:#60a5fa; border:1px solid rgba(96,165,250,0.3); }
+    .badge-purple { background:rgba(124,58,237,0.15); color:#a78bfa; border:1px solid rgba(167,139,250,0.3); }
+    .badge-gold   { background:rgba(217,119,6,0.15);  color:#fbbf24; border:1px solid rgba(251,191,36,0.3); }
+    .badge-gray   { background:rgba(255,255,255,0.06); color:#8892a4; border:1px solid rgba(255,255,255,0.1); }
+
+    /* Requirements checklist */
+    .req-list { list-style:none; padding:0; }
+    .req-item { display:flex; align-items:flex-start; gap:12px; padding:10px 0; border-bottom:1px solid rgba(255,255,255,0.05); }
+    .req-item:last-child { border-bottom:none; }
+    .req-check { font-size:1rem; flex-shrink:0; margin-top:1px; }
+    .req-title { font-size:0.85rem; font-weight:700; color:#fff; margin-bottom:3px; }
+    .req-body { font-size:0.75rem; color:#8892a4; line-height:1.5; }
+
+    /* Non-negotiables */
+    .nn-row { display:flex; align-items:flex-start; gap:14px; padding:14px 0; border-bottom:1px solid rgba(255,255,255,0.05); }
+    .nn-row:last-child { border-bottom:none; }
+    .nn-num { width:28px; height:28px; background:rgba(217,119,6,0.15); border:1px solid rgba(251,191,36,0.3); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.75rem; font-weight:700; color:#fbbf24; flex-shrink:0; line-height:28px; text-align:center; }
+    .nn-title { font-size:0.88rem; font-weight:700; color:#fff; margin-bottom:4px; }
+    .nn-body { font-size:0.78rem; color:#8892a4; line-height:1.6; }
+    .nn-status { flex-shrink:0; }
+
+    /* Roadmap timeline */
+    .timeline { position:relative; padding-left:24px; }
+    .timeline::before { content:''; position:absolute; left:6px; top:0; bottom:0; width:2px; background:rgba(251,191,36,0.2); }
+    .tl-item { position:relative; margin-bottom:20px; }
+    .tl-item:last-child { margin-bottom:0; }
+    .tl-dot { position:absolute; left:-21px; top:4px; width:12px; height:12px; border-radius:50%; border:2px solid; }
+    .tl-dot.done    { background:#34d399; border-color:#34d399; box-shadow:0 0 8px rgba(52,211,153,0.5); }
+    .tl-dot.active  { background:#fbbf24; border-color:#fbbf24; box-shadow:0 0 8px rgba(251,191,36,0.5); }
+    .tl-dot.pending { background:transparent; border-color:#8892a4; }
+    .tl-phase { font-size:9px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:#8892a4; margin-bottom:4px; }
+    .tl-title { font-size:0.88rem; font-weight:700; color:#fff; margin-bottom:4px; }
+    .tl-body { font-size:0.78rem; color:#8892a4; line-height:1.6; }
+
+    @media(max-width:900px){ .main-grid,.three-col{grid-template-columns:1fr;} .kpi-row{grid-template-columns:repeat(2,1fr);} }
+    @media(max-width:500px){ .kpi-row{grid-template-columns:1fr;} }
+  </style>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+<canvas id="particle-canvas"></canvas>
+<div class="page-wrap">
+<header>
+<div class="header-title"><span>EDE</span> / CEES / EEP  Frameworks</div>
+<div class="header-badge">Restricted Access</div>
+</header>
+<div class="dash-wrap">
+<div class="dash-back"><a class="back-btn" href="../dashboards.html">← Back to Dashboards</a></div>
+<div class="dash-page-header">
+<div class="eyebrow">Dashboard 06 — Coming Soon</div>
+<h1>EEP Certification Progress Tracker</h1>
+<p>Track certification progress across Practitioner, Lead, and Trainer levels. Monitor non-negotiable commitment completion rates, governance app usage, and cohort milestones.</p>
+</div>
+<!-- KPI Row -->
+<div class="kpi-row">
+<div class="kpi-card c1">
+<div class="kpi-label">Total Enrolled</div>
+<div class="kpi-value">14</div>
+<div class="kpi-sub">Active certification candidates</div>
+</div>
+<div class="kpi-card c2">
+<div class="kpi-label">L1 Certified</div>
+<div class="kpi-value">8</div>
+<div class="kpi-sub">EEP Practitioner · 57% of team</div>
+</div>
+<div class="kpi-card c3">
+<div class="kpi-label">L2 Certified</div>
+<div class="kpi-value">3</div>
+<div class="kpi-sub">EEP Lead · 21% of team</div>
+</div>
+<div class="kpi-card c4">
+<div class="kpi-label">L3 Certified</div>
+<div class="kpi-value">1</div>
+<div class="kpi-sub">EEP Trainer · M. Garcia</div>
+</div>
+</div>
+<!-- Three Cert Level Cards -->
+<div class="three-col">
+<div class="panel">
+<div class="cert-level-card l1">
+<div class="cert-header">
+<div><div class="cert-title">Level 1 — Practitioner</div><div class="cert-audience">All onboarding team members · 4–6 weeks</div></div>
+<span class="cert-badge l1">L1</span>
+</div>
+<div class="cert-progress-wrap">
+<div class="cert-progress-bg"><div class="cert-progress-fill" style="width:73%;background:linear-gradient(90deg,#0078ff,#00c8ff);"></div></div>
+<span class="cert-progress-pct" style="color:#60a5fa;">73%</span>
+</div>
+<div class="cert-stats">
+<div class="cert-stat"><strong>8</strong> certified</div>
+<div class="cert-stat"><strong>3</strong> in progress</div>
+<div class="cert-stat"><strong>3</strong> not started</div>
+</div>
+</div>
+<div style="margin-top:16px;">
+<div class="panel-title" style="margin-bottom:12px;">L1 Requirements</div>
+<ul class="req-list">
+<li class="req-item"><span class="req-check">✅</span><div><div class="req-title">EDEv4 Introduction Session (90 min)</div><div class="req-body">Live only. Async recordings do not satisfy this requirement.</div></div></li>
+<li class="req-item"><span class="req-check">✅</span><div><div class="req-title">CEEDS Onboarding Session (90 min)</div><div class="req-body">CEEDS structure, cadence design, CEES Session format.</div></div></li>
+<li class="req-item"><span class="req-check">✅</span><div><div class="req-title">CE Framework Deep-Dive (60 min)</div><div class="req-body">Trust architecture: credibility–reliability–referenceability.</div></div></li>
+<li class="req-item"><span class="req-check">⏳</span><div><div class="req-title">Written Scenario Assessment</div><div class="req-body">2 scenarios · 80% minimum · 1 retake after 72hr wait.</div></div></li>
+<li class="req-item"><span class="req-check">⏳</span><div><div class="req-title">Supervised CEES Session Participation</div><div class="req-body">One full cycle as participant. Signal language + lesson contribution required.</div></div></li>
+</ul>
+</div>
+</div>
+<div class="panel">
+<div class="cert-level-card l2">
+<div class="cert-header">
+<div><div class="cert-title">Level 2 — Lead</div><div class="cert-audience">L1 practitioners · 6+ months delivery · 6–9 months</div></div>
+<span class="cert-badge l2">L2</span>
+</div>
+<div class="cert-progress-wrap">
+<div class="cert-progress-bg"><div class="cert-progress-fill" style="width:43%;background:linear-gradient(90deg,#7c3aed,#a78bfa);"></div></div>
+<span class="cert-progress-pct" style="color:#a78bfa;">43%</span>
+</div>
+<div class="cert-stats">
+<div class="cert-stat"><strong>3</strong> certified</div>
+<div class="cert-stat"><strong>2</strong> in progress</div>
+<div class="cert-stat"><strong>3</strong> eligible</div>
+</div>
+</div>
+<div style="margin-top:16px;">
+<div class="panel-title" style="margin-bottom:12px;">L2 Requirements</div>
+<ul class="req-list">
+<li class="req-item"><span class="req-check">✅</span><div><div class="req-title">Active L1 Certification</div><div class="req-body">No outstanding coaching flags.</div></div></li>
+<li class="req-item"><span class="req-check">✅</span><div><div class="req-title">6 Months Delivery Under Standard</div><div class="req-body">Verified via OO assignments, signal log entries, CEES attendance.</div></div></li>
+<li class="req-item"><span class="req-check">⏳</span><div><div class="req-title">Three Playbook Lesson Contributions</div><div class="req-body">Each: scenario description + contrast analysis + transferable principle.</div></div></li>
+<li class="req-item"><span class="req-check">⏳</span><div><div class="req-title">Facilitate One Complete CEES Cycle</div><div class="req-body">4 sessions over 8 weeks. L3 Trainer observes at least 2.</div></div></li>
+<li class="req-item"><span class="req-check">⏳</span><div><div class="req-title">Pass L2 Scenario Assessment</div><div class="req-body">3 scenarios across 3 performance bands · 80% minimum.</div></div></li>
+</ul>
+</div>
+</div>
+<div class="panel">
+<div class="cert-level-card l3">
+<div class="cert-header">
+<div><div class="cert-title">Level 3 — Trainer</div><div class="cert-audience">L2 leads who will sustain the program · 3–6 months</div></div>
+<span class="cert-badge l3">L3</span>
+</div>
+<div class="cert-progress-wrap">
+<div class="cert-progress-bg"><div class="cert-progress-fill" style="width:14%;background:linear-gradient(90deg,#d97706,#fbbf24);"></div></div>
+<span class="cert-progress-pct" style="color:#fbbf24;">14%</span>
+</div>
+<div class="cert-stats">
+<div class="cert-stat"><strong>1</strong> certified</div>
+<div class="cert-stat"><strong>1</strong> in progress</div>
+<div class="cert-stat"><strong>1</strong> eligible</div>
+</div>
+</div>
+<div style="margin-top:16px;">
+<div class="panel-title" style="margin-bottom:12px;">L3 Requirements</div>
+<ul class="req-list">
+<li class="req-item"><span class="req-check">✅</span><div><div class="req-title">Active L2 Certification</div><div class="req-body">Continued evidence of delivery during L3 preparation.</div></div></li>
+<li class="req-item"><span class="req-check">⏳</span><div><div class="req-title">Trainer-of-Trainers Module</div><div class="req-body">Program philosophy, facilitation failure modes, L1 assessment administration.</div></div></li>
+<li class="req-item"><span class="req-check">⏳</span><div><div class="req-title">Observed Full CEES Session</div><div class="req-body">Scored against facilitation rubric · 80% minimum · no automatic failure dimensions.</div></div></li>
+<li class="req-item"><span class="req-check">⏳</span><div><div class="req-title">Playbook Scenario Write-Up</div><div class="req-body">Fully developed scenario meeting editorial standard.</div></div></li>
+<li class="req-item"><span class="req-check">⏳</span><div><div class="req-title">Pass L3 Panel Debrief (15 min)</div><div class="req-body">Program philosophy, edge cases, and stewardship conversation.</div></div></li>
+</ul>
+</div>
+</div>
+</div>
+<!-- Practitioner Register + Non-Negotiables -->
+<div class="main-grid">
+<div class="panel">
+<div class="panel-title">Practitioner Register — Current Cohort</div>
+<table class="prac-table">
+<thead>
+<tr><th>Name</th><th>Level</th><th>Status</th><th>Timeline</th><th>Next Step</th></tr>
+</thead>
+<tbody>
+<tr>
+<td><div class="prac-name">M. Garcia</div><div class="prac-sub">Program Lead</div></td>
+<td><span class="badge badge-gold">L3</span></td>
+<td><span class="badge badge-green">Certified</span></td>
+<td>Q1 2026</td>
+<td>Quarterly review</td>
+</tr>
+<tr>
+<td><div class="prac-name">S. Patel</div><div class="prac-sub">Engagement Lead</div></td>
+<td><span class="badge badge-purple">L2</span></td>
+<td><span class="badge badge-green">Certified</span></td>
+<td>Q2 2026</td>
+<td>L3 prep started</td>
+</tr>
+<tr>
+<td><div class="prac-name">R. Chen</div><div class="prac-sub">Senior Consultant</div></td>
+<td><span class="badge badge-purple">L2</span></td>
+<td><span class="badge badge-green">Certified</span></td>
+<td>Q2 2026</td>
+<td>Playbook contribution</td>
+</tr>
+<tr>
+<td><div class="prac-name">J. Torres</div><div class="prac-sub">Consultant</div></td>
+<td><span class="badge badge-blue">L1</span></td>
+<td><span class="badge badge-amber">In Progress</span></td>
+<td>Target: Jun 30</td>
+<td>CEES Session pending</td>
+</tr>
+<tr>
+<td><div class="prac-name">A. Brooks</div><div class="prac-sub">Consultant</div></td>
+<td><span class="badge badge-blue">L1</span></td>
+<td><span class="badge badge-amber">In Progress</span></td>
+<td>Target: Jul 15</td>
+<td>Scenario assessment</td>
+</tr>
+<tr>
+<td><div class="prac-name">T. Osei</div><div class="prac-sub">New Hire</div></td>
+<td><span class="badge badge-gray">L1</span></td>
+<td><span class="badge badge-gray">Not Started</span></td>
+<td>Start: Jun 16</td>
+<td>EDEv4 session</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Five Non-Negotiables -->
+<div class="panel">
+<div class="panel-title">Five Non-Negotiable Commitments — Compliance</div>
+<div class="nn-row">
+<div class="nn-num">I</div>
+<div style="flex:1;">
+<div class="nn-title">Outcome Ownership</div>
+<div class="nn-body">Every engagement has a named OO, visible to client in writing, before delivery begins.</div>
+</div>
+<div class="nn-status"><span class="badge badge-green">91%</span></div>
+</div>
+<div class="nn-row">
+<div class="nn-num">II</div>
+<div style="flex:1;">
+<div class="nn-title">Communication Standards</div>
+<div class="nn-body">Every client-facing communication passes Three Tests before sending.</div>
+</div>
+<div class="nn-status"><span class="badge badge-amber">87%</span></div>
+</div>
+<div class="nn-row">
+<div class="nn-num">III</div>
+<div style="flex:1;">
+<div class="nn-title">Value Validation at Close</div>
+<div class="nn-body">Every engagement closes with validated client articulation of value received.</div>
+</div>
+<div class="nn-status"><span class="badge badge-green">83%</span></div>
+</div>
+<div class="nn-row">
+<div class="nn-num">IV</div>
+<div style="flex:1;">
+<div class="nn-title">Runbook Adherence</div>
+<div class="nn-body">Every delivery incident follows the applicable Runbook without improvisation.</div>
+</div>
+<div class="nn-status"><span class="badge badge-green">100%</span></div>
+</div>
+<div class="nn-row">
+<div class="nn-num">V</div>
+<div style="flex:1;">
+<div class="nn-title">Operating Cadences</div>
+<div class="nn-body">Four operating cadences are non-negotiable standing commitments.</div>
+</div>
+<div class="nn-status"><span class="badge badge-amber">88%</span></div>
+</div>
+</div>
+</div>
+<!-- 12-Month Roadmap -->
+<div class="full-width">
+<div class="panel">
+<div class="panel-title">12-Month Capability Roadmap</div>
+<div class="timeline">
+<div class="tl-item">
+<div class="tl-dot done"></div>
+<div class="tl-phase">Q1 2026 — Foundation</div>
+<div class="tl-title">Deploy program · Activate all five operating motions · Full OO coverage</div>
+<div class="tl-body">Program live · Runbooks published · Level 1 cohort certified · Signal tracking active. <strong style="color:#34d399;">✓ Complete</strong></div>
+</div>
+<div class="tl-item">
+<div class="tl-dot active"></div>
+<div class="tl-phase">Q2 2026 — Operationalization (Current)</div>
+<div class="tl-title">Build team fluency · Surface first measurable CX improvements · Identify L2 candidates</div>
+<div class="tl-body">Real-case CEES Sessions running · L2 development paths initiated · Q1 signal data analyzed. <strong style="color:#fbbf24;">⚡ In Progress</strong></div>
+</div>
+<div class="tl-item">
+<div class="tl-dot pending"></div>
+<div class="tl-phase">Q3 2026 — Embedding</div>
+<div class="tl-title">Normalize EEP as team culture · First L3 Trainers qualified · Adjacent team awareness</div>
+<div class="tl-body">First L3 certification complete · New team members onboarding under EEP default · Adjacent team briefings conducted.</div>
+</div>
+<div class="tl-item">
+<div class="tl-dot pending"></div>
+<div class="tl-phase">Q4 2026 — Scale</div>
+<div class="tl-title">Prepare for expansion · Publish Playbook v2 · Present for broader adoption</div>
+<div class="tl-body">Playbook v2 published · L3 Trainers delivering independently · Expansion plan presented to senior leadership. Primary metric: renewal rate, reference conversion, CSAT trend.</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<footer>EDE / CEES / EEP Frameworks  ·  Confidential  ·  Authorized Personnel Only</footer>
+</div>
+<script src="../js/main.js"></script>
+
+<script>
+Chart.defaults.color = '#8892a4';
+Chart.defaults.borderColor = 'rgba(255,255,255,0.06)';
+Chart.defaults.font.family = '"Segoe UI", Roboto, sans-serif';
+
+// ── Certification Level Doughnut
+(function(){
+  const ctx = document.getElementById('certDoughnut');
+  if(!ctx) return;
+  new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels: ['L3 Trainer (1)','L2 Lead (3)','L1 Practitioner (8)','Not Started (2)'],
+      datasets:[{
+        data: [1, 3, 8, 2],
+        backgroundColor: [
+          'rgba(217,119,6,0.8)',
+          'rgba(124,58,237,0.8)',
+          'rgba(0,120,255,0.8)',
+          'rgba(255,255,255,0.1)'
+        ],
+        borderColor: ['#d97706','#7c3aed','#0078ff','rgba(255,255,255,0.2)'],
+        borderWidth: 2, hoverOffset: 8
+      }]
+    },
+    options: {
+      responsive:true, maintainAspectRatio:true, cutout:'60%',
+      plugins:{
+        legend:{ position:'bottom', labels:{ boxWidth:12, padding:12, color:'#8892a4' } },
+        tooltip:{ backgroundColor:'rgba(10,14,36,0.95)', borderColor:'rgba(217,119,6,0.3)', borderWidth:1,
+          callbacks:{ label: ctx => ` ${ctx.label}` } }
+      }
+    }
+  });
+})();
+
+// ── Non-Negotiables Compliance Bar Chart
+(function(){
+  const ctx = document.getElementById('nnBar');
+  if(!ctx) return;
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: ['I — Outcome
+Ownership','II — Comm
+Standards','III — Value
+Validation','IV — Runbook
+Adherence','V — Operating
+Cadences'],
+      datasets:[
+        { label:'Compliant %', data:[91,87,83,100,88],
+          backgroundColor:['rgba(52,211,153,0.75)','rgba(251,191,36,0.75)','rgba(251,191,36,0.75)','rgba(52,211,153,0.75)','rgba(251,191,36,0.75)'],
+          borderColor:['#34d399','#fbbf24','#fbbf24','#34d399','#fbbf24'],
+          borderWidth:1, borderRadius:6 },
+        { label:'Gap %', data:[9,13,17,0,12],
+          backgroundColor:'rgba(255,255,255,0.06)',
+          borderColor:'rgba(255,255,255,0.15)',
+          borderWidth:1, borderRadius:6 }
+      ]
+    },
+    options: {
+      responsive:true, maintainAspectRatio:true,
+      plugins:{
+        legend:{ position:'bottom', labels:{ boxWidth:10, padding:12, color:'#8892a4' } },
+        tooltip:{ backgroundColor:'rgba(10,14,36,0.95)', borderColor:'rgba(217,119,6,0.3)', borderWidth:1,
+          callbacks:{ label: ctx => ` ${ctx.dataset.label}: ${ctx.parsed.y}%` } }
+      },
+      scales:{
+        x:{ stacked:true, grid:{ display:false }, ticks:{ color:'#8892a4' } },
+        y:{ stacked:true, min:0, max:100, grid:{ color:'rgba(255,255,255,0.05)' }, ticks:{ color:'#8892a4', callback: v => v+'%' } }
+      }
+    }
+  });
+})();
+</script>
+</body>
+</html>

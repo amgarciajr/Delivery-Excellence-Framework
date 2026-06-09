@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>EDE Identity — EDE Frameworks</title>
+<link href="../css/styles.css" rel="stylesheet"/>
+<style>
+    .mod-hero { position:relative; padding:48px 0 36px; text-align:center; overflow:hidden; }
+    .mod-hero-glow { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:600px; height:300px; background:url('../assets/glows/hero-glow.png?expires=1783578285&signature=0b348fa5c5a2884114e14864de4c1acb95d81ccec007eb59f8475423127d91ef') center/contain no-repeat; opacity:0.4; pointer-events:none; }
+    .mod-eyebrow { font-size:11px; font-weight:700; letter-spacing:3px; text-transform:uppercase; color:#00c8ff; margin-bottom:12px; }
+    .mod-title { font-size:2.2rem; font-weight:800; color:#fff; margin-bottom:12px; text-shadow:0 0 30px rgba(0,200,255,0.3); }
+    .mod-subtitle { font-size:1rem; color:#8892a4; max-width:600px; margin:0 auto; line-height:1.7; }
+    .stat-row { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:28px; }
+    .stat-card { background:linear-gradient(160deg,rgba(17,24,39,0.97) 0%,rgba(10,14,36,0.97) 100%); border:1px solid rgba(0,200,255,0.18); border-radius:14px; padding:20px 18px; position:relative; overflow:hidden; text-align:center; }
+    .stat-card::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background:linear-gradient(90deg,#0078ff,#00c8ff); }
+    .stat-num { font-size:2rem; font-weight:800; color:#00c8ff; line-height:1; margin-bottom:6px; }
+    .stat-label { font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:#8892a4; }
+    .stat-desc { font-size:0.78rem; color:#b0bac8; margin-top:4px; }
+    .panel { background:linear-gradient(160deg,rgba(17,24,39,0.97) 0%,rgba(10,14,36,0.97) 100%); border:1px solid rgba(0,200,255,0.15); border-radius:14px; padding:24px 28px; position:relative; overflow:hidden; margin-bottom:20px; }
+    .panel::before { content:''; position:absolute; top:0; left:0; right:0; height:1px; background:linear-gradient(90deg,transparent,rgba(0,200,255,0.4),transparent); }
+    .panel-title { font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:#00c8ff; margin-bottom:16px; }
+    .evolution-row { display:flex; align-items:center; gap:0; margin-bottom:24px; flex-wrap:wrap; }
+    .evo-stage { flex:1; min-width:120px; text-align:center; padding:16px 8px; background:rgba(0,0,0,0.2); border:1px solid rgba(255,255,255,0.07); border-radius:10px; margin:4px; position:relative; }
+    .evo-stage.active { background:rgba(0,200,255,0.1); border-color:rgba(0,200,255,0.3); }
+    .evo-label { font-size:9px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:#8892a4; margin-bottom:6px; }
+    .evo-stage.active .evo-label { color:#00c8ff; }
+    .evo-title { font-size:1rem; font-weight:800; color:#fff; margin-bottom:4px; }
+    .evo-desc { font-size:0.75rem; color:#8892a4; line-height:1.5; }
+    .evo-arrow { font-size:1.4rem; color:#00c8ff; align-self:center; padding:0 4px; flex-shrink:0; }
+    .two-col { display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom:20px; }
+    .three-col { display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; margin-bottom:20px; }
+    .test-card { border-radius:12px; padding:20px; border:1px solid rgba(0,200,255,0.2); background:rgba(0,200,255,0.06); margin-bottom:14px; }
+    .test-card:last-child { margin-bottom:0; }
+    .test-name { font-size:0.92rem; font-weight:800; color:#00c8ff; margin-bottom:8px; }
+    .test-question { font-size:0.85rem; color:#e8eaf6; font-style:italic; margin-bottom:10px; line-height:1.6; }
+    .test-pass { font-size:0.78rem; color:#34d399; margin-bottom:4px; }
+    .test-fail { font-size:0.78rem; color:#f87171; }
+    .antipattern-row { display:flex; align-items:flex-start; gap:14px; padding:14px 0; border-bottom:1px solid rgba(255,255,255,0.05); }
+    .antipattern-row:last-child { border-bottom:none; }
+    .ap-icon { width:32px; height:32px; border-radius:8px; background:rgba(248,113,113,0.12); border:1px solid rgba(248,113,113,0.25); display:flex; align-items:center; justify-content:center; font-size:0.9rem; flex-shrink:0; }
+    .ap-title { font-size:0.88rem; font-weight:700; color:#f87171; margin-bottom:4px; }
+    .ap-body { font-size:0.78rem; color:#8892a4; line-height:1.6; margin-bottom:6px; }
+    .ap-fix { font-size:0.78rem; color:#34d399; }
+    .callout { border-radius:10px; padding:16px 20px; margin:16px 0; border:1px solid rgba(0,200,255,0.3); background:rgba(0,200,255,0.07); }
+    .callout-text { font-size:0.88rem; color:#e8eaf6; line-height:1.7; font-style:italic; }
+    .callout-attr { font-size:0.75rem; color:#00c8ff; font-weight:700; margin-top:8px; }
+    .mini-card { background:rgba(0,0,0,0.25); border:1px solid rgba(255,255,255,0.07); border-radius:10px; padding:16px; margin-bottom:12px; }
+    .mini-card:last-child { margin-bottom:0; }
+    .mini-card-title { font-size:0.85rem; font-weight:700; color:#fff; margin-bottom:6px; }
+    .mini-card-body { font-size:0.78rem; color:#8892a4; line-height:1.6; }
+    @media(max-width:900px){ .two-col,.three-col,.stat-row{ grid-template-columns:1fr 1fr; } .evolution-row{ flex-direction:column; } .evo-arrow{ transform:rotate(90deg); } }
+    @media(max-width:600px){ .two-col,.three-col,.stat-row{ grid-template-columns:1fr; } .mod-title{ font-size:1.6rem; } }
+  </style>
+</head>
+<body>
+<canvas id="particle-canvas"></canvas>
+<div class="page-wrap">
+<header>
+<div class="header-title"><span>EDE</span> / CEES / EEP  Frameworks</div>
+<button class="pdf-btn" onclick="exportPDF()">⬇ Export PDF</button>
+</header>
+<div class="container">
+<div style="margin-bottom:16px;"><a class="back-btn" href="../index.html">← Back to Framework Library</a></div>
+<div class="mod-hero">
+<div class="mod-hero-glow"></div>
+<div class="mod-eyebrow">EDE Identity — Trusted Advisor at the Customer's Table</div>
+<h1 class="mod-title">EDE Identity</h1>
+<p class="mod-subtitle">EDE Identity defines who you are at the customer's table: the deepest technical expertise applied to the hardest business problems — as a trusted advisor, not a subject matter expert.</p>
+</div>
+<!-- Stats -->
+<div class="stat-row">
+<div class="stat-card"><div class="stat-num">4</div><div class="stat-label">Role Stages</div><div class="stat-desc">PFE → CE → CSA → EDE</div></div>
+<div class="stat-card"><div class="stat-num">3</div><div class="stat-label">Identity Tests</div><div class="stat-desc">Repeat-Back, Stakes, Next-Step</div></div>
+<div class="stat-card"><div class="stat-num">5</div><div class="stat-label">Anti-Patterns</div><div class="stat-desc">Behaviors that erode trusted-advisor status</div></div>
+<div class="stat-card"><div class="stat-num">1</div><div class="stat-label">Mission</div><div class="stat-desc">Outcomes, not deliverables</div></div>
+</div>
+<!-- Overview -->
+<div class="panel">
+<div class="panel-title">What EDE Identity Means</div>
+<p style="color:#e8eaf6;line-height:1.8;font-size:0.97rem;margin-bottom:14px;">EDE Identity is not a job title — it is a stance. It defines how you show up at the customer's table: not as a technical resource who executes tasks, but as a trusted advisor who applies the deepest technical expertise to the hardest business problems. The difference between a subject matter expert and a trusted advisor is not knowledge — it is the willingness to have an opinion, to name the stakes, and to own the outcome.</p>
+<div class="callout">
+<div class="callout-text">"The deepest technical expertise applied to the hardest business problems. Outcomes, not deliverables. Opinions, not options. This is the EDE identity."</div>
+<div class="callout-attr">— EDE Identity Standard</div>
+</div>
+</div>
+<!-- Role Evolution -->
+<div class="panel">
+<div class="panel-title">Role Evolution — Four Stages</div>
+<div class="evolution-row">
+<div class="evo-stage">
+<div class="evo-label">Stage 01</div>
+<div class="evo-title">PFE</div>
+<div class="evo-desc">Premier Field Engineer. Technical execution. Reactive delivery. Customer-facing but task-oriented.</div>
+</div>
+<div class="evo-arrow">→</div>
+<div class="evo-stage">
+<div class="evo-label">Stage 02</div>
+<div class="evo-title">CE</div>
+<div class="evo-desc">Customer Engineer. Broader scope. Beginning to advise, not just execute. Relationship awareness developing.</div>
+</div>
+<div class="evo-arrow">→</div>
+<div class="evo-stage">
+<div class="evo-label">Stage 03</div>
+<div class="evo-title">CSA</div>
+<div class="evo-desc">Cloud Solution Architect. Strategic advisory. Outcome-oriented. Trust-building as a deliberate practice.</div>
+</div>
+<div class="evo-arrow">→</div>
+<div class="evo-stage active">
+<div class="evo-label">Stage 04 — Current</div>
+<div class="evo-title">EDE</div>
+<div class="evo-desc">Engagement Delivery Expert. Trusted advisor. Deepest expertise. Outcomes, not deliverables. Opinions, not options.</div>
+</div>
+</div>
+<div style="font-size:0.82rem;color:#8892a4;line-height:1.7;">The evolution is not just a title change — it is a fundamental shift in stance. Each stage requires the engineer to take on more accountability for outcomes, more willingness to have opinions, and more responsibility for the client's experience beyond the technical deliverable.</div>
+</div>
+<!-- Trusted Advisor vs SME + Three Tests -->
+<div class="two-col">
+<div class="panel">
+<div class="panel-title">Trusted Advisor vs. Subject Matter Expert</div>
+<div class="mini-card">
+<div class="mini-card-title" style="color:#f87171;">❌ Subject Matter Expert Stance</div>
+<div class="mini-card-body">"Here are three options you could consider." Presents choices without recommendation. Avoids accountability for the outcome. Defers to the client on every decision. Technically correct but not trusted.</div>
+</div>
+<div class="mini-card">
+<div class="mini-card-title" style="color:#34d399;">✅ Trusted Advisor Stance</div>
+<div class="mini-card-body">"Based on what I know about your environment, I recommend Option B. Here's why, and here's what happens if we choose A instead." Has an opinion. Names the stakes. Owns the recommendation.</div>
+</div>
+<div class="mini-card">
+<div class="mini-card-title">The Behavioral Difference</div>
+<div class="mini-card-body">The trusted advisor does not have more knowledge than the SME. They have more willingness to be accountable for their knowledge. They say "I recommend" not "you could consider." They name what they would do, not just what is possible.</div>
+</div>
+<div class="callout" style="margin-top:0;">
+<div class="callout-text">"Opinions, not options. The client hired you because you know more than they do. Act like it."</div>
+</div>
+</div>
+<div class="panel">
+<div class="panel-title">Three Identity Tests</div>
+<div class="test-card">
+<div class="test-name">Test 1 — Repeat-Back Test</div>
+<div class="test-question">"Could the client accurately restate the key content of this communication in their own words after one reading?"</div>
+<div class="test-pass">✅ Pass: Client can restate scope, next steps, and stakes without asking for clarification.</div>
+<div class="test-fail">❌ Fail: Client asks "what did you mean by X?" or takes the wrong action based on your communication.</div>
+</div>
+<div class="test-card">
+<div class="test-name">Test 2 — Stakes Test</div>
+<div class="test-question">"Does the client understand what happens next if they do or do not take the requested action?"</div>
+<div class="test-pass">✅ Pass: Consequence of action and inaction are both explicit in the communication.</div>
+<div class="test-fail">❌ Fail: Client doesn't respond because they don't understand why it matters.</div>
+</div>
+<div class="test-card">
+<div class="test-name">Test 3 — Next-Step Test</div>
+<div class="test-question">"Is the immediate next action crystal clear — who does it, when, and how will completion be confirmed?"</div>
+<div class="test-pass">✅ Pass: One action, one owner, one deadline, one confirmation method.</div>
+<div class="test-fail">❌ Fail: Multiple possible next steps, unclear ownership, no deadline.</div>
+</div>
+</div>
+</div>
+<!-- Anti-Patterns -->
+<div class="panel">
+<div class="panel-title">Five Anti-Patterns — Behaviors That Erode Trusted-Advisor Status</div>
+<div class="antipattern-row">
+<div class="ap-icon">🚫</div>
+<div>
+<div class="ap-title">Hedging</div>
+<div class="ap-body">"It depends." "There are several approaches." "You might want to consider..." These phrases signal that you are unwilling to be accountable for your recommendation. They erode trust immediately.</div>
+<div class="ap-fix">✅ Fix: State your recommendation directly. "I recommend X because Y. The risk of Z is mitigated by W."</div>
+</div>
+</div>
+<div class="antipattern-row">
+<div class="ap-icon">🚫</div>
+<div>
+<div class="ap-title">Microsoft-Speak</div>
+<div class="ap-body">Using internal Microsoft terminology, acronyms, or product names that the client doesn't recognize. Creates distance, signals that you're thinking about Microsoft's framework rather than the client's problem.</div>
+<div class="ap-fix">✅ Fix: Translate everything into the client's language. If they don't use the term, don't use it.</div>
+</div>
+</div>
+<div class="antipattern-row">
+<div class="ap-icon">🚫</div>
+<div>
+<div class="ap-title">Scope Creep (Accepting)</div>
+<div class="ap-body">Silently accepting scope additions without naming the impact. The trusted advisor names scope changes explicitly: "That's outside our current scope — here's what it would take to include it."</div>
+<div class="ap-fix">✅ Fix: Name every scope change. "That's a new item — here's the impact on timeline and outcome."</div>
+</div>
+</div>
+<div class="antipattern-row">
+<div class="ap-icon">🚫</div>
+<div>
+<div class="ap-title">Outcome Avoidance</div>
+<div class="ap-body">Focusing on deliverables rather than outcomes. "I delivered the workshop" instead of "the client can now do X that they couldn't do before." Deliverable-focus signals task orientation, not outcome ownership.</div>
+<div class="ap-fix">✅ Fix: Always frame your work in terms of what the client can now do differently.</div>
+</div>
+</div>
+<div class="antipattern-row">
+<div class="ap-icon">🚫</div>
+<div>
+<div class="ap-title">Invisible Expertise</div>
+<div class="ap-body">Having the right answer but not saying it because you're waiting to be asked, or because you're not sure it's "your place." The trusted advisor volunteers expertise proactively — that's the job.</div>
+<div class="ap-fix">✅ Fix: If you know something the client needs to know, say it. That's what they hired you for.</div>
+</div>
+</div>
+</div>
+</div>
+<footer>EDE / CEES / EEP Frameworks  ·  Confidential  ·  Authorized Personnel Only</footer>
+</div>
+<script src="../js/main.js"></script>
+</body>
+</html>
