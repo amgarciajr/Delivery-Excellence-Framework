@@ -2,55 +2,40 @@
 <html lang="en">
 <head>
     <meta charset="utf-8"/>
-    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Framework Library</title>
     <link href="css/styles.css" rel="stylesheet"/>
     <script>
         document.addEventListener("DOMContentLoaded", () => {
             if (sessionStorage.getItem("ede-access") === "granted") {
-                document.getElementById("access-gate").style.display = "none";
-                document.getElementById("main-content").style.display = "block";
+                const gate = document.getElementById("access-gate");
+                const main = document.getElementById("main-content");
+                if (gate) gate.style.display = "none";
+                if (main) main.style.display = "block";
             }
         });
         function confirmProceed() {
             sessionStorage.setItem("ede-access", "granted");
-            document.getElementById("access-gate").style.display = "none";
-            document.getElementById("main-content").style.display = "block";
-            document.getElementById("confirmModal").style.display = "none";
+            window.location.reload(); // Simplest way to apply state
         }
-        function cancelModal() { document.getElementById("confirmModal").style.display = "none"; }
     </script>
 </head>
 <body>
-    <canvas id="particle-canvas"></canvas>
-    <div class="page-wrap">
-        <div id="access-gate">
-            <div class="gate-card">
-                <h1>Restricted Access</h1>
-                <p>This library is confidential. Please confirm to proceed.</p>
-                <button class="btn-primary" onclick="document.getElementById('confirmModal').style.display='flex'">Accept & Continue</button>
-            </div>
-        </div>
-
-        <div id="main-content" style="display:none;">
-            <header>
-                <div class="header-title"><span>EDE</span> / CEES / EEP &nbsp;Frameworks</div>
-            </header>
-            <div class="container">
-                <div class="card">
-                    <h2>Modules</h2>
-                    <div class="nav-grid">
-                        <a class="nav-item" href="modules/operational-hygiene.html"><span class="nav-item-label">Operational Hygiene</span></a>
-                        </div>
-                </div>
-            </div>
-        </div>
+    <div id="access-gate">
+        <h1>Restricted Access</h1>
+        <p>This library is confidential.</p>
+        <button onclick="confirmProceed()">Accept & Continue</button>
     </div>
-    <div id="confirmModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); justify-content:center; align-items:center;">
-        <div style="background:#111; padding:20px; color:#fff;">
-            <h3>Confirm Access</h3>
-            <button onclick="confirmProceed()">Continue</button>
-            <button onclick="cancelModal()">Cancel</button>
+
+    <div id="main-content" style="display:none;">
+        <header>
+            <div class="header-title"><span>EDE</span> / CEES / EEP Frameworks</div>
+        </header>
+        <div class="container">
+            <div class="nav-grid">
+                <a class="nav-item" href="modules/cees-playbook.html">CEES Playbook</a>
+                <a class="nav-item" href="modules/eep-charter.html">EEP Charter</a>
+            </div>
         </div>
     </div>
 </body>
