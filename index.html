@@ -6,12 +6,32 @@
     <title>SECURE ACCESS — DELIVERY EXCELLENCE OS</title>
     <link href="css/styles.css" rel="stylesheet"/>
     <style>
-        .gate-wrap { max-width: 800px; margin: 15vh auto; padding: 60px; background: #111827; border: 1px solid var(--accent); border-radius: var(--radius-lg); text-align: center; }
+        .gate-wrap { max-width: 800px; margin: 15vh auto; padding: 60px; background: #111827; border: 1px solid var(--accent); border-radius: var(--radius-lg); box-shadow: var(--shadow); text-align: center; }
         .gate-icon { width: 80px; margin-bottom: 20px; filter: drop-shadow(0 0 10px var(--accent)); }
         h1.imposing { font-size: 2.5rem; font-weight: 800; color: #fff; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 20px; }
         .divider { width: 80px; height: 4px; background: var(--accent); margin: 0 auto 30px; }
-        .terms-box { text-align: left; background: rgba(0,0,0,0.4); padding: 25px; border-left: 3px solid #FF6200; margin: 30px 0; font-size: 0.9rem; line-height: 1.6; color: var(--text); }
+        .terms-box { text-align: left; background: rgba(0,0,0,0.4); padding: 25px; border-left: 3px solid #FF6200; margin: 30px 0; font-size: 0.9rem; line-height: 1.6; color: #ccc; }
+        .challenge-box { margin: 20px 0; padding: 20px; border: 1px solid #333; border-radius: 8px; }
     </style>
+    <script>
+        // Generate math challenge
+        let a = Math.floor(Math.random() * 10) + 1;
+        let b = Math.floor(Math.random() * 10) + 1;
+
+        document.addEventListener("DOMContentLoaded", () => {
+            document.getElementById("math-challenge").innerText = `${a} + ${b} = ?`;
+        });
+
+        function verifyAndProceed() {
+            let answer = document.getElementById("math-answer").value;
+            if (parseInt(answer) === (a + b)) {
+                sessionStorage.setItem("ede-access", "granted");
+                window.location.href = "dashboard.html";
+            } else {
+                alert("Verification failed. Access denied.");
+            }
+        }
+    </script>
 </head>
 <body>
     <canvas id="particle-canvas"></canvas>
@@ -20,10 +40,18 @@
         <h1 class="imposing">Authorized Access Only</h1>
         <div class="divider"></div>
         <p style="color: var(--muted); margin-bottom: 30px;">You are attempting to access the Delivery Excellence Operating System. All materials are strictly confidential.</p>
+        
         <div class="terms-box">
-            <strong>Confidentiality & IP Agreement:</strong> By proceeding, you acknowledge that all frameworks, playbooks, and diagnostic tools contained herein are the exclusive intellectual property of the Framework Owner. Unauthorized reproduction or distribution is strictly prohibited.
+            <strong>Confidentiality & IP Agreement:</strong> By proceeding, you acknowledge that all frameworks, playbooks, and diagnostic tools contained herein are the exclusive intellectual property of the Framework Owner. Unauthorized reproduction, distribution, or scraping of this content is strictly prohibited.
         </div>
-        <button onclick="window.location.href='dashboard.html'" class="btn-primary" style="padding: 18px 40px; font-size: 1rem;">Accept & Initialize System</button>
+
+        <div class="challenge-box">
+            <p style="margin-bottom:10px;">Solve to initialize system:</p>
+            <div id="math-challenge" style="font-size: 1.5rem; font-weight:bold; color: var(--accent2); margin-bottom:10px;"></div>
+            <input type="number" id="math-answer" placeholder="Result" style="padding: 10px; width: 120px; background:#000; border:1px solid #444; color:#fff; border-radius:4px; text-align:center;">
+        </div>
+
+        <button onclick="verifyAndProceed()" class="btn-primary" style="padding: 18px 40px; font-size: 1rem; margin-top: 10px;">Accept & Initialize System</button>
     </div>
 </body>
 </html>
