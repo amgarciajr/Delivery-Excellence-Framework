@@ -1,0 +1,12 @@
+User-agent: *
+Disallow: /modules/
+Disallow: /dashboards/
+
+User-agent: GPTBot
+Disallow: /
+
+User-agent: CCBot
+Disallow: /
+
+User-agent: Google-Extended
+Disallow: /
