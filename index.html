@@ -6,13 +6,20 @@
     <title>EDE Frameworks | Authorized Access</title>
     <link href="css/styles.css" rel="stylesheet"/>
     <style>
-        /* Modernized Gate/Dashboard transition styles */
         #main-dashboard { display: none; }
-        .gate-card { max-width: 600px; margin: 100px auto; padding: 40px; background: #111827; border: 1px solid rgba(0,120,255,0.2); border-radius: 20px; text-align: center; }
-        .dashboard-hero { padding: 60px 20px; text-align: center; }
-        .grid-layout { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; padding: 40px; max-width: 1200px; margin: 0 auto; }
-        .tile { background: #111827; border: 1px solid rgba(0,120,255,0.2); border-radius: 16px; padding: 30px; text-decoration: none; color: white; transition: 0.3s; }
-        .tile:hover { transform: translateY(-5px); border-color: #0078ff; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .gate-card { 
+            background: linear-gradient(160deg, #111827 0%, #0d1130 100%);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow), var(--glow-shadow);
+            padding: 52px 48px;
+            max-width: 560px;
+            margin: 10vh auto;
+            text-align: center;
+        }
+        .gate-card h1 { color: #fff; margin-bottom: 20px; }
+        .gate-card p { color: var(--muted); margin-bottom: 30px; line-height: 1.6; }
+        .terms-box { text-align: left; background: rgba(0,0,0,0.3); padding: 15px; border-radius: 8px; margin-bottom: 20px; font-size: 0.8rem; color: var(--muted); }
     </style>
     <script>
         function accessGranted() {
@@ -28,35 +35,48 @@
     </script>
 </head>
 <body>
-    <div id="access-gate" class="gate-card">
-        <h1>Restricted Access</h1>
-        <p>This library contains proprietary frameworks. By continuing, you agree to confidentiality terms.</p>
-        <button onclick="accessGranted()" class="btn-primary">Accept & Continue</button>
-    </div>
+    <canvas id="particle-canvas"></canvas>
+    <div class="page-wrap">
+        <div id="access-gate" class="gate-card">
+            <h1>Authorized Access Only</h1>
+            <div class="terms-box">
+                <strong>Confidentiality Notice:</strong> Accessing this portal implies agreement to strict confidentiality regarding EDE, CEES, and EEP proprietary methodologies. All content is for authorized personnel only. Redistribution is strictly prohibited.
+            </div>
+            <button onclick="accessGranted()" class="btn-primary">Accept & Continue</button>
+        </div>
 
-    <div id="main-dashboard">
-        <header>
-            <div class="header-title"><span>EDE</span> / CEES / EEP Frameworks</div>
-        </header>
+        <div id="main-dashboard">
+            <header>
+                <div class="header-title"><span>EDE</span> / CEES / EEP Frameworks</div>
+                <div class="header-badge">AUTHORIZED</div>
+            </header>
 
-        <section class="dashboard-hero">
-            <h1>Select Your Path</h1>
-            <p>Welcome to the consolidated enterprise delivery library.</p>
-        </section>
+            <section class="hero">
+                <div class="hero-glow"></div>
+                <h1>Operational <span>Command Center</span></h1>
+                <p>Welcome to the consolidated delivery library. Select your operational stream below.</p>
+            </section>
 
-        <div class="grid-layout">
-            <a href="dashboards.html" class="tile">
-                <h2>📊 Dashboards</h2>
-                <p>Live operational views and performance tracking tools.</p>
-            </a>
-            <a href="modules/cees-playbook.html" class="tile">
-                <h2>🧩 Frameworks</h2>
-                <p>The complete CEES, EEP, and EDE reference library.</p>
-            </a>
-            <a href="engineer-dashboards.html" class="tile">
-                <h2>🚀 Engineer Apps</h2>
-                <p>Interactive delivery tools and command centers.</p>
-            </a>
+            <div class="container">
+                <div class="nav-grid">
+                    <a class="nav-item" href="dashboards.html">
+                        <img src="assets/icons/dashboards.png"/>
+                        <span class="nav-item-label">Operational Dashboards</span>
+                    </a>
+                    <a class="nav-item" href="modules/cees-playbook.html">
+                        <img src="assets/icons/cees-playbook.png"/>
+                        <span class="nav-item-label">CEES Playbook</span>
+                    </a>
+                    <a class="nav-item" href="modules/eep-charter.html">
+                        <img src="assets/icons/eep-charter.png"/>
+                        <span class="nav-item-label">EEP Charter</span>
+                    </a>
+                    <a class="nav-item" href="modules/operational-hygiene.html">
+                        <img src="assets/icons/operational-hygiene.png"/>
+                        <span class="nav-item-label">Operational Hygiene</span>
+                    </a>
+                </div>
+            </div>
         </div>
     </div>
 </body>
