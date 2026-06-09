@@ -1,102 +1,45 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <script>
-    if (sessionStorage.getItem("ede-access") !== "granted") {
-        window.location.href = "../index.html"; // Adjust to ../index.html for pages in subfolders
-    }
-</script>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Operational Dashboards — Delivery Excellence OS</title>
+    <title>COMMAND CENTER — DELIVERY EXCELLENCE OS</title>
     <link href="css/styles.css" rel="stylesheet"/>
-    <style>
-        .dash-wrap { padding: 48px 24px 80px; max-width: 1200px; margin: 0 auto; }
-        .dash-page-header { margin-bottom: 48px; border-left: 4px solid var(--accent); padding-left: 20px; }
-        .dash-page-header h1 { font-size: 2.2rem; font-weight: 800; color: #fff; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1px;}
-        
-        .dash-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 24px;
+    <script>
+        // Security Guard: Prevent direct access to the dashboard
+        if (sessionStorage.getItem("ede-access") !== "granted") {
+            window.location.href = "index.html";
         }
-        @media (min-width: 768px) { .dash-grid { grid-template-columns: repeat(2, 1fr); } }
-        @media (min-width: 1024px) { .dash-grid { grid-template-columns: repeat(3, 1fr); } }
-
-        .dash-tile {
-            background: rgba(17, 24, 39, 0.7);
-            border: 1px solid rgba(0, 120, 255, 0.2);
-            border-radius: var(--radius);
-            padding: 32px;
-            display: flex;
-            flex-direction: column;
-            text-decoration: none;
-            color: inherit;
-            transition: 0.3s;
-        }
-        .dash-tile:hover { transform: translateY(-5px); border-color: var(--accent); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        .tile-icon { font-size: 2rem; margin-bottom: 16px; display: block; }
-        .tile-title { font-size: 1.2rem; font-weight: 800; color: #fff; margin-bottom: 10px; }
-        .tile-desc { font-size: 0.9rem; color: var(--muted); margin-bottom: 20px; flex-grow: 1; }
-        .tile-cta { font-size: 0.75rem; font-weight: 700; color: var(--accent2); text-transform: uppercase; letter-spacing: 1px; }
-    </style>
+    </script>
 </head>
 <body>
     <canvas id="particle-canvas"></canvas>
     <div class="page-wrap">
         <header>
             <div class="header-title"><span>EDE</span> / CEES / EEP OS</div>
-            <div class="header-badge">OPERATIONAL LAYER</div>
+            <div class="header-badge">SYSTEM STATUS: RATIFIED</div>
         </header>
 
-        <div class="dash-wrap">
-            <div class="dash-back" style="margin-bottom: 30px;">
-                <a class="back-btn" href="index.html">← Back to Command Center</a>
-            </div>
-            
-            <div class="dash-page-header">
-                <div class="eyebrow" style="color: var(--accent2);">Data & Telemetry</div>
-                <h1>Operational Dashboards</h1>
-                <p>Real-time performance tracking and engagement telemetry.</p>
-            </div>
+        <div class="container" style="max-width: 1200px; margin: 40px auto; padding: 0 20px;">
+            <section class="card" style="padding: 40px; display: flex; align-items: center; gap: 40px; margin-bottom: 40px;">
+                <img src="assets/icons/mike-garcia-profile.png" style="width: 120px; height: 120px; border-radius: 50%; border: 2px solid var(--accent2);">
+                <div>
+                    <h2 style="color: #fff; margin-bottom: 5px;">Mike Garcia</h2>
+                    <p style="color: var(--accent2); font-weight: 700; text-transform: uppercase; font-size: 0.8rem;">Architect & Framework Owner</p>
+                    <p style="color: var(--muted); margin: 15px 0; max-width: 700px;">
+                        Architecting enterprise-grade delivery standards. My frameworks replace reactive "subject matter expertise" with proactive "outcome ownership."
+                    </p>
+                    <a href="https://www.linkedin.com/in/amikegarcia/" target="_blank" class="btn-ghost">View LinkedIn Profile →</a>
+                </div>
+            </section>
 
-            <div class="dash-grid">
-                <a href="dashboards/dashboard-01.html" class="dash-tile">
-                    <span class="tile-icon">📈</span>
-                    <h2 class="tile-title">Engagement Health</h2>
-                    <p class="tile-desc">CPE scoring, survey windows, and learning loop analytics.</p>
-                    <span class="tile-cta">View Dashboard →</span>
-                </a>
-                <a href="dashboards/dashboard-02.html" class="dash-tile">
-                    <span class="tile-icon">🗂️</span>
-                    <h2 class="tile-title">Queue Monitor</h2>
-                    <p class="tile-desc">Tracking dispatch taxonomy and 48-hour compliance.</p>
-                    <span class="tile-cta">View Dashboard →</span>
-                </a>
-                <a href="dashboards/dashboard-03.html" class="dash-tile">
-                    <span class="tile-icon">📡</span>
-                    <h2 class="tile-title">Signal Quality</h2>
-                    <p class="tile-desc">Distinguishing actionable signal from operational noise.</p>
-                    <span class="tile-cta">View Dashboard →</span>
-                </a>
-                <a href="dashboards/dashboard-04.html" class="dash-tile">
-                    <span class="tile-icon">🤝</span>
-                    <h2 class="tile-title">CSAM Partnership</h2>
-                    <p class="tile-desc">Relationship health, surprise index, and trust metrics.</p>
-                    <span class="tile-cta">View Dashboard →</span>
-                </a>
-                <a href="dashboards/dashboard-05.html" class="dash-tile">
-                    <span class="tile-icon">🎯</span>
-                    <h2 class="tile-title">Accountability</h2>
-                    <p class="tile-desc">Evidence-based scorecard trends and Drift Watch.</p>
-                    <span class="tile-cta">View Dashboard →</span>
-                </a>
-                <a href="dashboards/dashboard-06.html" class="dash-tile">
-                    <span class="tile-icon">🏅</span>
-                    <h2 class="tile-title">Certification</h2>
-                    <p class="tile-desc">Engine-wide certification and commitment tracking.</p>
-                    <span class="tile-cta">View Dashboard →</span>
-                </a>
+            <div class="nav-grid">
+                <a class="nav-item" href="dashboards.html"><img src="assets/icons/dashboards.png"/><span class="nav-item-label">Operational Dashboards</span></a>
+                <a class="nav-item" href="modules/cees-playbook.html"><img src="assets/icons/cees-playbook.png"/><span class="nav-item-label">CEES Playbook</span></a>
+                <a class="nav-item" href="modules/eep-charter.html"><img src="assets/icons/eep-charter.png"/><span class="nav-item-label">EEP Charter</span></a>
+                <a class="nav-item" href="modules/operational-hygiene.html"><img src="assets/icons/operational-hygiene.png"/><span class="nav-item-label">Operational Hygiene</span></a>
+                <a class="nav-item" href="modules/scoping-adaptive-polling.html"><img src="assets/icons/scoping-polling.png"/><span class="nav-item-label">Scoping & Polling</span></a>
+                <a class="nav-item" href="modules/ede-identity.html"><img src="assets/icons/ede-identity.png"/><span class="nav-item-label">EDE Identity</span></a>
             </div>
         </div>
         <footer>EDE / CEES / EEP Frameworks · Confidential · Authorized Personnel Only</footer>
