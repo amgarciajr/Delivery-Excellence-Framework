@@ -548,3 +548,26 @@ footer {
   .nav-grid { grid-template-columns: 1fr 1fr; }
   .module-header h1 { font-size: 1.4rem; }
 }
+/* ── NEW: Vertical Grid Layout for Hub ── */
+.panel-grid {
+    display: grid;
+    /* This creates one column by default (vertical), 
+       and switches to 2 or 3 columns when screen space allows */
+    grid-template-columns: 1fr;
+    gap: 24px;
+    width: 100%;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+@media (min-width: 768px) {
+    .panel-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 1024px) {
+    .panel-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
