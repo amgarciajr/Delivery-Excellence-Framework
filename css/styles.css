@@ -3,7 +3,7 @@
    Glow, Particle, & Accessibility Infrastructure
 ═══════════════════════════════════════════════ */
 
-/* ── Reset: Ensure consistent spacing ── */
+/* ── 1. Reset: Eliminate default browser gaps ── */
 * {
   margin: 0;
   padding: 0;
@@ -12,8 +12,12 @@
 
 html, body {
   min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  background-color: #08091c; /* Matches your --bg */
 }
 
+/* ── 2. Global Variables ── */
 :root {
   --bg:           #08091c;
   --bg2:          #0d1130;
@@ -25,7 +29,6 @@ html, body {
 }
 
 body {
-  background-color: var(--bg);
   background-image: 
     url('../assets/textures/dot-grid.png'),
     url('../assets/backgrounds/bg-main.jpg');
@@ -35,7 +38,13 @@ body {
   font-family: "Segoe UI", Roboto, sans-serif;
 }
 
-/* ── Accessibility: Motion & Focus ── */
+/* ── 3. Container Overrides (Prevents top gaps) ── */
+header, .page-wrap, .selection-wrap, .dash-wrap {
+  margin-top: 0 !important;
+  padding-top: 20px; /* Adjust to 0px if you want it flush against the top */
+}
+
+/* ── 4. Accessibility: Motion & Focus ── */
 @media (prefers-reduced-motion: reduce) { 
   * { animation: none !important; transition: none !important; } 
 }
@@ -45,7 +54,7 @@ body {
   outline-offset: 4px; 
 }
 
-/* ── Glow & Pulse Infrastructure ── */
+/* ── 5. Glow & Pulse Infrastructure ── */
 @keyframes glow-pulse {
   0%   { box-shadow: 0 0 10px rgba(0, 120, 255, 0.2); border-color: rgba(0, 120, 255, 0.2); }
   50%  { box-shadow: 0 0 30px rgba(0, 120, 255, 0.5); border-color: var(--accent); }
@@ -71,19 +80,19 @@ body {
   pointer-events: none;
 }
 
+/* ── 6. Navigation & UI Elements ── */
 .nav-item { display: flex; gap: 20px; padding: 24px; text-decoration: none; color: inherit; align-items: center; }
 .nav-item:hover { transform: translateY(-4px); background: rgba(255, 255, 255, 0.03); }
 .nav-item-label { font-weight: 700; font-size: 1.1rem; margin-bottom: 4px; display: block; }
 .nav-item-desc { font-size: 0.85rem; color: var(--muted); }
 
-/* ── Pride Theme Button ── */
 .pride-btn {
   padding: 12px 24px; background: #111827; color: #fff;
   border: 2px solid transparent; border-radius: 6px;
   border-image: linear-gradient(90deg, #E65C5C, #FFC15E, #FFFF99, #76C776, #5E9EFF, #A864A8) 1;
 }
 
-/* ── Panel Grid (Vertical Stack Override) ── */
+/* ── 7. Panel Grid (Vertical Stack) ── */
 .panel-grid {
   display: grid;
   grid-template-columns: 1fr;
