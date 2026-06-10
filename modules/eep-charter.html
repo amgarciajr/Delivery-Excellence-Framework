@@ -1,19 +1,165 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8"/>
-    <script>
-        if (sessionStorage.getItem("ede-access") !== "granted") { window.location.href = "../index.html"; }
-    </script>
-    <link href="../css/styles.css" rel="stylesheet"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EEP Charter &#8212; EDE Frameworks</title>
+  <link rel="stylesheet" href="../css/styles.css">
+  <style>
+    .mod-hero{position:relative;padding:48px 0 36px;text-align:center;overflow:hidden}
+    .mod-hero-glow{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:600px;height:300px;background:url('../assets/glows/hero-glow.png') center/contain no-repeat;opacity:0.4;pointer-events:none}
+    .mod-eyebrow{font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#FF6200;margin-bottom:12px}
+    .mod-title{font-size:2.2rem;font-weight:800;color:#fff;margin-bottom:12px;text-shadow:0 0 30px rgba(255,98,0,0.3)}
+    .mod-subtitle{font-size:1rem;color:#8892a4;max-width:600px;margin:0 auto;line-height:1.7}
+    .stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:28px}
+    .stat-card{background:linear-gradient(160deg,rgba(17,24,39,0.97) 0%,rgba(10,14,36,0.97) 100%);border:1px solid rgba(255,98,0,0.18);border-radius:14px;padding:20px 18px;position:relative;overflow:hidden;text-align:center}
+    .stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#FF6200,#ffaa50)}
+    .stat-num{font-size:2rem;font-weight:800;color:#FF6200;line-height:1;margin-bottom:6px}
+    .stat-label{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#8892a4}
+    .stat-desc{font-size:0.78rem;color:#b0bac8;margin-top:4px}
+    .panel{background:linear-gradient(160deg,rgba(17,24,39,0.97) 0%,rgba(10,14,36,0.97) 100%);border:1px solid rgba(255,98,0,0.15);border-radius:14px;padding:24px 28px;position:relative;overflow:hidden;margin-bottom:20px}
+    .panel::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,98,0,0.4),transparent)}
+    .panel-title{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#FF6200;margin-bottom:16px}
+    .nn-card{border-radius:12px;padding:20px;margin-bottom:14px;border:1px solid rgba(255,98,0,0.2);background:rgba(255,98,0,0.06);position:relative;overflow:hidden}
+    .nn-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:linear-gradient(180deg,#FF6200,#ffaa50);border-radius:2px 0 0 2px}
+    .nn-num{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#FF6200;margin-bottom:6px}
+    .nn-title{font-size:1rem;font-weight:800;color:#fff;margin-bottom:8px}
+    .nn-body{font-size:0.82rem;color:#8892a4;line-height:1.6;margin-bottom:8px}
+    .nn-comply{font-size:0.78rem;color:#34d399;margin-bottom:4px}
+    .nn-violate{font-size:0.78rem;color:#f87171}
+    .two-col{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px}
+    .three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:20px}
+    .biz-card{border-radius:12px;padding:20px;border:1px solid rgba(255,98,0,0.15);background:rgba(0,0,0,0.2);text-align:center}
+    .biz-num{font-size:1.8rem;font-weight:800;color:#FF6200;margin-bottom:6px}
+    .biz-label{font-size:0.82rem;font-weight:700;color:#fff;margin-bottom:4px}
+    .biz-source{font-size:0.72rem;color:#8892a4}
+    .scope-table{width:100%;border-collapse:collapse}
+    .scope-table th{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#8892a4;padding:0 12px 12px 0;text-align:left;border-bottom:1px solid rgba(255,255,255,0.06)}
+    .scope-table td{font-size:0.82rem;color:#e8eaf6;padding:11px 12px 11px 0;border-bottom:1px solid rgba(255,255,255,0.04);vertical-align:top;line-height:1.6}
+    .scope-table tr:last-child td{border-bottom:none}
+    .callout{border-radius:10px;padding:16px 20px;margin:16px 0;border:1px solid rgba(255,98,0,0.3);background:rgba(255,98,0,0.07)}
+    .callout-text{font-size:0.88rem;color:#e8eaf6;line-height:1.7;font-style:italic}
+    .callout-attr{font-size:0.75rem;color:#FF6200;font-weight:700;margin-top:8px}
+    .identity-row{display:flex;align-items:flex-start;gap:14px;padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.05)}
+    .identity-row:last-child{border-bottom:none}
+    .id-label{font-size:0.82rem;font-weight:700;color:#FF6200;min-width:160px;flex-shrink:0}
+    .id-value{font-size:0.82rem;color:#e8eaf6;line-height:1.6}
+    .color-swatch{display:inline-block;width:14px;height:14px;border-radius:3px;margin-right:6px;vertical-align:middle}
+    @media(max-width:900px){.two-col,.three-col,.stat-row{grid-template-columns:1fr 1fr}}
+    @media(max-width:600px){.two-col,.three-col,.stat-row{grid-template-columns:1fr}.mod-title{font-size:1.6rem}}
+  </style>
 </head>
 <body>
-    <div class="page-wrap">
-        <header><div class="header-title"><span>EDE</span> / CEES / EEP OS</div></header>
-        <div class="container">
-            <a class="back-btn" href="../dashboard.html">← Back to Command Center</a>
-            <h1>EEP Charter</h1>
-            </div>
+<canvas id="particle-canvas"></canvas>
+<div class="page-wrap">
+  <header>
+    <div class="header-title"><span>EDE</span> / CEES / EEP &nbsp;Frameworks</div>
+    <button class="pdf-btn" onclick="exportPDF()">&#11015; Export PDF</button>
+  </header>
+  <div class="container">
+    <div style="margin-bottom:16px;"><a class="back-btn" href="../index.html">&#8592; Back to Framework Library</a></div>
+    <div class="mod-hero">
+      <div class="mod-hero-glow"></div>
+      <div class="mod-eyebrow">EEP Charter &#8212; Formal Organizational Commitment</div>
+      <h1 class="mod-title">EEP Charter</h1>
+      <p class="mod-subtitle">The Engagement Excellence Program formalizes delivery excellence into a governed, organization-wide standard with five non-negotiable commitments, three certification levels, and zero exclusions.</p>
     </div>
+    <div class="stat-row">
+      <div class="stat-card"><div class="stat-num">5</div><div class="stat-label">Non-Negotiables</div><div class="stat-desc">Zero exceptions by seniority or schedule</div></div>
+      <div class="stat-card"><div class="stat-num">Q2 2026</div><div class="stat-label">Effective Date</div><div class="stat-desc">Mandatory compliance from ratification</div></div>
+      <div class="stat-card"><div class="stat-num">Zero</div><div class="stat-label">Exclusions</div><div class="stat-desc">All engagement types, sizes, durations</div></div>
+      <div class="stat-card"><div class="stat-num">3</div><div class="stat-label">Cert Levels</div><div class="stat-desc">Practitioner, Lead, Trainer</div></div>
+    </div>
+    <div class="panel">
+      <div class="panel-title">What the Charter Establishes</div>
+      <p style="color:#e8eaf6;line-height:1.8;font-size:0.97rem;margin-bottom:14px;">This Charter constitutes the formal organizational commitment document establishing the EEP as an operational standard. From the date of ratification, the EEP ceases to be an initiative, pilot, or enhancement effort and becomes the expected and enforced standard of delivery excellence for all client-facing engagements. It is not a collection of best practices assembled after the fact. It is an engineered system.</p>
+      <div class="callout">
+        <div class="callout-text">"Trustworthy by design, not by default. Client trust is not a byproduct of technical quality. It is a distinct output, with its own drivers, its own failure modes, and its own standards."</div>
+        <div class="callout-attr">&#8212; EEP Charter, Program Lead: Mike Garcia</div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="panel-title">Five Non-Negotiable Commitments</div>
+      <div class="nn-card">
+        <div class="nn-num">Non-Negotiable I</div>
+        <div class="nn-title">Outcome Ownership</div>
+        <div class="nn-body">Every engagement has a named Outcome Owner, visible to the client in writing, before delivery begins. No engagement may proceed to active delivery without this designation in place.</div>
+        <div class="nn-comply">&#10003; Compliance: OO named, communicated in writing, before Day One.</div>
+        <div class="nn-violate">&#10007; Violation: Delivery begins without written OO confirmation to client.</div>
+      </div>
+      <div class="nn-card">
+        <div class="nn-num">Non-Negotiable II</div>
+        <div class="nn-title">Communication Standards</div>
+        <div class="nn-body">Every client-facing communication passes the Three Communication Tests before it is sent &#8212; no exceptions. Communications that do not pass all three tests are not sent. There is no expedience exception.</div>
+        <div class="nn-comply">&#10003; Compliance: All three tests applied to every client-facing communication before sending.</div>
+        <div class="nn-violate">&#10007; Violation: Any client communication sent without Three Tests review.</div>
+      </div>
+      <div class="nn-card">
+        <div class="nn-num">Non-Negotiable III</div>
+        <div class="nn-title">Value Validation at Close</div>
+        <div class="nn-body">Every engagement closes with validated client articulation of value received. No engagement is administratively closed without this record in the engagement file. Task completion is not closure.</div>
+        <div class="nn-comply">&#10003; Compliance: Three validation questions asked, client articulation documented before close.</div>
+        <div class="nn-violate">&#10007; Violation: Engagement closed on milestone sign-off without client value articulation.</div>
+      </div>
+      <div class="nn-card">
+        <div class="nn-num">Non-Negotiable IV</div>
+        <div class="nn-title">Runbook Adherence</div>
+        <div class="nn-body">Every delivery incident follows the applicable Runbook &#8212; Escalation, Communication, Handoff, or Incident Response &#8212; without improvisation in high-pressure scenarios. The Runbook is the judgment.</div>
+        <div class="nn-comply">&#10003; Compliance: Applicable runbook followed for every delivery incident, no improvisation.</div>
+        <div class="nn-violate">&#10007; Violation: Incident handled by improvisation rather than runbook protocol.</div>
+      </div>
+      <div class="nn-card">
+        <div class="nn-num">Non-Negotiable V</div>
+        <div class="nn-title">Operating Cadences</div>
+        <div class="nn-body">The four operating cadences are non-negotiable standing commitments, not optional enhancements. They are not to be cancelled, deferred, or abbreviated due to schedule pressure or workload.</div>
+        <div class="nn-comply">&#10003; Compliance: All four cadences held on schedule every cycle.</div>
+        <div class="nn-violate">&#10007; Violation: Any cadence cancelled, deferred, or abbreviated without documented cause.</div>
+      </div>
+    </div>
+    <div class="two-col">
+      <div class="panel">
+        <div class="panel-title">Scope &#8212; Zero Exclusions</div>
+        <table class="scope-table">
+          <thead><tr><th>Dimension</th><th>Applies To</th><th>Exclusions</th></tr></thead>
+          <tbody>
+            <tr><td><strong style="color:#FF6200;">Personnel</strong></td><td>All client-facing team members, all levels</td><td style="color:#34d399;">None</td></tr>
+            <tr><td><strong style="color:#FF6200;">Engagement Type</strong></td><td>Implementation, Advisory, Migration, Modernization, Managed Services</td><td style="color:#34d399;">None</td></tr>
+            <tr><td><strong style="color:#FF6200;">Engagement Size</strong></td><td>All sizes &#8212; small, mid-market, enterprise</td><td style="color:#34d399;">None</td></tr>
+            <tr><td><strong style="color:#FF6200;">Duration</strong></td><td>All durations &#8212; days, months, years</td><td style="color:#34d399;">None</td></tr>
+            <tr><td><strong style="color:#FF6200;">Geography</strong></td><td>All delivery locations and remote models</td><td style="color:#34d399;">None</td></tr>
+          </tbody>
+        </table>
+        <div class="callout" style="margin-top:16px;">
+          <div class="callout-text">"The standard scales in application, not in applicability. A one-week advisory engagement is subject to the same standard as a multi-year transformation program."</div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-title">Business Case &#8212; Why This Matters</div>
+        <div class="three-col" style="margin-bottom:16px;">
+          <div class="biz-card"><div class="biz-num">$4.88M</div><div class="biz-label">Avg Enterprise Breach Cost</div><div class="biz-source">IBM Cost of a Data Breach, 2024</div></div>
+          <div class="biz-card"><div class="biz-num">80%+</div><div class="biz-label">Breaches via Credentials</div><div class="biz-source">Identity is the new perimeter</div></div>
+          <div class="biz-card"><div class="biz-num">25&#8211;95%</div><div class="biz-label">Profitability Gain</div><div class="biz-source">From 5% retention increase (Bain)</div></div>
+        </div>
+        <p style="font-size:0.82rem;color:#8892a4;line-height:1.7;">Consulting revenue is trust-dependent in a way that product revenue is not. A client who exits an engagement as an active advocate is worth multiples of the original engagement value in downstream revenue. The EEP is not a compliance exercise &#8212; it is a revenue strategy.</p>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="panel-title">Program Identity &#8212; Official Standards</div>
+      <div class="identity-row"><div class="id-label">Full Program Name</div><div class="id-value">Engagement Excellence Program</div></div>
+      <div class="identity-row"><div class="id-label">Abbreviated Name</div><div class="id-value">EEP</div></div>
+      <div class="identity-row"><div class="id-label">Tagline</div><div class="id-value"><em>The standard for how we build client trust.</em></div></div>
+      <div class="identity-row"><div class="id-label">Short-form Tagline</div><div class="id-value"><em>Excellence in delivery. Trust as the outcome.</em></div></div>
+      <div class="identity-row"><div class="id-label">Creator Attribution</div><div class="id-value">Built on original frameworks developed by Mike Garcia &#8212; EDEv4, CEEDS, CE Framework</div></div>
+      <div class="identity-row"><div class="id-label">Primary Color</div><div class="id-value"><span class="color-swatch" style="background:#FF6200;"></span>#FF6200 Avanade Orange &#8212; Headers, accent elements, certification badges, CTAs</div></div>
+      <div class="identity-row"><div class="id-label">Secondary Color</div><div class="id-value"><span class="color-swatch" style="background:#1C1C1C;border:1px solid #444;"></span>#1C1C1C Charcoal &#8212; Body text, slide backgrounds, section dividers</div></div>
+      <div class="identity-row"><div class="id-label">Program Lead</div><div class="id-value">Mike Garcia &#183; Effective Q2 2026 &#183; Classification: Operational Standard &#8212; Mandatory Compliance</div></div>
+    </div>
+    <div style="margin-top:32px;padding-top:24px;border-top:1px solid rgba(255,255,255,0.06);">
+      <a class="back-btn" href="../index.html">&#8592; Back to Framework Library</a>
+    </div>
+  </div>
+  <footer>EDE / CEES / EEP Frameworks &nbsp;&#183;&nbsp; Confidential &nbsp;&#183;&nbsp; Authorized Personnel Only</footer>
+</div>
+<script src="../js/main.js"></script>
 </body>
 </html>
