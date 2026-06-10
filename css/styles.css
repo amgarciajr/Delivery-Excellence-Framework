@@ -1,97 +1,51 @@
-/* ═══════════════════════════════════════════════
-   EDE / CEES / EEP Frameworks — Production v4.0
-   Glow, Particle, & Accessibility Infrastructure
-═══════════════════════════════════════════════ */
+/* ================================
+   Root Variables
+   ================================ */
+:root {
+  --text: #e0e0e0;
+}
 
-/* ── 1. Reset: Eliminate default browser gaps ── */
+/* ================================
+   Global Reset
+   ================================ */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-html, body {
+/* ================================
+   HTML + BODY Foundation
+   ================================ */
+html,
+body {
   height: 100%;
-  background-color: #0d0d0d;
+  min-height: 100vh;
   margin: 0;
   padding: 0;
-}
-
-/* ── 2. Canvas: Fixed as background layer ── */
-#particle-canvas {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: -1;
-  pointer-events: none;
-  display: block;
-}
-
-/* ── 3. Page Containers ── */
-.page-wrap {
-  position: relative;
-  z-index: 1;
-  min-height: 100vh;
-}
-
-header, .selection-wrap, .dash-wrap {
-  margin-top: 0 !important;
-  padding-top: 20px; 
-}
-
-/* ── 4. Global Variables ── */
-:root {
-  --bg:           #08091c;
-  --bg2:          #0d1130;
-  --accent:       #0078ff;
-  --accent2:      #00c8ff;
-  --text:         #e8eaf6;
-  --muted:        #8892a4;
-  --focus-ring:   #fff;
-}
-
-body {
+  background-color: #0d0d0d;
   color: var(--text);
   font-family: "Segoe UI", Roboto, sans-serif;
-  background-image: 
-    url('../assets/textures/dot-grid.png'),
-    url('../assets/backgrounds/bg-main.jpg');
-  background-attachment: fixed;
+}
+
+/* ================================
+   BODY Background Layers
+   ================================ */
+body {
+  /* Layer 1: Dot grid texture
+     Layer 2: Main background image */
+  background-image: url('assets/textures/dot-grid.png'),
+                    url('assets/backgrounds/bg-main.jpg');
+
+  /* Keep the dot grid fixed, allow the main image to scroll */
+  background-attachment: fixed, scroll;
+
+  /* Dot grid uses natural size, main image covers viewport */
   background-size: auto, cover;
-}
 
-/* ── 5. Accessibility: Motion & Focus ── */
-@media (prefers-reduced-motion: reduce) { 
-  * { animation: none !important; transition: none !important; } 
-}
+  /* Dot grid repeats, main image does not */
+  background-repeat: repeat, no-repeat;
 
-:focus-visible { 
-  outline: 2px solid var(--focus-ring); 
-  outline-offset: 4px; 
-}
-
-/* ── 6. UI Components ── */
-.panel-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 24px;
-  max-width: 600px;
-  margin: 0 auto;
-  width: 100%;
-}
-
-.nav-item { 
-  display: flex; 
-  gap: 20px; 
-  padding: 24px; 
-  text-decoration: none; 
-  color: inherit; 
-  align-items: center; 
-}
-
-.nav-item:hover { 
-  transform: translateY(-4px); 
-  background: rgba(255, 255, 255, 0.03); 
+  /* Ensure backgrounds align consistently */
+  background-position: top left, center center;
 }
