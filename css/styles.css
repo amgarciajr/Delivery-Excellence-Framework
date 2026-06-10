@@ -1,51 +1,182 @@
-/* ================================
+/* =========================================================
+   GLOBAL DESIGN SYSTEM — MODERN SELECTOR FRAMEWORK
+   ========================================================= */
+
+/* ------------------------------
    Root Variables
-   ================================ */
+   ------------------------------ */
 :root {
+  --bg-dark: #0d0d0d;
+  --bg-panel: #111;
+  --bg-panel-hover: #1a1a1a;
   --text: #e0e0e0;
+  --text-muted: #b5b5b5;
+  --accent: #4da3ff;
+  --accent-glow: rgba(77, 163, 255, 0.35);
+  --radius: 14px;
+  --transition: 0.25s ease;
 }
 
-/* ================================
-   Global Reset
-   ================================ */
+/* ------------------------------
+   Reset
+   ------------------------------ */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-/* ================================
-   HTML + BODY Foundation
-   ================================ */
+/* ------------------------------
+   HTML + BODY
+   ------------------------------ */
 html,
 body {
   height: 100%;
   min-height: 100vh;
-  margin: 0;
-  padding: 0;
-  background-color: #0d0d0d;
+  background-color: var(--bg-dark);
   color: var(--text);
   font-family: "Segoe UI", Roboto, sans-serif;
+  overflow-x: hidden;
 }
 
-/* ================================
-   BODY Background Layers
-   ================================ */
+/* ------------------------------
+   Background Layers
+   ------------------------------ */
 body {
-  /* Layer 1: Dot grid texture
-     Layer 2: Main background image */
   background-image: url('assets/textures/dot-grid.png'),
                     url('assets/backgrounds/bg-main.jpg');
-
-  /* Keep the dot grid fixed, allow the main image to scroll */
   background-attachment: fixed, scroll;
-
-  /* Dot grid uses natural size, main image covers viewport */
   background-size: auto, cover;
-
-  /* Dot grid repeats, main image does not */
   background-repeat: repeat, no-repeat;
-
-  /* Ensure backgrounds align consistently */
   background-position: top left, center center;
+}
+
+/* =========================================================
+   CANVAS BACKGROUND (ANIMATED)
+   ========================================================= */
+#canvas {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -2;
+  display: block;
+  pointer-events: none;
+}
+
+/* =========================================================
+   PAGE WRAPPER
+   ========================================================= */
+.page-wrapper {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 60px 40px;
+  position: relative;
+  z-index: 5;
+}
+
+/* =========================================================
+   SECTION HEADERS
+   ========================================================= */
+.section-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.section-title {
+  font-size: 2.4rem;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.section-subtitle {
+  font-size: 1.2rem;
+  color: var(--text-muted);
+}
+
+/* =========================================================
+   PANEL GRID (Selector Tiles)
+   ========================================================= */
+.panel-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 30px;
+  margin-top: 40px;
+}
+
+.panel {
+  background: var(--bg-panel);
+  padding: 28px;
+  border-radius: var(--radius);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(6px);
+  transition: var(--transition);
+  position: relative;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.panel:hover {
+  background: var(--bg-panel-hover);
+  transform: translateY(-6px);
+  box-shadow: 0 0 22px var(--accent-glow);
+}
+
+/* Glow sweep */
+.panel::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, transparent, var(--accent-glow), transparent);
+  transform: translateX(-100%);
+  transition: 0.6s ease;
+}
+
+.panel:hover::before {
+  transform: translateX(100%);
+}
+
+/* Panel content */
+.panel-label {
+  font-size: 1.4rem;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.panel-desc {
+  font-size: 0.95rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+  margin-bottom: 14px;
+}
+
+.panel-cta {
+  font-size: 0.9rem;
+  color: var(--accent);
+  font-weight: 600;
+}
+
+/* Badge */
+.count-badge {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  background: var(--accent);
+  color: #000;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+/* =========================================================
+   UTILITY CLASSES
+   ========================================================= */
+.center {
+  text-align: center;
+}
+
+.mt-40 {
+  margin-top: 40px;
 }
