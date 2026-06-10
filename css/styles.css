@@ -96,15 +96,16 @@ body {
 }
 
 /* =========================================================
-   PANEL GRID (Selector Tiles)
+   PANEL GRID — VERTICAL SQUARE TILES
    ========================================================= */
 .panel-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   gap: 30px;
   margin-top: 40px;
 }
 
+/* Vertical square tile */
 .panel {
   background: var(--bg-panel);
   padding: 28px;
@@ -115,6 +116,13 @@ body {
   position: relative;
   cursor: pointer;
   overflow: hidden;
+
+  /* Makes the tile a vertical square */
+  aspect-ratio: 1 / 1.25;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .panel:hover {
@@ -141,14 +149,15 @@ body {
 .panel-label {
   font-size: 1.4rem;
   font-weight: 600;
-  margin-bottom: 6px;
+  margin-top: 10px;
 }
 
 .panel-desc {
   font-size: 0.95rem;
   color: var(--text-muted);
   line-height: 1.4;
-  margin-bottom: 14px;
+  margin-top: 6px;
+  flex-grow: 1;
 }
 
 .panel-cta {
