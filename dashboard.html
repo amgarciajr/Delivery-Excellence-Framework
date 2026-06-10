@@ -1,357 +1,297 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Dashboards — EDE Frameworks</title>
+<title>Select Your Path — EDE Frameworks</title>
 <link href="css/styles.css" rel="stylesheet"/>
 <style>
-
-    /* ── Dashboard Page ── */
-    .dash-wrap {
+    /* ── Selection Page Layout ── */
+    .selection-wrap {
+      min-height: calc(100vh - 72px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 60px 24px;
       position: relative;
       z-index: 1;
-      padding: 48px 24px 80px;
     }
 
-    .dash-page-header {
-      max-width: 1100px;
-      margin: 0 auto 48px;
+    .selection-header {
+      text-align: center;
+      margin-bottom: 56px;
     }
 
-    .dash-page-header .eyebrow {
+    .selection-header .eyebrow {
       font-size: 11px;
       font-weight: 700;
       letter-spacing: 3px;
       text-transform: uppercase;
       color: #FF6200;
-      margin-bottom: 12px;
+      margin-bottom: 16px;
     }
 
-    .dash-page-header h1 {
-      font-size: 2.2rem;
+    .selection-header h1 {
+      font-size: 2.6rem;
       font-weight: 800;
       color: #fff;
-      margin-bottom: 12px;
-      text-shadow: 0 0 30px rgba(255,98,0,0.2);
+      line-height: 1.2;
+      margin-bottom: 14px;
+      text-shadow: 0 0 40px rgba(0,180,255,0.3);
     }
 
-    .dash-page-header p {
-      font-size: 1rem;
+    .selection-header p {
+      font-size: 1.05rem;
       color: #8892a4;
-      max-width: 600px;
+      max-width: 520px;
+      margin: 0 auto;
       line-height: 1.7;
     }
 
-    /* ── Dashboard Tile Grid ── */
-    .dash-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 24px;
-      max-width: 1100px;
-      margin: 0 auto;
-    }
-
-    /* ── Individual Tile ── */
-    .dash-tile {
+    .panel {
       background: linear-gradient(160deg, rgba(17,24,39,0.97) 0%, rgba(10,14,36,0.97) 100%);
-      border: 1px solid rgba(0,120,255,0.15);
-      border-radius: 16px;
-      padding: 32px 28px 28px;
+      border: 1px solid rgba(0,120,255,0.18);
+      border-radius: 20px;
+      padding: 48px 40px 40px;
       display: flex;
       flex-direction: column;
       position: relative;
       overflow: hidden;
-      transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+      transition: transform 0.28s ease, box-shadow 0.28s ease, border-color 0.28s ease;
       cursor: pointer;
       text-decoration: none;
       color: inherit;
     }
 
-    .dash-tile::before {
+    .panel::before {
       content: '';
       position: absolute;
       top: 0; left: 0; right: 0;
       height: 3px;
-      border-radius: 16px 16px 0 0;
+      border-radius: 20px 20px 0 0;
     }
 
-    /* Each tile gets a unique accent color */
-    .dash-tile:nth-child(1)::before { background: linear-gradient(90deg, #0078ff, #00c8ff); }
-    .dash-tile:nth-child(2)::before { background: linear-gradient(90deg, #FF6200, #ffaa50); }
-    .dash-tile:nth-child(3)::before { background: linear-gradient(90deg, #7c3aed, #a78bfa); }
-    .dash-tile:nth-child(4)::before { background: linear-gradient(90deg, #059669, #34d399); }
-    .dash-tile:nth-child(5)::before { background: linear-gradient(90deg, #dc2626, #f87171); }
-    .dash-tile:nth-child(6)::before { background: linear-gradient(90deg, #d97706, #fbbf24); }
+    .panel.dashboards::before { background: linear-gradient(90deg, #FF6200, #ff9a50); }
+    .panel.frameworks::before { background: linear-gradient(90deg, #0078ff, #00c8ff); }
+    .panel.engineer::before   { background: linear-gradient(90deg, #FF6200, #ffaa50); }
 
-    .dash-tile:hover {
-      transform: translateY(-5px);
+    .panel:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
     }
 
-    .dash-tile:nth-child(1):hover { border-color: rgba(0,120,255,0.45);   box-shadow: 0 16px 48px rgba(0,120,255,0.2); }
-    .dash-tile:nth-child(2):hover { border-color: rgba(255,98,0,0.45);    box-shadow: 0 16px 48px rgba(255,98,0,0.2); }
-    .dash-tile:nth-child(3):hover { border-color: rgba(124,58,237,0.45);  box-shadow: 0 16px 48px rgba(124,58,237,0.2); }
-    .dash-tile:nth-child(4):hover { border-color: rgba(5,150,105,0.45);   box-shadow: 0 16px 48px rgba(5,150,105,0.2); }
-    .dash-tile:nth-child(5):hover { border-color: rgba(220,38,38,0.45);   box-shadow: 0 16px 48px rgba(220,38,38,0.2); }
-    .dash-tile:nth-child(6):hover { border-color: rgba(217,119,6,0.45);   box-shadow: 0 16px 48px rgba(217,119,6,0.2); }
+    /* Glow blob behind each panel */
+    .panel::after {
+      content: '';
+      position: absolute;
+      width: 300px; height: 300px;
+      border-radius: 50%;
+      top: -80px; right: -80px;
+      pointer-events: none;
+      opacity: 0.07;
+      transition: opacity 0.3s;
+    }
 
-    /* Tile number badge */
-    .tile-num {
-      font-size: 10px;
+    .panel.dashboards::after, .panel.engineer::after { background: #FF6200; }
+    .panel.frameworks::after  { background: #0078ff; }
+    .panel:hover::after       { opacity: 0.13; }
+
+    .panel-badge {
+      width: 64px; height: 64px;
+      border-radius: 16px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2rem;
+      margin-bottom: 28px;
+      flex-shrink: 0;
+    }
+
+    .panel.dashboards .panel-badge, .panel.engineer .panel-badge {
+      background: rgba(255,98,0,0.12);
+      border: 1px solid rgba(255,98,0,0.3);
+    }
+
+    .panel.frameworks .panel-badge {
+      background: rgba(0,120,255,0.12);
+      border: 1px solid rgba(0,120,255,0.3);
+    }
+
+    .panel-label {
+      font-size: 11px;
       font-weight: 700;
-      letter-spacing: 2px;
+      letter-spacing: 3px;
       text-transform: uppercase;
-      margin-bottom: 16px;
-      opacity: 0.6;
+      margin-bottom: 10px;
     }
 
-    .dash-tile:nth-child(1) .tile-num { color: #00c8ff; }
-    .dash-tile:nth-child(2) .tile-num { color: #FF6200; }
-    .dash-tile:nth-child(3) .tile-num { color: #a78bfa; }
-    .dash-tile:nth-child(4) .tile-num { color: #34d399; }
-    .dash-tile:nth-child(5) .tile-num { color: #f87171; }
-    .dash-tile:nth-child(6) .tile-num { color: #fbbf24; }
+    .panel.dashboards .panel-label, .panel.engineer .panel-label { color: #FF6200; }
+    .panel.frameworks .panel-label { color: #00c8ff; }
 
-    /* Tile icon */
-    .tile-icon {
-      font-size: 2.2rem;
-      margin-bottom: 16px;
-      display: block;
-      line-height: 1;
-    }
-
-    /* Tile title */
-    .tile-title {
-      font-size: 1.1rem;
+    .panel h2 {
+      font-size: 1.75rem;
       font-weight: 800;
       color: #fff;
-      margin-bottom: 10px;
-      line-height: 1.3;
+      margin-bottom: 14px;
+      line-height: 1.2;
     }
 
-    /* Tile description */
-    .tile-desc {
-      font-size: 0.88rem;
+    .panel .panel-desc {
+      font-size: 0.97rem;
       color: #8892a4;
-      line-height: 1.7;
+      line-height: 1.75;
+      margin-bottom: 32px;
       flex-grow: 1;
-      margin-bottom: 20px;
     }
 
-    /* Tile metrics row */
-    .tile-metrics {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-bottom: 20px;
+    .panel-bullets {
+      list-style: none;
+      padding: 0;
+      margin-bottom: 36px;
     }
 
-    .metric-tag {
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      padding: 4px 10px;
-      border-radius: 20px;
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.1);
-      color: #8892a4;
+    .panel-bullets li {
+      font-size: 0.88rem;
+      color: #b0bac8;
+      padding: 7px 0 7px 22px;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      position: relative;
+      line-height: 1.5;
     }
 
-    /* Tile CTA */
-    .tile-cta {
+    .panel-bullets li::before {
+      content: '▸';
+      position: absolute; left: 0;
+      font-size: 0.8rem; top: 9px;
+    }
+
+    .panel.dashboards .panel-bullets li::before, .panel.engineer .panel-bullets li::before { color: #FF6200; }
+    .panel.frameworks .panel-bullets li::before { color: #00c8ff; }
+
+    .panel-cta {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      font-size: 0.82rem;
+      gap: 10px;
+      padding: 13px 28px;
+      border-radius: 10px;
+      font-size: 0.95rem;
       font-weight: 700;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-      color: #8892a4;
-      transition: gap 0.2s ease, color 0.2s ease;
-      margin-top: auto;
+      letter-spacing: 0.03em;
+      text-decoration: none;
+      transition: gap 0.2s ease, box-shadow 0.2s ease;
+      align-self: flex-start;
     }
 
-    .dash-tile:nth-child(1):hover .tile-cta { color: #00c8ff; gap: 10px; }
-    .dash-tile:nth-child(2):hover .tile-cta { color: #FF6200; gap: 10px; }
-    .dash-tile:nth-child(3):hover .tile-cta { color: #a78bfa; gap: 10px; }
-    .dash-tile:nth-child(4):hover .tile-cta { color: #34d399; gap: 10px; }
-    .dash-tile:nth-child(5):hover .tile-cta { color: #f87171; gap: 10px; }
-    .dash-tile:nth-child(6):hover .tile-cta { color: #fbbf24; gap: 10px; }
+    .panel.dashboards .panel-cta, .panel.engineer .panel-cta {
+      background: linear-gradient(135deg, #FF6200, #cc4e00);
+      color: #fff;
+      box-shadow: 0 4px 20px rgba(255,98,0,0.3);
+    }
 
-    /* Status pill */
-    .status-pill {
-      position: absolute;
-      top: 20px;
-      right: 20px;
-      font-size: 9px;
+    .panel.frameworks .panel-cta {
+      background: linear-gradient(135deg, #0078ff, #0055cc);
+      color: #fff;
+      box-shadow: 0 4px 20px rgba(0,120,255,0.3);
+    }
+
+    .count-badge {
+      display: inline-block;
+      font-size: 11px;
       font-weight: 700;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
+      letter-spacing: 1px;
       padding: 3px 10px;
       border-radius: 20px;
+      margin-left: 10px;
+      vertical-align: middle;
     }
 
-    .status-live {
-      background: rgba(5,150,105,0.15);
-      color: #34d399;
-      border: 1px solid rgba(52,211,153,0.3);
+    .panel.dashboards .count-badge, .panel.engineer .count-badge {
+      background: rgba(255,98,0,0.15);
+      color: #FF6200;
+      border: 1px solid rgba(255,98,0,0.3);
     }
 
-    .status-coming {
-      background: rgba(255,255,255,0.05);
-      color: #8892a4;
-      border: 1px solid rgba(255,255,255,0.1);
+    .panel.frameworks .count-badge {
+      background: rgba(0,120,255,0.15);
+      color: #00c8ff;
+      border: 1px solid rgba(0,120,255,0.3);
     }
 
-    /* ── Back nav ── */
-    .dash-back {
-      max-width: 1100px;
-      margin: 0 auto 32px;
+    @media (max-width: 640px) {
+      .selection-header h1 { font-size: 1.8rem; }
+      .panel { padding: 36px 24px 32px; }
     }
-
-    /* ── Responsive ── */
-    @media (max-width: 900px) {
-      .dash-grid { grid-template-columns: repeat(2, 1fr); }
-    }
-
-    @media (max-width: 560px) {
-      .dash-grid { grid-template-columns: 1fr; }
-      .dash-page-header h1 { font-size: 1.6rem; }
-    }
-
   </style>
 </head>
 <body>
 <canvas id="particle-canvas"></canvas>
 <div class="page-wrap">
-<!-- Header -->
-<header>
-<div class="header-title">
-<span>EDE</span> / CEES / EEP  Frameworks
+  <header>
+    <div class="header-title"><span>EDE</span> / CEES / EEP Frameworks</div>
+    <div class="header-badge">Restricted Access</div>
+  </header>
+  <div class="selection-wrap">
+    <div class="selection-header">
+      <div class="eyebrow">Authorized Access Granted</div>
+      <h1>Where would you like to go?</h1>
+      <p>Select a section below to access the full library of dashboards or the complete framework reference materials.</p>
     </div>
-<div class="header-badge">Restricted Access</div>
-</header>
-<div class="dash-wrap">
-<!-- Back link -->
-<div class="dash-back">
-<a class="back-btn" href="selection.html">← Back to Selection</a>
+    <div class="panel-grid">
+      <a class="panel dashboards" href="dashboards.html">
+        <div class="panel-badge">📊</div>
+        <div class="panel-label">Section 01</div>
+        <h2>Dashboards <span class="count-badge">6 Views</span></h2>
+        <p class="panel-desc">Live operational views and performance tracking tools.</p>
+        <ul class="panel-bullets">
+          <li>Engagement Health &amp; CPE Score Tracker</li>
+          <li>Dispatch Activity &amp; Queue Monitor</li>
+          <li>Signal Quality &amp; Status Cadence View</li>
+          <li>CSAM Partnership Pulse</li>
+          <li>Self-Accountability Trend Dashboard</li>
+          <li>EEP Certification Progress Tracker</li>
+        </ul>
+        <span class="panel-cta">Enter Dashboards →</span>
+      </a>
+      <a class="panel engineer" href="engineer-dashboards.html">
+        <div class="panel-badge">🚀</div>
+        <div class="panel-label">Section 03</div>
+        <h2>Engineer Apps <span class="count-badge">4 Tools</span></h2>
+        <p class="panel-desc">Fully interactive delivery tools built on the EEP framework.</p>
+        <ul class="panel-bullets">
+          <li>Engineer Delivery Dashboard</li>
+          <li>EEP Command Center — full reference hub</li>
+          <li>EEP Command Center M365 — live tenant</li>
+          <li>Self-Assessment Tool</li>
+        </ul>
+        <span class="panel-cta">Enter Engineer Apps →</span>
+      </a>
+      <a class="panel frameworks" href="index.html#main-content" onclick="goFrameworks(event)">
+        <div class="panel-badge">🧩</div>
+        <div class="panel-label">Section 02</div>
+        <h2>Frameworks <span class="count-badge">8 Modules</span></h2>
+        <p class="panel-desc">The complete EDE / CEES / EEP reference library.</p>
+        <ul class="panel-bullets">
+          <li>Operational Hygiene</li>
+          <li>Scoping &amp; Adaptive Polling</li>
+          <li>CSAM Partnership</li>
+          <li>Quick Match &amp; Self-Dispatch</li>
+          <li>EDE Identity</li>
+          <li>CEES Playbook</li>
+          <li>EEP Charter</li>
+          <li>Self-Accountability Scorecard</li>
+        </ul>
+        <span class="panel-cta">Enter Frameworks →</span>
+      </a>
+    </div>
+  </div>
+  <footer>EDE / CEES / EEP Frameworks · Confidential · Authorized Personnel Only</footer>
 </div>
-<!-- Page Header -->
-<div class="dash-page-header">
-<div class="eyebrow">Section 01 — Dashboards</div>
-<h1>Operational Dashboards</h1>
-<p>Live views and performance tracking tools for monitoring engagement health, CPE scores, dispatch activity, and signal quality across your portfolio.</p>
-</div>
-<!-- Dashboard Tile Grid -->
-<div class="dash-grid">
-<!-- 1. Engagement Health & CPE Score Tracker -->
-<a href="dashboards/dashboard-01.html" class="dash-tile">
-<span class="status-pill status-live">● Live</span>
-<div class="tile-num">Dashboard 01</div>
-<span class="tile-icon">📈</span>
-<div class="tile-title">Engagement Health &amp; CPE Score Tracker</div>
-<p class="tile-desc">
-          Monitor CPE scores across all active engagements in real time. Track survey completion windows, follow-up status, and learning loop closures. Identify at-risk engagements before scores are finalized.
-        </p>
-<div class="tile-metrics">
-<span class="metric-tag">CPE Score</span>
-<span class="metric-tag">Survey Window</span>
-<span class="metric-tag">Follow-Up</span>
-<span class="metric-tag">Learning Loop</span>
-</div>
-<span class="tile-cta">View Dashboard →</span>
-</a>
-<!-- 2. Dispatch Activity & Queue Monitor -->
-<a href="dashboards/dashboard-02.html" class="dash-tile">
-<span class="status-pill status-live">● Live</span>
-<div class="tile-num">Dashboard 02</div>
-<span class="tile-icon">🗂️</span>
-<div class="tile-title">Dispatch Activity &amp; Queue Monitor</div>
-<p class="tile-desc">
-          Full visibility into dispatch taxonomy across proactive, Quick Match, RMOT, and self-dispatch channels. Track acceptance rates, first-48-hour actions, and queue discipline metrics week over week.
-        </p>
-<div class="tile-metrics">
-<span class="metric-tag">Acceptance Rate</span>
-<span class="metric-tag">Queue Depth</span>
-<span class="metric-tag">48hr Actions</span>
-<span class="metric-tag">RMOT Pool</span>
-</div>
-<span class="tile-cta">View Dashboard →</span>
-</a>
-<!-- 3. Signal Quality & Status Cadence View -->
-<a href="dashboards/dashboard-03.html" class="dash-tile">
-<span class="status-pill status-live">● Live</span>
-<div class="tile-num">Dashboard 03</div>
-<span class="tile-icon">📡</span>
-<div class="tile-title">Signal Quality &amp; Status Cadence View</div>
-<p class="tile-desc">
-          Measure the quality and frequency of status updates across engagements. Distinguish signal from noise — track updates that change decisions vs. updates that only report activity. Identify cadence drift early.
-        </p>
-<div class="tile-metrics">
-<span class="metric-tag">Signal Rate</span>
-<span class="metric-tag">Cadence Score</span>
-<span class="metric-tag">Drift Alerts</span>
-<span class="metric-tag">Decision Updates</span>
-</div>
-<span class="tile-cta">View Dashboard →</span>
-</a>
-<!-- 4. CSAM Partnership Pulse -->
-<a href="dashboards/dashboard-04.html" class="dash-tile">
-<span class="status-pill status-live">● Live</span>
-<div class="tile-num">Dashboard 04</div>
-<span class="tile-icon">🤝</span>
-<div class="tile-title">CSAM Partnership Pulse</div>
-<p class="tile-desc">
-          Track the health of your CSAM relationships across all active accounts. Monitor weekly check-in completion, Outcome Owner call cadence, surprise incidents, and routing trust scores by CSAM.
-        </p>
-<div class="tile-metrics">
-<span class="metric-tag">Check-In Rate</span>
-<span class="metric-tag">Surprise Index</span>
-<span class="metric-tag">Routing Trust</span>
-<span class="metric-tag">OO Calls</span>
-</div>
-<span class="tile-cta">View Dashboard →</span>
-</a>
-<!-- 5. Self-Accountability Trend Dashboard -->
-<a href="dashboards/dashboard-05.html" class="dash-tile">
-<span class="status-pill status-live">● Live</span>
-<div class="tile-num">Dashboard 05</div>
-<span class="tile-icon">🎯</span>
-<div class="tile-title">Self-Accountability Trend Dashboard</div>
-<p class="tile-desc">
-          30-day rolling view of scorecard performance across all five pillars — CX, clarity, ownership, signal, and accountability. Visualize score trends, evidence gaps, and Drift Watch alerts over time.
-        </p>
-<div class="tile-metrics">
-<span class="metric-tag">Pillar Scores</span>
-<span class="metric-tag">Evidence Rate</span>
-<span class="metric-tag">Drift Watch</span>
-<span class="metric-tag">30-Day Trend</span>
-</div>
-<span class="tile-cta">View Dashboard →</span>
-</a>
-<!-- 6. EEP Certification Progress Tracker -->
-<a href="dashboards/dashboard-06.html" class="dash-tile">
-<span class="status-pill status-coming">Coming Soon</span>
-<div class="tile-num">Dashboard 06</div>
-<span class="tile-icon">🏅</span>
-<div class="tile-title">EEP Certification Progress Tracker</div>
-<p class="tile-desc">
-          Track certification progress across Practitioner, Lead, and Trainer levels for all engineers in the program. Monitor non-negotiable commitment completion rates, governance app usage, and cohort milestones.
-        </p>
-<div class="tile-metrics">
-<span class="metric-tag">Practitioner</span>
-<span class="metric-tag">Lead</span>
-<span class="metric-tag">Trainer</span>
-<span class="metric-tag">Commitments</span>
-</div>
-<span class="tile-cta">View Dashboard →</span>
-</a>
-</div><!-- /dash-grid -->
-</div><!-- /dash-wrap -->
-<footer>EDE / CEES / EEP Frameworks  ·  Confidential  ·  Authorized Personnel Only</footer>
-</div><!-- /page-wrap -->
 <script src="js/main.js"></script>
+<script>
+  function goFrameworks(e) {
+    e.preventDefault();
+    sessionStorage.setItem('ede-access', 'granted');
+    window.location.href = 'index.html';
+  }
+</script>
 </body>
 </html>
