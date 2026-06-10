@@ -10,6 +10,10 @@
   box-sizing: border-box;
 }
 
+html, body {
+  min-height: 100vh;
+}
+
 :root {
   --bg:           #08091c;
   --bg2:          #0d1130;
@@ -29,7 +33,6 @@ body {
   background-size: auto, cover;
   color: var(--text);
   font-family: "Segoe UI", Roboto, sans-serif;
-  min-height: 100vh;
 }
 
 /* ── Accessibility: Motion & Focus ── */
@@ -78,4 +81,14 @@ body {
   padding: 12px 24px; background: #111827; color: #fff;
   border: 2px solid transparent; border-radius: 6px;
   border-image: linear-gradient(90deg, #E65C5C, #FFC15E, #FFFF99, #76C776, #5E9EFF, #A864A8) 1;
+}
+
+/* ── Panel Grid (Vertical Stack Override) ── */
+.panel-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+  max-width: 600px;
+  margin: 0 auto;
+  width: 100%;
 }
