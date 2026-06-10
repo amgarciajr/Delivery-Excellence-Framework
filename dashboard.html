@@ -1,297 +1,59 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Select Your Path — EDE Frameworks</title>
-<link href="css/styles.css" rel="stylesheet"/>
-<style>
-    /* ── Selection Page Layout ── */
-    .selection-wrap {
-      min-height: calc(100vh - 72px);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 60px 24px;
-      position: relative;
-      z-index: 1;
-    }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Select Your Path — EDE Frameworks</title>
 
-    .selection-header {
-      text-align: center;
-      margin-bottom: 56px;
-    }
-
-    .selection-header .eyebrow {
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 3px;
-      text-transform: uppercase;
-      color: #FF6200;
-      margin-bottom: 16px;
-    }
-
-    .selection-header h1 {
-      font-size: 2.6rem;
-      font-weight: 800;
-      color: #fff;
-      line-height: 1.2;
-      margin-bottom: 14px;
-      text-shadow: 0 0 40px rgba(0,180,255,0.3);
-    }
-
-    .selection-header p {
-      font-size: 1.05rem;
-      color: #8892a4;
-      max-width: 520px;
-      margin: 0 auto;
-      line-height: 1.7;
-    }
-
-    .panel {
-      background: linear-gradient(160deg, rgba(17,24,39,0.97) 0%, rgba(10,14,36,0.97) 100%);
-      border: 1px solid rgba(0,120,255,0.18);
-      border-radius: 20px;
-      padding: 48px 40px 40px;
-      display: flex;
-      flex-direction: column;
-      position: relative;
-      overflow: hidden;
-      transition: transform 0.28s ease, box-shadow 0.28s ease, border-color 0.28s ease;
-      cursor: pointer;
-      text-decoration: none;
-      color: inherit;
-    }
-
-    .panel::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 3px;
-      border-radius: 20px 20px 0 0;
-    }
-
-    .panel.dashboards::before { background: linear-gradient(90deg, #FF6200, #ff9a50); }
-    .panel.frameworks::before { background: linear-gradient(90deg, #0078ff, #00c8ff); }
-    .panel.engineer::before   { background: linear-gradient(90deg, #FF6200, #ffaa50); }
-
-    .panel:hover {
-      transform: translateY(-6px);
-      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
-    }
-
-    /* Glow blob behind each panel */
-    .panel::after {
-      content: '';
-      position: absolute;
-      width: 300px; height: 300px;
-      border-radius: 50%;
-      top: -80px; right: -80px;
-      pointer-events: none;
-      opacity: 0.07;
-      transition: opacity 0.3s;
-    }
-
-    .panel.dashboards::after, .panel.engineer::after { background: #FF6200; }
-    .panel.frameworks::after  { background: #0078ff; }
-    .panel:hover::after       { opacity: 0.13; }
-
-    .panel-badge {
-      width: 64px; height: 64px;
-      border-radius: 16px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 2rem;
-      margin-bottom: 28px;
-      flex-shrink: 0;
-    }
-
-    .panel.dashboards .panel-badge, .panel.engineer .panel-badge {
-      background: rgba(255,98,0,0.12);
-      border: 1px solid rgba(255,98,0,0.3);
-    }
-
-    .panel.frameworks .panel-badge {
-      background: rgba(0,120,255,0.12);
-      border: 1px solid rgba(0,120,255,0.3);
-    }
-
-    .panel-label {
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 3px;
-      text-transform: uppercase;
-      margin-bottom: 10px;
-    }
-
-    .panel.dashboards .panel-label, .panel.engineer .panel-label { color: #FF6200; }
-    .panel.frameworks .panel-label { color: #00c8ff; }
-
-    .panel h2 {
-      font-size: 1.75rem;
-      font-weight: 800;
-      color: #fff;
-      margin-bottom: 14px;
-      line-height: 1.2;
-    }
-
-    .panel .panel-desc {
-      font-size: 0.97rem;
-      color: #8892a4;
-      line-height: 1.75;
-      margin-bottom: 32px;
-      flex-grow: 1;
-    }
-
-    .panel-bullets {
-      list-style: none;
-      padding: 0;
-      margin-bottom: 36px;
-    }
-
-    .panel-bullets li {
-      font-size: 0.88rem;
-      color: #b0bac8;
-      padding: 7px 0 7px 22px;
-      border-bottom: 1px solid rgba(255,255,255,0.05);
-      position: relative;
-      line-height: 1.5;
-    }
-
-    .panel-bullets li::before {
-      content: '▸';
-      position: absolute; left: 0;
-      font-size: 0.8rem; top: 9px;
-    }
-
-    .panel.dashboards .panel-bullets li::before, .panel.engineer .panel-bullets li::before { color: #FF6200; }
-    .panel.frameworks .panel-bullets li::before { color: #00c8ff; }
-
-    .panel-cta {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      padding: 13px 28px;
-      border-radius: 10px;
-      font-size: 0.95rem;
-      font-weight: 700;
-      letter-spacing: 0.03em;
-      text-decoration: none;
-      transition: gap 0.2s ease, box-shadow 0.2s ease;
-      align-self: flex-start;
-    }
-
-    .panel.dashboards .panel-cta, .panel.engineer .panel-cta {
-      background: linear-gradient(135deg, #FF6200, #cc4e00);
-      color: #fff;
-      box-shadow: 0 4px 20px rgba(255,98,0,0.3);
-    }
-
-    .panel.frameworks .panel-cta {
-      background: linear-gradient(135deg, #0078ff, #0055cc);
-      color: #fff;
-      box-shadow: 0 4px 20px rgba(0,120,255,0.3);
-    }
-
-    .count-badge {
-      display: inline-block;
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 1px;
-      padding: 3px 10px;
-      border-radius: 20px;
-      margin-left: 10px;
-      vertical-align: middle;
-    }
-
-    .panel.dashboards .count-badge, .panel.engineer .count-badge {
-      background: rgba(255,98,0,0.15);
-      color: #FF6200;
-      border: 1px solid rgba(255,98,0,0.3);
-    }
-
-    .panel.frameworks .count-badge {
-      background: rgba(0,120,255,0.15);
-      color: #00c8ff;
-      border: 1px solid rgba(0,120,255,0.3);
-    }
-
-    @media (max-width: 640px) {
-      .selection-header h1 { font-size: 1.8rem; }
-      .panel { padding: 36px 24px 32px; }
-    }
-  </style>
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="css/styles.css">
 </head>
+
 <body>
-<canvas id="particle-canvas"></canvas>
-<div class="page-wrap">
-  <header>
-    <div class="header-title"><span>EDE</span> / CEES / EEP Frameworks</div>
-    <div class="header-badge">Restricted Access</div>
-  </header>
-  <div class="selection-wrap">
-    <div class="selection-header">
-      <div class="eyebrow">Authorized Access Granted</div>
-      <h1>Where would you like to go?</h1>
-      <p>Select a section below to access the full library of dashboards or the complete framework reference materials.</p>
-    </div>
+
+  <!-- Animated Canvas Background -->
+  <canvas id="canvas"></canvas>
+  <script src="js/main.js"></script>
+
+  <!-- Page Wrapper -->
+  <div class="page-wrapper">
+
+    <!-- Header -->
+    <header class="section-header">
+      <h1 class="section-title">Select Your Path</h1>
+      <p class="section-subtitle">Choose a framework to explore</p>
+    </header>
+
+    <!-- Panel Grid -->
     <div class="panel-grid">
-      <a class="panel dashboards" href="dashboards.html">
-        <div class="panel-badge">📊</div>
-        <div class="panel-label">Section 01</div>
-        <h2>Dashboards <span class="count-badge">6 Views</span></h2>
-        <p class="panel-desc">Live operational views and performance tracking tools.</p>
-        <ul class="panel-bullets">
-          <li>Engagement Health &amp; CPE Score Tracker</li>
-          <li>Dispatch Activity &amp; Queue Monitor</li>
-          <li>Signal Quality &amp; Status Cadence View</li>
-          <li>CSAM Partnership Pulse</li>
-          <li>Self-Accountability Trend Dashboard</li>
-          <li>EEP Certification Progress Tracker</li>
-        </ul>
-        <span class="panel-cta">Enter Dashboards →</span>
-      </a>
-      <a class="panel engineer" href="engineer-dashboards.html">
-        <div class="panel-badge">🚀</div>
-        <div class="panel-label">Section 03</div>
-        <h2>Engineer Apps <span class="count-badge">4 Tools</span></h2>
-        <p class="panel-desc">Fully interactive delivery tools built on the EEP framework.</p>
-        <ul class="panel-bullets">
-          <li>Engineer Delivery Dashboard</li>
-          <li>EEP Command Center — full reference hub</li>
-          <li>EEP Command Center M365 — live tenant</li>
-          <li>Self-Assessment Tool</li>
-        </ul>
-        <span class="panel-cta">Enter Engineer Apps →</span>
-      </a>
-      <a class="panel frameworks" href="index.html#main-content" onclick="goFrameworks(event)">
-        <div class="panel-badge">🧩</div>
-        <div class="panel-label">Section 02</div>
-        <h2>Frameworks <span class="count-badge">8 Modules</span></h2>
-        <p class="panel-desc">The complete EDE / CEES / EEP reference library.</p>
-        <ul class="panel-bullets">
-          <li>Operational Hygiene</li>
-          <li>Scoping &amp; Adaptive Polling</li>
-          <li>CSAM Partnership</li>
-          <li>Quick Match &amp; Self-Dispatch</li>
-          <li>EDE Identity</li>
-          <li>CEES Playbook</li>
-          <li>EEP Charter</li>
-          <li>Self-Accountability Scorecard</li>
-        </ul>
-        <span class="panel-cta">Enter Frameworks →</span>
-      </a>
+
+      <!-- Example Panel -->
+      <div class="panel" onclick="location.href='modules/ede-overview.html'">
+        <div class="count-badge">10</div>
+        <div class="panel-label">EDE Overview</div>
+        <div class="panel-desc">Explore the Enterprise Delivery Excellence framework.</div>
+        <div class="panel-cta">Open Module →</div>
+      </div>
+
+      <div class="panel" onclick="location.href='modules/cees.html'">
+        <div class="count-badge">6</div>
+        <div class="panel-label">CEES Framework</div>
+        <div class="panel-desc">Customer Engagement Excellence System.</div>
+        <div class="panel-cta">Open Module →</div>
+      </div>
+
+      <div class="panel" onclick="location.href='modules/operating-model.html'">
+        <div class="count-badge">8</div>
+        <div class="panel-label">Operating Model</div>
+        <div class="panel-desc">Structure, governance, and delivery alignment.</div>
+        <div class="panel-cta">Open Module →</div>
+      </div>
+
+      <!-- Add more panels as needed -->
+
     </div>
+
   </div>
-  <footer>EDE / CEES / EEP Frameworks · Confidential · Authorized Personnel Only</footer>
-</div>
-<script src="js/main.js"></script>
-<script>
-  function goFrameworks(e) {
-    e.preventDefault();
-    sessionStorage.setItem('ede-access', 'granted');
-    window.location.href = 'index.html';
-  }
-</script>
+
 </body>
 </html>
