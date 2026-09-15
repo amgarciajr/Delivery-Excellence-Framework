@@ -1,0 +1,992 @@
+{
+  "solution": {
+    "name": "DataProtectionDeliveryHub",
+    "publisherPrefix": "dpdh",
+    "version": "1.0.0.0",
+    "storage": "Dataverse",
+    "documentStorage": "SharePoint via authoritative links",
+    "sampleData": "Synthetic only"
+  },
+  "choiceSets": {
+    "Health": [
+      "Green",
+      "Amber",
+      "Red",
+      "Not assessed"
+    ],
+    "Priority": [
+      "Critical",
+      "High",
+      "Medium",
+      "Low"
+    ],
+    "Organization": [
+      "Avanade",
+      "Customer",
+      "Partner",
+      "Microsoft",
+      "Shared",
+      "Unassigned"
+    ],
+    "Stage": [
+      "Qualify",
+      "Initiate",
+      "Discover",
+      "Assess",
+      "Design",
+      "Build",
+      "Validate",
+      "Transition",
+      "Close",
+      "Operate"
+    ],
+    "ReadinessRecommendation": [
+      "Go",
+      "Go with conditions",
+      "No-go",
+      "Not ready for decision"
+    ],
+    "EvidenceQuality": [
+      "Submitted",
+      "Under review",
+      "Accepted",
+      "Rejected",
+      "Superseded"
+    ],
+    "ReviewState": [
+      "Draft",
+      "Peer review",
+      "Quality review",
+      "Customer review",
+      "Approved",
+      "Delivered",
+      "Superseded"
+    ]
+  },
+  "entities": {
+    "Account": {
+      "purpose": "Customer or internal account reference",
+      "fields": {
+        "id": "Guid",
+        "name": "Text(200)",
+        "status": "Choice",
+        "ownerId": "Lookup(SystemUser/Team)",
+        "createdOn": "DateTime",
+        "modifiedOn": "DateTime",
+        "isActive": "YesNo",
+        "industry": "Choice",
+        "region": "Choice",
+        "dataSensitivity": "Choice",
+        "authoritativeReference": "URL"
+      },
+      "relationships": []
+    },
+    "Opportunity": {
+      "purpose": "Pre-delivery qualification",
+      "fields": {
+        "id": "Guid",
+        "name": "Text(200)",
+        "status": "Choice",
+        "ownerId": "Lookup(SystemUser/Team)",
+        "createdOn": "DateTime",
+        "modifiedOn": "DateTime",
+        "isActive": "YesNo",
+        "accountId": "Lookup(Account)",
+        "offeringId": "Lookup(Offering)",
+        "objectives": "MultilineText",
+        "regulatoryDrivers": "MultilineText",
+        "expectedOutcomes": "MultilineText",
+        "qualificationStatus": "Choice",
+        "deliveryRisk": "Choice",
+        "targetStart": "Date",
+        "handoffAccepted": "YesNo"
+      },
+      "relationships": []
+    },
+    "Offering": {
+      "purpose": "Reusable offering definition",
+      "fields": {
+        "id": "Guid",
+        "name": "Text(200)",
+        "status": "Choice",
+        "ownerId": "Lookup(SystemUser/Team)",
+        "createdOn": "DateTime",
+        "modifiedOn": "DateTime",
+        "isActive": "YesNo",
+        "capabilities": "MultiselectChoice",
+        "defaultDurationDays": "WholeNumber",
+        "stageTemplate": "Text",
+        "version": "Text"
+      },
+      "relationships": []
+    },
+    "Engagement": {
+      "purpose": "Delivery spine",
+      "fields": {
+        "id": "Guid",
+        "name": "Text(200)",
+        "status": "Choice",
+        "ownerId": "Lookup(SystemUser/Team)",
+        "createdOn": "DateTime",
+        "modifiedOn": "DateTime",
+        "isActive": "YesNo",
+        "accountId": "Lookup(Account)",
+        "opportunityId": "Lookup(Opportunity)",
+        "offeringId": "Lookup(Offering)",
+        "engagementCode": "Text(50)",
+        "stage": "Choice",
+        "health": "Choice",
+        "startDate": "Date",
+        "endDate": "Date",
+        "objectives": "MultilineText",
+        "inScope": "MultilineText",
+        "outOfScope": "MultilineText",
+        "assumptions": "MultilineText",
+        "constraints": "MultilineText",
+        "successMeasures": "MultilineText",
+        "sensitivity": "Choice",
+        "authoritativeWorkspace": "URL"
+      },
+      "relationships": []
+    },
+    "Stakeholder": {
+      "purpose": "Engagement stakeholder and responsibility",
+      "fields": {
+        "id": "Guid",
+        "name": "Text(200)",
+        "status": "Choice",
+        "ownerId": "Lookup(SystemUser/Team)",
+        "createdOn": "DateTime",
+        "modifiedOn": "DateTime",
+        "isActive": "YesNo",
+        "engagementId": "Lookup(Engagement)",
+        "displayName": "Text",
+        "organization": "Choice",
+        "roleTitle": "Text",
+        "responsibility": "MultilineText",
+        "accountableFor": "MultilineText",
+        "email": "Email",
+        "approvalAuthority": "YesNo"
+      },
+      "relationships": []
+    },
+    "Workstream": {
+      "purpose": "Execution grouping",
+      "fields": {
+        "id": "Guid",
+        "name": "Text(200)",
+        "status": "Choice",
+        "ownerId": "Lookup(SystemUser/Team)",
+        "createdOn": "DateTime",
+        "modifiedOn": "DateTime",
+        "isActive": "YesNo",
+        "engagementId": "Lookup(Engagement)",
+        "capability": "Choice",
+        "leadId": "Lookup(SystemUser)",
+        "startDate": "Date",
+        "endDate": "Date",
+        "health": "Choice",
+        "percentComplete": "WholeNumber"
+      },
+      "relationships": []
+    },
+    "Milestone": {
+      "purpose": "Milestone and gate target",
+      "fields": {
+        "id": "Guid",
+        "name": "Text(200)",
+        "status": "Choice",
+        "ownerId": "Lookup(SystemUser/Team)",
+        "createdOn": "DateTime",
+        "modifiedOn": "DateTime",
+        "isActive": "YesNo",
+        "engagementId": "Lookup(Engagement)",
+        "workstreamId": "Lookup(Workstream)",
+        "type": "Choice",
+        "dueDate": "Date",
+        "completedOn": "DateTime",
+        "mandatory": "YesNo",
+        "acceptanceCriteria": "MultilineText"
+      },
+      "relationships": []
+    },
+    "Action": {
+      "purpose": "Assigned work item",
+      "fields": {
+        "id": "Guid",
+        "name": "Text(200)",
+        "status": "Choice",
+        "ownerId": "Lookup(SystemUser/Team)",
+        "createdOn": "DateTime",
+        "modifiedOn": "DateTime",
+        "isActive": "YesNo",
+        "engagementId": "Lookup(Engagement)",
+        "workstreamId": "Lookup(Workstream)",
+        "category": "Choice",
+        "priority": "Choice",
+        "dueDate": "Date",
+        "completedOn": "DateTime",
+        "sourceType": "Choice",
+        "sourceId": "Text",
+        "description": "MultilineText"
+      },
+      "relationships": []
+    },
+    "ScopeItem": {
+      "purpose": "Explicit scope boundary",
+      "fields": {
+        "id": "Guid",
+        "name": "Text(200)",
+        "status": "Choice",
+        "ownerId": "Lookup(SystemUser/Team)",
+        "createdOn": "DateTime",
+        "modifiedOn": "DateTime",
+        "isActive": "YesNo",
+        "engagementId": "Lookup(Engagement)",
+        "scopeType": "Choice(In/Out/Assumption/Constraint/Exclusion)",
+        "description": "MultilineText",
+        "approved": "YesNo",
+        "approvedBy": "Lookup(SystemUser)",
+        "approvedOn": "DateTime",
+        "changeId": "Lookup(Change)"
+      },
+      "relationships": []
+    },
+    "Requirement": {
+      "purpose": "Traceable commitment",
+      "fields": {
+        "id": "Guid",
+        "name": "Text(200)",
+        "status": "Choice",
+        "ownerId": "Lookup(SystemUser/Team)",
+        "createdOn": "DateTime",
+        "modifiedOn": "DateTime",
+        "isActive": "YesNo",
+        "engagementId": "Lookup(Engagement)",
+        "workstreamId": "Lookup(Workstream)",
+        "requirementCode": "Text(50)",
+        "type": "Choice",
+        "priority": "Choice",
+        "description": "MultilineText",
+        "acceptanceCriteria": "MultilineText",
+        "source": "Text",
+        "approved": "YesNo",
+        "traceabilityStatus": "Choice"
+      },
+      "relationships": []
+    },
+    "Workshop": {
+      "purpose": "Discovery workshop",
+      "fields": {
+        "id": "Guid",
+        "name": "Text(200)",
+        "status": "Choice",
+        "ownerId": "Lookup(SystemUser/Team)",
+        "createdOn": "DateTime",
+        "modifiedOn": "DateTime",
+        "isActive": "YesNo",
+        "engagementId": "Lookup(Engagement)",
+        "type": "Choice",
+        "scheduledOn": "DateTime",
+        "facilitatorId": "Lookup(SystemUser)",
+        "objectives": "MultilineText",
+        "summary": "MultilineText",
+        "decisionsCaptured": "WholeNumber",
+        "actionsCaptured": "WholeNumber"
+      },
+      "relationships": []
+    },
+    "Assessment": {
+      "purpose": "Assessment instance",
+      "fields": {
+        "id": "Guid",
+        "name": "Text(200)",
+        "status": "Choice",
+        "ownerId": "Lookup(SystemUser/Team)",
+        "createdOn": "DateTime",
+        "modifiedOn": "DateTime",
+        "isActive": "YesNo",
+        "engagementId": "Lookup(Engagement)",
+        "templateId": "Lookup(AssessmentTemplate)",
+        "version": "Text",
+        "startedOn": "Date",
+        "completedOn": "Date",
+        "maturityScore": "Decimal",
+        "confidence": "Choice",
+        "reviewedBy": "Lookup(SystemUser)"
+      },
+      "relationships": []
+    },
+    "AssessmentTemplate": {
+      "purpose": "Reusable framework",
+      "fields": {
+        "id": "Guid",
+        "name": "Text(200)",
+        "status": "Choice",
+        "ownerId": "Lookup(SystemUser/Team)",
+        "createdOn": "DateTime",
+        "modifiedOn": "DateTime",
+        "isActive": "YesNo",
+        "capability": "Choice",
+        "version": "Text",
+        "published": "YesNo",
+        "guidanceUrl": "URL"
+      },
+      "relationships": []
+    },
+    "AssessmentResponse": {
+      "purpose": "Question response",
+      "fields": {
+        "id": "Guid",
+        "name": "Text(200)",
+        "status": "Choice",
+        "ownerId": "Lookup(SystemUser/Team)",
+        "createdOn": "DateTime",
+        "modifiedOn": "DateTime",
+        "isActive": "YesNo",
+        "assessmentId": "Lookup(Assessment)",
+        "questionCode": "Text",
+        "response": "MultilineText",
+        "rating": "Decimal",
+        "confidence": "Choice",
+        "evidenceId": "Lookup(Evidence)",
+        "notes": "MultilineText"
+      },
+      "relationships": []
+    },
+    "Finding": {
+      "purpose": "Observed gap or strength",
+      "fields": {
+        "id": "Guid",
+        "name": "Text(200)",
+        "status": "Choice",
+        "ownerId": "Lookup(SystemUser/Team)",
+        "createdOn": "DateTime",
+        "modifiedOn": "DateTime",
+        "isActive": "YesNo",
+        "engagementId": "Lookup(Engagement)",
+        "assessmentId": "Lookup(Assessment)",
+        "type": "Choice",
+        "severity": "Choice",
+        "observation": "MultilineText",
+        "businessImpact": "MultilineText",
+        "cause": "MultilineText",
+        "validated": "YesNo"
+      },
+      "relationships": []
+    },
+    "Recommendation": {
+      "purpose": "Recommended action",
+      "fields": {
+        "id": "Guid",
+        "name": "Text(200)",
+        "status": "Choice",
+        "ownerId": "Lookup(SystemUser/Team)",
+        "createdOn": "DateTime",
+        "modifiedOn": "DateTime",
+        "isActive": "YesNo",
+        "engagementId": "Lookup(Engagement)",
+        "findingId": "Lookup(Finding)",
+        "priority": "Choice",
+        "recommendation": "MultilineText",
+        "rationale": "MultilineText",
+        "effort": "Choice",
+        "timeHorizon": "Choice",
+        "ownerOrganization": "Choice",
+        "accepted": "Choice"
+      },
+      "relationships": []
+    },
+    "Control": {
+      "purpose": "Reusable control library",
+      "fields": {
+        "id": "Guid",
+        "name": "Text(200)",
+        "status": "Choice",
+        "ownerId": "Lookup(SystemUser/Team)",
+        "createdOn": "DateTime",
+        "modifiedOn": "DateTime",
+        "isActive": "YesNo",
+        "framework": "Text",
+        "controlCode": "Text",
+        "capability": "Choice",
+        "objective": "MultilineText",
+        "validationGuidance": "MultilineText"
+      },
+      "relationships": []
+    },
+    "ControlImplementation": {
+      "purpose": "Engagement control state",
+      "fields": {
+        "id": "Guid",
+        "name": "Text(200)",
+        "status": "Choice",
+        "ownerId": "Lookup(SystemUser/Team)",
+        "createdOn": "DateTime",
+        "modifiedOn": "DateTime",
+        "isActive": "YesNo",
+        "engagementId": "Lookup(Engagement)",
+        "controlId": "Lookup(Control)",
+        "requirementId": "Lookup(Requirement)",
+        "implementationStatus": "Choice",
+        "design": "MultilineText",
+        "ownerOrganization": "Choice",
+        "evidenceId": "Lookup(Evidence)",
+        "exceptionId": "Lookup(Exception)"
+      },
+      "relationships": []
+    },
+    "ArchitectureDecision": {
+      "purpose": "Decision record",
+      "fields": {
+        "id": "Guid",
+        "name": "Text(200)",
+        "status": "Choice",
+        "ownerId": "Lookup(SystemUser/Team)",
+        "createdOn": "DateTime",
+        "modifiedOn": "DateTime",
+        "isActive": "YesNo",
+        "engagementId": "Lookup(Engagement)",
+        "decisionCode": "Text",
+        "question": "MultilineText",
+        "options": "MultilineText",
+        "recommendation": "MultilineText",
+        "finalDecision": "MultilineText",
+        "rationale": "MultilineText",
+        "decisionStatus": "Choice",
+        "approverId": "Lookup(SystemUser)",
+        "dueDate": "Date",
+        "decidedOn": "DateTime",
+        "impact": "MultilineText"
+      },
+      "relationships": []
+    },
+    "ConfigurationItem": {
+      "purpose": "Build/configuration specification",
+      "fields": {
+        "id": "Guid",
+        "name": "Text(200)",
+        "status": "Choice",
+        "ownerId": "Lookup(SystemUser/Team)",
+        "createdOn": "DateTime",
+        "modifiedOn": "DateTime",
+        "isActive": "YesNo",
+        "engagementId": "Lookup(Engagement)",
+        "workstreamId": "Lookup(Workstream)",
+        "requirementId": "Lookup(Requirement)",
+        "environment": "Choice",
+        "targetState": "MultilineText",
+        "deploymentMethod": "Choice",
+        "rollbackPlan": "MultilineText",
+        "validationMethod": "MultilineText",
+        "implementedBy": "Lookup(SystemUser)",
+        "reviewedBy": "Lookup(SystemUser)"
+      },
+      "relationships": []
+    },
+    "Risk": {
+      "purpose": "Risk register",
+      "fields": {
+        "id": "Guid",
+        "name": "Text(200)",
+        "status": "Choice",
+        "ownerId": "Lookup(SystemUser/Team)",
+        "createdOn": "DateTime",
+        "modifiedOn": "DateTime",
+        "isActive": "YesNo",
+        "engagementId": "Lookup(Engagement)",
+        "riskCode": "Text",
+        "category": "Choice",
+        "probability": "Choice",
+        "impact": "Choice",
+        "severity": "Choice",
+        "description": "MultilineText",
+        "mitigation": "MultilineText",
+        "contingency": "MultilineText",
+        "dueDate": "Date",
+        "acceptedBy": "Lookup(SystemUser)",
+        "escalationStatus": "Choice"
+      },
+      "relationships": []
+    },
+    "Issue": {
+      "purpose": "Issue register",
+      "fields": {
+        "id": "Guid",
+        "name": "Text(200)",
+        "status": "Choice",
+        "ownerId": "Lookup(SystemUser/Team)",
+        "createdOn": "DateTime",
+        "modifiedOn": "DateTime",
+        "isActive": "YesNo",
+        "engagementId": "Lookup(Engagement)",
+        "issueCode": "Text",
+        "severity": "Choice",
+        "description": "MultilineText",
+        "businessImpact": "MultilineText",
+        "resolutionPlan": "MultilineText",
+        "dueDate": "Date",
+        "resolvedOn": "DateTime",
+        "rootCause": "MultilineText"
+      },
+      "relationships": []
+    },
+    "Dependency": {
+      "purpose": "Dependency register",
+      "fields": {
+        "id": "Guid",
+        "name": "Text(200)",
+        "status": "Choice",
+        "ownerId": "Lookup(SystemUser/Team)",
+        "createdOn": "DateTime",
+        "modifiedOn": "DateTime",
+        "isActive": "YesNo",
+        "engagementId": "Lookup(Engagement)",
+        "dependencyCode": "Text",
+        "organization": "Choice",
+        "description": "MultilineText",
+        "neededBy": "Date",
+        "confirmed": "YesNo",
+        "fulfilledOn": "DateTime",
+        "impactIfLate": "MultilineText"
+      },
+      "relationships": []
+    },
+    "Change": {
+      "purpose": "Scope/change control",
+      "fields": {
+        "id": "Guid",
+        "name": "Text(200)",
+        "status": "Choice",
+        "ownerId": "Lookup(SystemUser/Team)",
+        "createdOn": "DateTime",
+        "modifiedOn": "DateTime",
+        "isActive": "YesNo",
+        "engagementId": "Lookup(Engagement)",
+        "changeCode": "Text",
+        "request": "MultilineText",
+        "reason": "MultilineText",
+        "scopeImpact": "MultilineText",
+        "scheduleImpact": "MultilineText",
+        "costImpact": "MultilineText",
+        "riskImpact": "MultilineText",
+        "approvalStatus": "Choice",
+        "approvedBy": "Lookup(SystemUser)"
+      },
+      "relationships": []
+    },
+    "Exception": {
+      "purpose": "Approved exception/compensating control",
+      "fields": {
+        "id": "Guid",
+        "name": "Text(200)",
+        "status": "Choice",
+        "ownerId": "Lookup(SystemUser/Team)",
+        "createdOn": "DateTime",
+        "modifiedOn": "DateTime",
+        "isActive": "YesNo",
+        "engagementId": "Lookup(Engagement)",
+        "type": "Choice",
+        "description": "MultilineText",
+        "businessJustification": "MultilineText",
+        "compensatingControl": "MultilineText",
+        "riskId": "Lookup(Risk)",
+        "expiryDate": "Date",
+        "approvalStatus": "Choice",
+        "approvedBy": "Lookup(SystemUser)"
+      },
+      "relationships": []
+    },
+    "TestPlan": {
+      "purpose": "Validation plan",
+      "fields": {
+        "id": "Guid",
+        "name": "Text(200)",
+        "status": "Choice",
+        "ownerId": "Lookup(SystemUser)",
+        "createdOn": "DateTime",
+        "modifiedOn": "DateTime",
+        "isActive": "YesNo",
+        "engagementId": "Lookup(Engagement)",
+        "workstreamId": "Lookup(Workstream)",
+        "scope": "MultilineText",
+        "entryCriteria": "MultilineText",
+        "exitCriteria": "MultilineText",
+        "environment": "Choice"
+      },
+      "relationships": []
+    },
+    "TestCase": {
+      "purpose": "Traceable test",
+      "fields": {
+        "id": "Guid",
+        "name": "Text(200)",
+        "status": "Choice",
+        "ownerId": "Lookup(SystemUser/Team)",
+        "createdOn": "DateTime",
+        "modifiedOn": "DateTime",
+        "isActive": "YesNo",
+        "testPlanId": "Lookup(TestPlan)",
+        "requirementId": "Lookup(Requirement)",
+        "configurationItemId": "Lookup(ConfigurationItem)",
+        "testCode": "Text",
+        "preconditions": "MultilineText",
+        "steps": "MultilineText",
+        "expectedResult": "MultilineText",
+        "priority": "Choice"
+      },
+      "relationships": []
+    },
+    "TestRun": {
+      "purpose": "Execution result",
+      "fields": {
+        "id": "Guid",
+        "name": "Text(200)",
+        "status": "Choice",
+        "ownerId": "Lookup(SystemUser/Team)",
+        "createdOn": "DateTime",
+        "modifiedOn": "DateTime",
+        "isActive": "YesNo",
+        "testCaseId": "Lookup(TestCase)",
+        "result": "Choice(Pass/Fail/Blocked/NotRun)",
+        "actualResult": "MultilineText",
+        "executedBy": "Lookup(SystemUser)",
+        "executedOn": "DateTime",
+        "environment": "Choice",
+        "evidenceId": "Lookup(Evidence)",
+        "defectId": "Lookup(Defect)"
+      },
+      "relationships": []
+    },
+    "Defect": {
+      "purpose": "Defect management",
+      "fields": {
+        "id": "Guid",
+        "name": "Text(200)",
+        "status": "Choice",
+        "ownerId": "Lookup(SystemUser/Team)",
+        "createdOn": "DateTime",
+        "modifiedOn": "DateTime",
+        "isActive": "YesNo",
+        "engagementId": "Lookup(Engagement)",
+        "defectCode": "Text",
+        "severity": "Choice",
+        "description": "MultilineText",
+        "rootCause": "MultilineText",
+        "resolution": "MultilineText",
+        "assignedTo": "Lookup(SystemUser)",
+        "dueDate": "Date"
+      },
+      "relationships": []
+    },
+    "Evidence": {
+      "purpose": "Evidence metadata and authoritative reference",
+      "fields": {
+        "id": "Guid",
+        "name": "Text(200)",
+        "status": "Choice",
+        "ownerId": "Lookup(SystemUser/Team)",
+        "createdOn": "DateTime",
+        "modifiedOn": "DateTime",
+        "isActive": "YesNo",
+        "engagementId": "Lookup(Engagement)",
+        "evidenceCode": "Text",
+        "type": "Choice",
+        "authoritativeUrl": "URL",
+        "capturedOn": "DateTime",
+        "environment": "Choice",
+        "sensitivity": "Choice",
+        "retentionCategory": "Choice",
+        "qualityStatus": "Choice",
+        "reviewedBy": "Lookup(SystemUser)",
+        "reviewedOn": "DateTime",
+        "relatedRecordType": "Text",
+        "relatedRecordId": "Guid"
+      },
+      "relationships": []
+    },
+    "ReadinessReview": {
+      "purpose": "Readiness assessment",
+      "fields": {
+        "id": "Guid",
+        "name": "Text(200)",
+        "status": "Choice",
+        "ownerId": "Lookup(SystemUser/Team)",
+        "createdOn": "DateTime",
+        "modifiedOn": "DateTime",
+        "isActive": "YesNo",
+        "engagementId": "Lookup(Engagement)",
+        "dimension": "Choice",
+        "gate": "Choice",
+        "rating": "Choice",
+        "score": "Decimal",
+        "mandatoryCriteriaMet": "YesNo",
+        "recommendation": "Choice",
+        "reviewedBy": "Lookup(SystemUser)",
+        "reviewedOn": "DateTime",
+        "exceptionId": "Lookup(Exception)"
+      },
+      "relationships": []
+    },
+    "ReadinessCriterion": {
+      "purpose": "Criterion result",
+      "fields": {
+        "id": "Guid",
+        "name": "Text(200)",
+        "status": "Choice",
+        "ownerId": "Lookup(SystemUser/Team)",
+        "createdOn": "DateTime",
+        "modifiedOn": "DateTime",
+        "isActive": "YesNo",
+        "readinessReviewId": "Lookup(ReadinessReview)",
+        "criterionCode": "Text",
+        "mandatory": "YesNo",
+        "result": "Choice",
+        "evidenceId": "Lookup(Evidence)",
+        "notes": "MultilineText"
+      },
+      "relationships": []
+    },
+    "Deliverable": {
+      "purpose": "Deliverable lifecycle",
+      "fields": {
+        "id": "Guid",
+        "name": "Text(200)",
+        "status": "Choice",
+        "ownerId": "Lookup(SystemUser/Team)",
+        "createdOn": "DateTime",
+        "modifiedOn": "DateTime",
+        "isActive": "YesNo",
+        "engagementId": "Lookup(Engagement)",
+        "workstreamId": "Lookup(Workstream)",
+        "deliverableCode": "Text",
+        "type": "Choice",
+        "authoritativeUrl": "URL",
+        "version": "Text",
+        "dueDate": "Date",
+        "reviewState": "Choice",
+        "reviewerId": "Lookup(SystemUser)",
+        "approvedBy": "Lookup(SystemUser)",
+        "deliveredOn": "DateTime",
+        "customerAccepted": "Choice"
+      },
+      "relationships": []
+    },
+    "HandoffItem": {
+      "purpose": "Transition checklist",
+      "fields": {
+        "id": "Guid",
+        "name": "Text(200)",
+        "status": "Choice",
+        "ownerId": "Lookup(SystemUser/Team)",
+        "createdOn": "DateTime",
+        "modifiedOn": "DateTime",
+        "isActive": "YesNo",
+        "engagementId": "Lookup(Engagement)",
+        "category": "Choice",
+        "description": "MultilineText",
+        "mandatory": "YesNo",
+        "ownerOrganization": "Choice",
+        "completed": "YesNo",
+        "evidenceId": "Lookup(Evidence)",
+        "acceptedBy": "Lookup(SystemUser)"
+      },
+      "relationships": []
+    },
+    "OperationalOwner": {
+      "purpose": "Named operations ownership",
+      "fields": {
+        "id": "Guid",
+        "name": "Text(200)",
+        "status": "Choice",
+        "ownerId": "Lookup(SystemUser/Team)",
+        "createdOn": "DateTime",
+        "modifiedOn": "DateTime",
+        "isActive": "YesNo",
+        "engagementId": "Lookup(Engagement)",
+        "roleType": "Choice",
+        "displayName": "Text",
+        "organization": "Text",
+        "email": "Email",
+        "primary": "YesNo",
+        "confirmed": "YesNo",
+        "confirmedOn": "DateTime"
+      },
+      "relationships": []
+    },
+    "LessonLearned": {
+      "purpose": "Closed-loop learning",
+      "fields": {
+        "id": "Guid",
+        "name": "Text(200)",
+        "status": "Choice",
+        "ownerId": "Lookup(SystemUser/Team)",
+        "createdOn": "DateTime",
+        "modifiedOn": "DateTime",
+        "isActive": "YesNo",
+        "engagementId": "Lookup(Engagement)",
+        "category": "Choice",
+        "situation": "MultilineText",
+        "lesson": "MultilineText",
+        "recommendation": "MultilineText",
+        "sanitizeForReuse": "YesNo",
+        "reviewStatus": "Choice",
+        "reusableAssetId": "Lookup(ReusableAsset)"
+      },
+      "relationships": []
+    },
+    "ReusableAsset": {
+      "purpose": "Practice asset catalog",
+      "fields": {
+        "id": "Guid",
+        "name": "Text(200)",
+        "status": "Choice",
+        "ownerId": "Lookup(SystemUser/Team)",
+        "createdOn": "DateTime",
+        "modifiedOn": "DateTime",
+        "isActive": "YesNo",
+        "assetType": "Choice",
+        "capability": "Choice",
+        "version": "Text",
+        "authoritativeUrl": "URL",
+        "sanitizationConfirmed": "YesNo",
+        "reviewStatus": "Choice",
+        "publishedOn": "Date",
+        "usageGuidance": "MultilineText"
+      },
+      "relationships": []
+    },
+    "BenefitOutcome": {
+      "purpose": "Outcome realization",
+      "fields": {
+        "id": "Guid",
+        "name": "Text(200)",
+        "status": "Choice",
+        "ownerId": "Lookup(SystemUser/Team)",
+        "createdOn": "DateTime",
+        "modifiedOn": "DateTime",
+        "isActive": "YesNo",
+        "engagementId": "Lookup(Engagement)",
+        "outcomeType": "Choice",
+        "baseline": "Decimal",
+        "target": "Decimal",
+        "actual": "Decimal",
+        "unit": "Text",
+        "measurementDate": "Date",
+        "evidenceId": "Lookup(Evidence)",
+        "validatedBy": "Lookup(SystemUser)"
+      },
+      "relationships": []
+    },
+    "StageGate": {
+      "purpose": "Gate decision",
+      "fields": {
+        "id": "Guid",
+        "name": "Text(200)",
+        "status": "Choice",
+        "ownerId": "Lookup(SystemUser/Team)",
+        "createdOn": "DateTime",
+        "modifiedOn": "DateTime",
+        "isActive": "YesNo",
+        "engagementId": "Lookup(Engagement)",
+        "stage": "Choice",
+        "decision": "Choice",
+        "decisionDate": "DateTime",
+        "decidedBy": "Lookup(SystemUser)",
+        "conditions": "MultilineText",
+        "missingCriteria": "MultilineText",
+        "exceptionId": "Lookup(Exception)"
+      },
+      "relationships": []
+    },
+    "Approval": {
+      "purpose": "Generic approval record",
+      "fields": {
+        "id": "Guid",
+        "name": "Text(200)",
+        "status": "Choice",
+        "ownerId": "Lookup(SystemUser/Team)",
+        "createdOn": "DateTime",
+        "modifiedOn": "DateTime",
+        "isActive": "YesNo",
+        "engagementId": "Lookup(Engagement)",
+        "recordType": "Text",
+        "recordId": "Guid",
+        "approvalType": "Choice",
+        "approverId": "Lookup(SystemUser)",
+        "decision": "Choice",
+        "decisionOn": "DateTime",
+        "comments": "MultilineText"
+      },
+      "relationships": []
+    },
+    "AuditEvent": {
+      "purpose": "Business audit trail",
+      "fields": {
+        "id": "Guid",
+        "name": "Text(200)",
+        "status": "Choice",
+        "ownerId": "Lookup(SystemUser/Team)",
+        "createdOn": "DateTime",
+        "modifiedOn": "DateTime",
+        "isActive": "YesNo",
+        "engagementId": "Lookup(Engagement)",
+        "eventType": "Choice",
+        "recordType": "Text",
+        "recordId": "Guid",
+        "actorId": "Lookup(SystemUser)",
+        "occurredOn": "DateTime",
+        "beforeSummary": "MultilineText",
+        "afterSummary": "MultilineText"
+      },
+      "relationships": []
+    },
+    "AutomationRun": {
+      "purpose": "Automation observability",
+      "fields": {
+        "id": "Guid",
+        "name": "Text(200)",
+        "status": "Choice",
+        "ownerId": "Lookup(SystemUser/Team)",
+        "createdOn": "DateTime",
+        "modifiedOn": "DateTime",
+        "isActive": "YesNo",
+        "flowName": "Text",
+        "correlationId": "Text",
+        "engagementId": "Lookup(Engagement)",
+        "startedOn": "DateTime",
+        "endedOn": "DateTime",
+        "result": "Choice",
+        "recordsProcessed": "WholeNumber",
+        "errorSummary": "MultilineText"
+      },
+      "relationships": []
+    },
+    "AppConfiguration": {
+      "purpose": "Environment-safe configuration",
+      "fields": {
+        "id": "Guid",
+        "name": "Text(200)",
+        "status": "Choice",
+        "ownerId": "Lookup(SystemUser/Team)",
+        "createdOn": "DateTime",
+        "modifiedOn": "DateTime",
+        "isActive": "YesNo",
+        "key": "Text",
+        "value": "MultilineText",
+        "environmentSpecific": "YesNo",
+        "secretReference": "Text",
+        "description": "MultilineText"
+      },
+      "relationships": []
+    }
+  },
+  "crossCuttingRules": [
+    "Every child delivery record must link to an Engagement unless explicitly practice-level.",
+    "Requirements must expose mappings to controls, configurations, tests, evidence, recommendations, and deliverables.",
+    "Failed mandatory readiness criteria block a Green gate regardless of weighted score.",
+    "Customer ownership is never inferred; it requires explicit confirmation.",
+    "Reusable assets require sanitization confirmation and review before publication.",
+    "AI output never constitutes approval or validated evidence."
+  ]
+}

@@ -1,0 +1,93 @@
+{
+  "roles": {
+    "Consultant": {
+      "scope": "Assigned engagements",
+      "createUpdate": [
+        "Action",
+        "Workshop",
+        "AssessmentResponse",
+        "Finding",
+        "TestRun",
+        "Evidence"
+      ],
+      "read": [
+        "Reference data",
+        "Assigned engagement records"
+      ]
+    },
+    "WorkstreamLead": {
+      "scope": "Led workstreams",
+      "createUpdate": [
+        "Requirement",
+        "ConfigurationItem",
+        "TestPlan",
+        "TestCase",
+        "Risk",
+        "Issue",
+        "Dependency",
+        "Deliverable"
+      ]
+    },
+    "Architect": {
+      "scope": "Assigned/consulted engagements",
+      "approve": [
+        "ArchitectureDecision",
+        "ControlImplementation",
+        "Exception",
+        "ConfigurationItem"
+      ]
+    },
+    "ProjectManager": {
+      "scope": "Managed engagements",
+      "createUpdate": [
+        "ScopeItem",
+        "Milestone",
+        "Action",
+        "Risk",
+        "Issue",
+        "Dependency",
+        "Change",
+        "Deliverable"
+      ]
+    },
+    "EngagementManager": {
+      "scope": "Managed engagements",
+      "approve": [
+        "StageGate",
+        "ReadinessReview",
+        "Risk acceptance",
+        "HandoffItem"
+      ]
+    },
+    "Reviewer": {
+      "scope": "Explicitly assigned reviews",
+      "approve": [
+        "Evidence",
+        "Deliverable",
+        "ReusableAsset"
+      ]
+    },
+    "PracticeLeader": {
+      "scope": "Sanitized portfolio summaries and published assets",
+      "restrictions": [
+        "No implicit client-content access"
+      ]
+    },
+    "PlatformAdministrator": {
+      "scope": "Platform configuration",
+      "restrictions": [
+        "No business approval authority by default"
+      ]
+    }
+  },
+  "controls": [
+    "Dataverse teams per engagement",
+    "Least privilege",
+    "Field security for sensitive records",
+    "Audit enabled",
+    "No hard-coded users",
+    "Configurable retention",
+    "Environment variables",
+    "Connection references"
+  ]
+}

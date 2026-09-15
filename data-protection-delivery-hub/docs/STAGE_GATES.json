@@ -1,0 +1,66 @@
+{
+  "Qualify": [
+    "Offering selected",
+    "Objectives recorded",
+    "Delivery risk assessed",
+    "Handoff owner named"
+  ],
+  "Initiate": [
+    "Charter approved",
+    "Scope boundaries recorded",
+    "Stakeholders identified",
+    "Workspace established",
+    "Responsibilities assigned"
+  ],
+  "Discover": [
+    "Document requests tracked",
+    "Workshops completed or exceptions recorded",
+    "Requirements captured",
+    "Open questions owned"
+  ],
+  "Assess": [
+    "Responses reviewed",
+    "Findings validated",
+    "Evidence quality reviewed",
+    "Recommendations drafted"
+  ],
+  "Design": [
+    "Requirements mapped",
+    "Architecture decisions approved",
+    "Controls designed",
+    "Configuration and rollback methods defined"
+  ],
+  "Build": [
+    "Configurations peer reviewed",
+    "Changes tracked",
+    "Deployment method confirmed",
+    "Unit evidence captured"
+  ],
+  "Validate": [
+    "Test coverage mapped",
+    "Mandatory tests passed",
+    "Defects dispositioned",
+    "Evidence accepted",
+    "Readiness reviewed"
+  ],
+  "Transition": [
+    "Runbooks delivered",
+    "Operators confirmed",
+    "Support and escalation confirmed",
+    "Training complete",
+    "Acceptance routed"
+  ],
+  "Close": [
+    "Deliverables delivered",
+    "Open items transferred",
+    "Lessons captured",
+    "Reusable content sanitized",
+    "Outcome follow-up scheduled"
+  ],
+  "Operate": [
+    "Post-release validation complete",
+    "Support metrics reviewed",
+    "Benefits measured",
+    "Deferred backlog governed"
+  ]
+}
